@@ -1,0 +1,135 @@
+### SOURCE: VAR_KOD^SET([KALKULATOR1000^GETFRAMENAME()+KALKULATOR100^GETFRAMENAME()]);@IF("VAR_KOD","!_","2288","BFITMP0","BFITMP1");
+[
+ {
+  "type": "FunctionCall",
+  "target": {
+   "type": "ObjectTarget",
+   "ref": {
+    "type": "Identifier",
+    "name": "VAR_KOD"
+   }
+  },
+  "method": "SET",
+  "args": [
+   {
+    "type": "BracketExpression",
+    "raw": "KALKULATOR1000^GETFRAMENAME()+KALKULATOR100^GETFRAMENAME()",
+    "expression": {
+     "type": "Expression",
+     "head": {
+      "type": "FunctionCall",
+      "target": {
+       "type": "ObjectTarget",
+       "ref": {
+        "type": "Identifier",
+        "name": "KALKULATOR1000"
+       }
+      },
+      "method": "GETFRAMENAME",
+      "args": [],
+      "isHashMethod": false
+     },
+     "tail": [
+      {
+       "op": "ADD",
+       "opCode": 1,
+       "operand": {
+        "type": "FunctionCall",
+        "target": {
+         "type": "ObjectTarget",
+         "ref": {
+          "type": "Identifier",
+          "name": "KALKULATOR100"
+         }
+        },
+        "method": "GETFRAMENAME",
+        "args": [],
+        "isHashMethod": false
+       }
+      }
+     ]
+    }
+   }
+  ],
+  "isHashMethod": false
+ },
+ {
+  "type": "FunctionCall",
+  "target": {
+   "type": "GlobalTarget"
+  },
+  "method": "IF",
+  "args": [
+   {
+    "type": "StringLiteral",
+    "value": "VAR_KOD"
+   },
+   {
+    "type": "StringLiteral",
+    "value": "!_"
+   },
+   {
+    "type": "StringLiteral",
+    "value": "2288"
+   },
+   {
+    "type": "StringLiteral",
+    "value": "BFITMP0"
+   },
+   {
+    "type": "StringLiteral",
+    "value": "BFITMP1"
+   }
+  ],
+  "isHashMethod": false
+ }
+]
+
+### SOURCE: KALKULATOR1^SETFRAME("PLAY",$1);
+[
+ {
+  "type": "FunctionCall",
+  "target": {
+   "type": "ObjectTarget",
+   "ref": {
+    "type": "Identifier",
+    "name": "KALKULATOR1"
+   }
+  },
+  "method": "SETFRAME",
+  "args": [
+   {
+    "type": "StringLiteral",
+    "value": "PLAY"
+   },
+   {
+    "type": "Identifier",
+    "name": "$1"
+   }
+  ],
+  "isHashMethod": false
+ }
+]
+
+### SOURCE: V_ETAP^SET(VAR_BRAMA);
+[
+ {
+  "type": "FunctionCall",
+  "target": {
+   "type": "ObjectTarget",
+   "ref": {
+    "type": "Identifier",
+    "name": "V_ETAP"
+   }
+  },
+  "method": "SET",
+  "args": [
+   {
+    "type": "Identifier",
+    "name": "VAR_BRAMA"
+   }
+  ],
+  "isHashMethod": false
+ }
+]
+
