@@ -21,7 +21,11 @@ const baseOptions = {
     startScene: urlParams.get('scene') ?? undefined,
     debug: urlParams.has('debug') ? urlParams.get('debug') == 'true' : BUILD_VARS.debug,
     debugContainer: debugContainer,
-    onExit: () => document.exitFullscreen(),
+    onExit: () => {
+        if (document.fullscreenElement !== null) {
+            void document.exitFullscreen()
+        }
+    },
     saveFile: areSavesEnabled ? SaveFileManager.fromLocalStorage() : undefined,
     storage: new IndexedDBStorage('reksio'),
 }
