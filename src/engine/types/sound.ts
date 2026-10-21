@@ -2,7 +2,7 @@ import { Type } from './index'
 import { loadSound } from '../../filesystem/assetsLoader'
 import { SoundDefinition } from '../../fileFormats/cnv/types'
 import { FileNotFoundError } from '../../filesystem/fileLoader'
-import { assert, NotImplementedError } from '../../common/errors'
+import { assert } from '../../common/errors'
 import { method, int } from '../../common/types'
 import { Sound as ISound } from '../audio'
 import { logger } from '../logging'
@@ -69,7 +69,11 @@ export class Sound extends Type<SoundDefinition> {
 
     @method()
     SETFREQ(frequency: int) {
-        throw new NotImplementedError()
+        if (this.sound === null) {
+            return
+        }
+        // Mirrors DirectSound's SetFrequency, where 0 restores the original frequency
+        this.sound.setRate(frequency > 0 ? frequency / this.sound.sampleRate : 1)
     }
 
     @method()

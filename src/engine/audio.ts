@@ -198,11 +198,20 @@ export class SoundInstance extends EventTarget {
 
 export class Sound {
     public instances: SoundInstance[] = []
+    // Playback rate relative to the original one, independent of the global speed
+    public rate: number = 1
 
     constructor(
         private manager: AudioManager,
-        public buffer: AudioBuffer
+        public buffer: AudioBuffer,
+        // Sample rate of the source file, as decodeAudioData resamples the buffer to the context's rate
+        public readonly sampleRate: number = buffer.sampleRate
     ) {}
+
+    setRate(rate: number) {
+        this.rate = rate
+        this.instances.forEach((instance) => (instance.speed = this.rate * this.manager.speed))
+    }
 
     _removeInstance(inst: SoundInstance) {
         const i = this.instances.indexOf(inst)
@@ -213,7 +222,7 @@ export class Sound {
 
     play(opts: PlayOptions = {}) {
         const instance = new SoundInstance(this.manager.ctx, this, this.manager.master, {
-            rate: this.manager.speed,
+            rate: this.rate * this.manager.speed,
             ...opts,
         })
         this.instances.push(instance)
@@ -237,6 +246,29 @@ export class Sound {
     get isPlaying() {
         return this.instances.some((instance) => instance.isPlaying)
     }
+}
+
+export const readWavSampleRate = (data: ArrayBuffer): number | null => {
+    if (data.byteLength < 12) {
+        return null
+    }
+
+    const view = new DataView(data)
+    const fourCC = (offset: number) => String.fromCharCode(...new Uint8Array(data, offset, 4))
+
+    if (fourCC(0) !== 'RIFF' || fourCC(8) !== 'WAVE') {
+        return null
+    }
+
+    let offset = 12
+    while (offset + 8 <= data.byteLength) {
+        const chunkSize = view.getUint32(offset + 4, true)
+        if (fourCC(offset) === 'fmt ' && offset + 16 <= data.byteLength) {
+            return view.getUint32(offset + 12, true)
+        }
+        offset += 8 + chunkSize + (chunkSize % 2)
+    }
+    return null
 }
 
 export class AudioManager {
@@ -270,6 +302,8 @@ export class AudioManager {
             throw new Error('Failed to decode audio data: empty buffer')
         }
 
+        const sampleRate = readWavSampleRate(dataBuffer)
+
         let buf: AudioBuffer
         try {
             buf = await this.ctx.decodeAudioData(dataBuffer)
@@ -277,7 +311,7 @@ export class AudioManager {
             throw new Error(`Failed to decode audio data: ${err instanceof Error ? err.message : String(err)}`)
         }
 
-        const sound = new Sound(this, buf)
+        const sound = new Sound(this, buf, sampleRate ?? buf.sampleRate)
         this.sounds.push(sound)
         return sound
     }
@@ -290,7 +324,7 @@ export class AudioManager {
 
     setGlobalRate(v: number) {
         this.speed = v
-        this.sounds.forEach((s) => s.instances.forEach((instance) => (instance.speed = this.speed)))
+        this.sounds.forEach((s) => s.instances.forEach((instance) => (instance.speed = s.rate * this.speed)))
     }
 
     pause() {
