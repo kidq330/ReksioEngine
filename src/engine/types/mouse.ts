@@ -76,6 +76,9 @@ export class Mouse extends Type<MouseDefinition> {
     }
 
     private registerCallbacks() {
+        // ENABLE may be called on an already enabled mouse, don't register listeners twice
+        this.unregisterCallbacks()
+
         this.mouseMoveListener = this.onMouseMove.bind(this)
         this.mouseClickListener = this.onMouseClick.bind(this)
         this.mouseReleaseListener = this.onMouseRelease.bind(this)
@@ -106,8 +109,17 @@ export class Mouse extends Type<MouseDefinition> {
     }
 
     private unregisterCallbacks() {
+        // removeListener without a listener would remove all listeners of that event
+        if (this.mouseMoveListener === undefined) {
+            return
+        }
+
         this.engine.app.stage.removeListener('pointermove', this.mouseMoveListener)
         this.engine.app.stage.removeListener('pointerdown', this.mouseClickListener)
+        this.engine.app.stage.removeListener('pointerup', this.mouseReleaseListener)
+        this.mouseMoveListener = undefined
+        this.mouseClickListener = undefined
+        this.mouseReleaseListener = undefined
     }
 
     @method()
