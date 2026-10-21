@@ -66,7 +66,7 @@ export class Mouse extends Type<MouseDefinition> {
     @method()
     // ACTIVE or ARROW
     SET(cursorType: string) {
-        throw new NotImplementedError()
+        this.engine.rendering.setCursor(cursorType.toUpperCase() === 'ACTIVE' ? 'pointer' : 'auto')
     }
 
     @method()
