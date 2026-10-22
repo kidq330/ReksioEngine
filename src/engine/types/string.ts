@@ -34,6 +34,14 @@ export class String extends ValueType<StringDefinition, string> {
         await this.setValue(this.value.substring(0, start) + this.value.substring(start + length))
     }
 
+    // Keeps only the given part, e.g. VARSTRING0^CUT(0,VARSTRING0^FIND("_")) (Wehikuł Czasu).
+    // A non-positive length keeps the rest of the string, a guess.
+    @method()
+    async CUT(start: int, length: int = 0) {
+        const end = length > 0 ? start + length : undefined
+        await this.setValue(this.value.substring(start, end))
+    }
+
     @method()
     GET(index?: int, length: int = 1): string {
         if (index === undefined) {
