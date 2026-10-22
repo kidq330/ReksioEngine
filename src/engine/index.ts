@@ -110,7 +110,27 @@ export class Engine {
         globalAudio.stopAll()
     }
 
+    // Scripts run to completion like in the original engine. A tick still waiting for something (e.g. a file
+    // loaded by a script) must not let the next frame start other scripts that change the same variables.
+    private tickInProgress = false
+    private skippedTicksMS = 0
+
     async tick(elapsedMS: number) {
+        if (this.tickInProgress) {
+            this.skippedTicksMS += elapsedMS
+            return
+        }
+
+        this.tickInProgress = true
+        try {
+            await this.tickObjects(elapsedMS + this.skippedTicksMS)
+        } finally {
+            this.tickInProgress = false
+        }
+    }
+
+    private async tickObjects(elapsedMS: number) {
+        this.skippedTicksMS = 0
         for (const scope of this.scopeManager.scopes) {
             for (const object of scope.objects.filter((object) => object.isReady)) {
                 try {
