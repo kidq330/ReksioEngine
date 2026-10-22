@@ -46,15 +46,33 @@ export class CanvasObserver extends Type<CanvasObserverDefinition> {
     }
 
     @method()
-    REMOVE(objectName: string) {
-        const object = this.engine.getObject(objectName)
-        if (object == null || !(object instanceof DisplayType)) {
-            return
-        }
+    REMOVE(...objectNames: string[]) {
+        for (const objectName of objectNames) {
+            const object = this.engine.getObject(objectName)
+            if (object == null || !(object instanceof DisplayType)) {
+                continue
+            }
 
-        const renderObject = object.getRenderObject()
-        if (renderObject != null) {
-            this.engine.rendering.removeFromStage(renderObject)
+            const renderObject = object.getRenderObject()
+            if (renderObject != null) {
+                this.engine.rendering.removeFromStage(renderObject)
+            }
+        }
+    }
+
+    // Puts objects taken off the canvas with REMOVE back on it
+    @method()
+    ADD(...objectNames: string[]) {
+        for (const objectName of objectNames) {
+            const object = this.engine.getObject(objectName)
+            if (object == null || !(object instanceof DisplayType)) {
+                continue
+            }
+
+            const renderObject = object.getRenderObject()
+            if (renderObject != null && renderObject.parent === null) {
+                this.engine.rendering.addToStage(renderObject, object)
+            }
         }
     }
 
