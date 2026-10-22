@@ -172,6 +172,18 @@ export class Sequence extends Type<SequenceDefinition> {
     }
 
     @method()
+    PAUSE() {
+        this.activeAnimo?.PAUSE()
+        this.playingSound?.pause()
+    }
+
+    @method()
+    RESUME() {
+        this.activeAnimo?.RESUME()
+        this.playingSound?.resume()
+    }
+
+    @method()
     STOP(arg?: boolean) {
         this.queue = []
         this.sequenceName = null

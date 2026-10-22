@@ -1,17 +1,21 @@
 import { ParentType, Type } from './index'
 import { SceneDefinition } from '../../fileFormats/cnv/types'
 import { Behaviour } from './behaviour'
-import { assert, NotImplementedError } from '../../common/errors'
+import { assert } from '../../common/errors'
 import { callMethod, method, int } from '../../common/types'
 import { loadSound } from '../../filesystem/assetsLoader'
 import { pathJoin } from '../../filesystem'
 import { Group } from './group'
 import { Animo } from './animo'
+import { Sequence } from './sequence'
+import { Sound } from './sound'
+import { Timer } from './timer'
 import { Value } from './values'
 
 export class Scene extends ParentType<SceneDefinition> {
     private minHSPriority = 0
     private maxHSPriority = 10000000
+    private pausedObjects: Array<Animo | Sequence | Sound | Timer> | null = null
 
     @method()
     SETMUSICVOLUME(volume: int) {
@@ -102,9 +106,48 @@ export class Scene extends ParentType<SceneDefinition> {
         }
     }
 
+    // Pauses everything that is running in the scene, RESUME continues exactly those objects
+    @method()
+    PAUSE() {
+        if (this.pausedObjects !== null || this.scope === null) {
+            return
+        }
+
+        this.pausedObjects = []
+        for (const object of this.scope.objects) {
+            const running =
+                (object instanceof Animo && object.isPlaying) ||
+                ((object instanceof Sequence || object instanceof Sound) && object.ISPLAYING()) ||
+                (object instanceof Timer && object.isEnabled)
+            if (running) {
+                this.pausedObjects.push(object as Animo | Sequence | Sound | Timer)
+            }
+        }
+
+        for (const object of this.pausedObjects) {
+            if (object instanceof Timer) {
+                object.DISABLE()
+            } else {
+                object.PAUSE()
+            }
+        }
+    }
+
     @method()
     RESUME() {
-        throw new NotImplementedError()
+        for (const object of this.pausedObjects ?? []) {
+            if (object instanceof Timer) {
+                object.ENABLE()
+            } else {
+                object.RESUME()
+            }
+        }
+        this.pausedObjects = null
+    }
+
+    @method()
+    ISPAUSED(): boolean {
+        return this.pausedObjects !== null
     }
 
     public getRelativePath(filename: string) {

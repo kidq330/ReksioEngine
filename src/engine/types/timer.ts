@@ -27,6 +27,10 @@ export class Timer extends Type<TimerDefinition> {
         this.DISABLE()
     }
 
+    get isEnabled() {
+        return this.enabled
+    }
+
     pause() {
         this.DISABLE()
     }
