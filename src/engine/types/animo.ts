@@ -389,6 +389,15 @@ export class Animo extends DisplayType<AnimoDefinition> {
         await this.playEvent(name)
     }
 
+    // Plays an event by its index. An index outside the events does nothing, like PLAY of an unknown event.
+    @method()
+    async NPLAY(index: int) {
+        const event = this.annFile?.events[index]
+        if (event !== undefined) {
+            await this.playEvent(event.name)
+        }
+    }
+
     async playEvent(name: string) {
         if (!this.hasEvent(name.toString())) {
             return
