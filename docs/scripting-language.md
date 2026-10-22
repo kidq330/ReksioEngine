@@ -307,10 +307,23 @@ repeat count:
 
 -   CP1250 text with one row per CRLF line. Fields are separated by `|` and map in order to the MODEL STRUCT's fields.
 -   **Empty cells are dropped, so later fields shift left** (`T:database.test.ts "LOAD shifts fields left"`).
--   `NULL` resets a field to the type's default.
+-   `NULL` stays the text `NULL` in STRING fields and resets fields of other types to their default (`T:database.test.ts "LOAD keeps NULL in STRING fields"`). Czarodzieje relies on this: ARCADE finds a location's default start position with `ARRSTARTNAME0^FIND("NULL")` over STRING cells read from DTA files. Turning them into empty strings would also break SAVE/LOAD round trips, because an empty cell shifts the following fields. **[G]**
 -   SAVE writes `toString` of each field. DOUBLE uses the Piklib double format (§4.2).
 
 **[F]** for the tested parts.
+
+**SEK** (WORLD^LOAD, `FILENAME` of WORLD) [fileFormats/sek/index.ts] are scenes of the Sekai library behind the WORLD plugin (§8.2). Little-endian, starting with the 19-byte magic `SEKAI81080701915004`, an object count and the objects. An object starts with `i32 type, i32 flags, i32 id`. Coordinates are Sekai's: origin in the screen centre, **y pointing up**.
+
+-   **Waypoint graphs** (type 4) are what Czarodzieje's ARCADE walks Reksio and Kretes on. Every location has one with id 9000 (KROLOWA also has 9001). The nodes form a grid 10 units apart over the walkable area, and the edges join neighbouring nodes. **[F]** (read from all 60 location files)
+
+    ```
+    i32 type = 4, i32 flags, i32 id, 11 x i32 (zero in all files)
+    i32 nodesCount, i32 edgesCount
+    nodesCount x { f32 x, f32 y, f32 z, f32 unused }
+    edgesCount x { i32 from, i32 to, i32 flags }    ; flags = 3 in all files
+    ```
+
+-   **Entities** (type 1) are bodies and colliders. After the header come an `i32`, position, rotation and size (3 x f32 each), and, when present (flags 0x80?), text properties: `name\0, i32 type (2 = string), value\0`, e.g. `entityDef` = `maxVel( 10000 ); limit( -400, -300, 0, 400, 300, 0 ); friction( 2500 );` and `entityName` = `Reksio`. Then a collision model follows: an `i32`, a triangle count and triangles of `material\0` (`Default`), 3 vertices of 8 floats (position, normal, UV) and 3 floats. **[?]** Not decoded by the TS engine; the physics minigames (CAT, BARANDALF) need it for collisions.
 
 **INI persistence:** a value object with `TOINI=TRUE` persists to a save store keyed by `[<parent scene/episode/application name>] <object name>=<value>` [engine/saveFile.ts:39-51]. On creation the stored value overrides `VALUE` [engine/types/index.ts:174]. **[G]** **[?]** The TS engine restores INTEGER, DOUBLE and BOOL values as strings.
 
@@ -348,6 +361,7 @@ Semantics [engine/types/sequence.ts] **[G]** throughout:
 -   **PARAMETER root:** `SEQUENCE^PLAY(name)` looks up `SEQEVENT:name`. It takes the _first character_ of the value and finds its index in `123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz{|}~`. That index selects one of the root's children (0-based) [engine/types/sequence.ts:21,88]. A code comment notes that a stray extra character in `S56_0_WIOSKA` still works.
 -   **MODE=SEQUENCE** plays all children in order, recursively. **MODE=RANDOM** plays one random child.
 -   **SIMPLE** plays `EVENT` on the ANIMO whose file is `FILENAME`. The ANIMO is found by object name, then by an existing ANIMO with that FILENAME, otherwise it is created. If the event does not exist, the first event is played.
+-   `ANIMOFN` and `WAVFN` can name objects instead of files: Czarodzieje's `BLANK.SEQ` speaks with the ANIMO `ANNCHARACTER` and the SOUND `SNDATGOAL`, which the scripts LOAD before playing the sequence. **[G]**
 -   **SPEAKING** plays `WAVFN`. It plays `<PREFIX>_START` if `STARTING`, then loops `<PREFIX>_1`, `<PREFIX>_2`, … while the sound plays, then `<PREFIX>_STOP` if `ENDING`.
 -   At the end the SEQUENCE object fires `ONFINISHED^<name passed to PLAY>`.
 
@@ -774,6 +788,7 @@ Only these five are implemented [interpreter/interpreter.ts:107-256]. An unknown
     -   Handler code receives no `$n` arguments, except MATRIX `ONNEXT`/`ONLATEST` (`$1`=x, `$2`=y, `$3`=action).
     -   A behaviour-reference handler receives its constant arguments.
 -   Break interrupts are swallowed at the handler boundary.
+-   **Handlers run to completion.** No other callback starts while one is running, even when it waits for a file to load; the TS engine skips ticks while the previous one is still running. Scripts depend on this, because handlers share global temporaries: in Czarodzieje's ARCADE a click handler and a sequence handler both use `VARITEMP0`. **[G]**
 -   **Parameter matching** is exact against the converted key:
     -   Upper-cased event name for ANIMO `ONFINISHED`, `ONSTARTED` and `ONFRAMECHANGED`.
     -   The new value for `ONCHANGED`/`ONBRUTALCHANGED`: numeric for INTEGER, string for STRING, boolean for BOOL.
@@ -839,8 +854,8 @@ Properties marked `?` are optional. `cb` is a callback and `cbs<k>` is a paramet
 | SYSTEM                                 | —                                                                                                           | —                                                                                                           | GETDATE (packed date int)                                                                                                                                                                                                                                                                                                                                                             |
 | MATRIX                                 | BASEPOS, CELLWIDTH, CELLHEIGHT, SIZE                                                                        | ONNEXT/ONLATEST cbs<str>                                                                                    | GET/SET, SETROW, SETGATE, MOVE, NEXT, TICK, CAN/IS/CALC… (game-specific)                                                                                                                                                                                                                                                                                                              |
 | STATICFILTER / FILTER                  | ACTION                                                                                                      | —                                                                                                           | SETPROPERTY, LINK, UNLINK                                                                                                                                                                                                                                                                                                                                                             |
-| WORLD                                  | FILENAME                                                                                                    | —                                                                                                           | LOAD, SETGRAVITY, SETLIMIT, SETSPEED, SETMAXSPEED, LINK, SETPOSITION, SETVELOCITY, MOVEOBJECTS                                                                                                                                                                                                                                                                                        |
-| PATTERN                                | (none)                                                                                                      | —                                                                                                           | — (TS: unimplemented type)                                                                                                                                                                                                                                                                                                                                                            |
+| WORLD (plugin, §8.2)                   | FILENAME                                                                                                    | — (raises ONSIGNAL on linked ANIMOs)                                                                        | LOAD, START/STOP, ADDBODY, LINK/UNLINK, SETPOSITION, SETVELOCITY, ADDFORCE, SETGRAVITY, SETLIMIT, SETMAXSPEED, FINDPATH, FOLLOWPATH, MOVEOBJECTS, GETPOSITIONX/Y/Z, GETANGLE, GETMOVEDISTANCE, SETBKGSIZE, SETREFOBJECT, GETBKGPOSX/Y                                                                                                                                                 |
+| PATTERN                                | GRIDX, GRIDY, WIDTH, HEIGHT, LAYERS, PRIORITY, TOCANVAS, VISIBLE                                            | ONINIT                                                                                                      | ADD(alias, cellX, cellY, object, layer), REMOVE, MOVE, SETPOSITION, GETGRAPHICSAT → object name or `NULL`. Entries show the named object's current frame at (cellX·GRIDX, cellY·GRIDY). **[G]**                                                                                                                                                                                       |
 
 Notes:
 
@@ -1011,8 +1026,8 @@ An implementation that only runs one title can therefore leave whole areas untes
 
 -   **Globals.** `@INT`, `@STRING`, `@BOOL`, `@DOUBLE` and `@MSGBOX` are used but not implemented. In the TS engine an unknown `@NAME` is fatal (§4.8), so Kapitan Nemo stops at its first local-variable declaration.
 -   **Types.**
-    -   WORLD needs most of `World.dll`'s methods, including `FINDPATH` (125 calls in Wehikuł Czasu), `SETACTIVE`, `ADDFORCE`, `GETPOSITIONX/Y/Z`, `JOIN`, `REMOVEOBJECT` and `SETGRAVITYCENTER`.
-    -   PATTERN (Czarodzieje: `ADD`, `MOVE`, `GETGRAPHICSAT`, and the properties `LAYERS`, `GRIDX`, `GRIDY`, `WIDTH`, `HEIGHT`) is unimplemented.
+    -   WORLD needs most of `World.dll`'s methods, including `FINDPATH` (125 calls in Wehikuł Czasu), `SETACTIVE`, `ADDFORCE`, `GETPOSITIONX/Y/Z`, `JOIN`, `REMOVEOBJECT` and `SETGRAVITYCENTER`. The TS engine now has the subset Czarodzieje's ARCADE needs (§8.2), but no collisions or joints.
+    -   PATTERN (Czarodzieje: `ADD`, `MOVE`, `GETGRAPHICSAT`, and the properties `LAYERS`, `GRIDX`, `GRIDY`, `WIDTH`, `HEIGHT`) is now implemented (§5).
 -   **Methods**, among others:
     -   `SEQUENCE^PAUSE`/`RESUME` (over 200 calls each in Wehikuł Czasu);
     -   `KEYBOARD^ENABLE`, `CNVLOADER^RELEASE`, `SCENE^PAUSE`, `SCENE^REMOVECLONES`;
@@ -1055,7 +1070,15 @@ Not yet analysed: _Kretes w Akcji_ and the other BlooMoo titles, and the non-scr
 
     Scripts call `JOIN` and `SETG`, which are not in this list. They may be prefix-matched abbreviations of `JOIN2` and `SETGRAVITY…`, or calls the original silently ignores. **[?]**
 
--   **`ONSIGNAL` is how WORLD reports back. [G]** `ONSIGNAL` is in the vocabulary of every engine build from Piklib 7.1 on, and of `Matrix.dll` and `World.dll`. It is therefore a generic event that ordinary objects can receive, and plugins can raise it. In the WORLD scenes, the scripts attach `ONSIGNAL^<param>` handlers to the ANIMO objects that the WORLD moves. The parameters are `ATGOAL` and `NOPATH` for path following, and numbers for the rest (506 handlers in Wehikuł Czasu), apparently body or contact identifiers. The TS schema rejects these handlers today (§4.11).
+-   **`ONSIGNAL` is how WORLD reports back. [G]** `ONSIGNAL` is in the vocabulary of every engine build from Piklib 7.1 on, and of `Matrix.dll` and `World.dll`. It is therefore a generic event that ordinary objects can receive, and plugins can raise it. In the WORLD scenes, the scripts attach `ONSIGNAL^<param>` handlers to the ANIMO objects that the WORLD moves. The parameters are `ATGOAL` and `NOPATH` for path following, and numbers for the rest (506 handlers in Wehikuł Czasu), apparently body or contact identifiers. The TS engine accepts these handlers on ANIMO and raises `ATGOAL`/`NOPATH`.
+-   **WORLD conventions, as Czarodzieje's scripts use them [G]:**
+    -   **Positions** in the script API (SETPOSITION, SETLIMIT, FINDPATH targets, GETPOSITIONX/Y) are screen coordinates: FINDPATH gets `MOUSE^GETPOSX/Y` directly. Sekai's frame is centred with y up, so world = (x − 400, 300 − y). The SEK waypoints of each location lie where its floor is on screen under this mapping.
+    -   **Velocities, forces and gravity** are passed in Sekai's frame, y up. DRAGON has `SETGRAVITY(0,-15,0)`, pushes `+y` after hitting something below and flaps upwards with a positive y force.
+    -   **GETANGLE** is the direction of movement in degrees, 0 = right, 90 = up. ARCADE picks Reksio's walk animation from `(angle + 22.5) / 45`; events `0`…`7` of `REX*.ANN` face right, back-right, back, …, front-right.
+    -   **Walking**: `FINDPATH(body, graph, x, y, z, flags…)` plans a path on the SEK graph. `FOLLOWPATH(body, 20, 0.5, speed)` runs every frame from an ELAPSE animation and sets the walking speed (units per second; Reksio's default is 300). `MOVEOBJECTS()` advances the simulation by the elapsed time, moves the linked ANIMOs, and raises `ONSIGNAL^ATGOAL` on arrival. `GETMOVEDISTANCE` (distance moved in the last step) selects walking or idle animations.
+    -   **Bodies** of SEK entities (Reksio = 100, Kretes = 101) are created by LOAD in the original. The TS engine creates a body when an id is first used.
+    -   **Scrolling**: `SETBKGSIZE(xMin, xMax, yMin, yMax)`, `SETMOVEFLAGS(dx, dy)` (non-zero = may scroll on that axis) and `SETREFOBJECT(body)` make the background follow a body. `GETBKGPOSX/Y` return the scroll offset that scripts subtract from the background's and objects' positions.
+    -   `START`/`STOP` start and pause the simulation; ARCADE calls START on the first click, so Kretes' initial FINDPATH waits until then.
 
 An implementation should treat extension types like built-in ones, with one registry entry each. The spec should describe them in per-plugin appendices.
 
