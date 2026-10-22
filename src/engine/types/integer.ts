@@ -78,6 +78,13 @@ export class Integer extends ValueType<IntegerDefinition, number> {
         return await this.setValue(this.value === first ? second : first)
     }
 
+    // Like DOUBLE^ARCTANEX, truncated to an integer
+    @method()
+    async ARCTANEX(y: double, x: double): Promise<int> {
+        const degrees = (Math.atan2(y, x) * 180) / Math.PI
+        return await this.setValue(Math.trunc(degrees < 0 ? degrees + 360 : degrees))
+    }
+
     @method()
     async ABS(value: int): Promise<int> {
         return await this.setValue(Math.abs(value))

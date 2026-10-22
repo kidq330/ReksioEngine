@@ -55,6 +55,11 @@ export class Double extends ValueType<DoubleDefinition, number> {
         return await this.setValue(Math.cos(angle * radianMultiplier))
     }
 
+    @method()
+    async ABS(value: double): Promise<double> {
+        return await this.setValue(Math.abs(value))
+    }
+
     // Source: https://docs.google.com/spreadsheets/d/1SYI_Gu6MAuSGw-OTXzk_FDWScx29Cc-6eXpc6UfSn1Y/edit?gid=1909841994#gid=1909841994
     @method()
     async ARCTANEX(y: double, x: double, summand?: double): Promise<double> {
