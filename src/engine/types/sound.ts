@@ -2,7 +2,6 @@ import { Type } from './index'
 import { loadSound } from '../../filesystem/assetsLoader'
 import { SoundDefinition } from '../../fileFormats/cnv/types'
 import { FileNotFoundError } from '../../filesystem/fileLoader'
-import { assert } from '../../common/errors'
 import { method, int } from '../../common/types'
 import { Sound as ISound } from '../audio'
 import { logger } from '../logging'
@@ -40,7 +39,10 @@ export class Sound extends Type<SoundDefinition> {
     // This argument is "PLAY" for kurator in intro for some reason
     @method()
     PLAY(arg?: string) {
-        assert(this.sound !== null)
+        // The file failed to load (already reported), e.g. SFX_TURNIEJSTART1.WAV isn't shipped with Wehikuł Czasu
+        if (this.sound === null) {
+            return
+        }
         this.sound.play({
             onStart: this.onStart.bind(this),
             onEnd: this.onEnd.bind(this),
