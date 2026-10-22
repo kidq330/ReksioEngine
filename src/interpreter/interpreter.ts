@@ -111,6 +111,7 @@ export class Interpreter {
             ['LOOP', this.handleLoop.bind(this)],
             ['WHILE', this.handleWhile.bind(this)],
             ['RETURN', this.handleReturn.bind(this)],
+            ['MSGBOX', this.handleMsgBox.bind(this)],
         ])
     }
 
@@ -162,6 +163,11 @@ export class Interpreter {
 
     private async handleBreak(_args: any[]): Promise<never> {
         throw new InterruptScriptExecution(false)
+    }
+
+    // A debugging message box in the original, logged instead of blocking the game
+    private async handleMsgBox(args: Value[]): Promise<void> {
+        logger.warn(`@MSGBOX: ${valueAsString(await unwrapValue(args[0] ?? null))}`)
     }
 
     private async handleReturn(args: Value[]): Promise<void> {

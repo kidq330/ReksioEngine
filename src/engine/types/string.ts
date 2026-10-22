@@ -2,6 +2,7 @@ import { ParentType, ValueType } from './index'
 import { Engine } from '../index'
 import { StringDefinition } from '../../fileFormats/cnv/types'
 import { method, int } from '../../common/types'
+import { logger } from '../logging'
 
 export class String extends ValueType<StringDefinition, string> {
     constructor(engine: Engine, parent: ParentType<any> | null, definition: StringDefinition) {
@@ -15,6 +16,12 @@ export class String extends ValueType<StringDefinition, string> {
     @method()
     async ADD(text: string) {
         await this.setValue(this.value + text)
+    }
+
+    // A debugging message box with the value in the original, logged instead
+    @method()
+    MSGBOX() {
+        logger.warn(`${this.name}^MSGBOX: ${this.value}`)
     }
 
     @method()
