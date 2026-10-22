@@ -498,9 +498,17 @@ export class Animo extends DisplayType<AnimoDefinition> {
         this.backward = false
     }
 
+    // SETANCHOR(x, y) sets the anchor point in pixels relative to the animation's origin,
+    // e.g. ANNREX^SETANCHOR(0,-100) in Wehikuł Czasu's ARCADE. The coordinate system is a guess.
     @method()
-    SETANCHOR(anchor: string) {
+    SETANCHOR(anchor: string | int, y?: int) {
         assert(this.sprite !== null)
+
+        if (y !== undefined) {
+            this.anchorOffsetX = Number(anchor)
+            this.anchorOffsetY = y
+            return
+        }
 
         switch (anchor) {
             case 'CENTER':
