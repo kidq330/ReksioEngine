@@ -146,17 +146,23 @@ export class Sequence extends Type<SequenceDefinition> {
 
     @method()
     async PLAY(sequenceName: string) {
-        assert(this.parameterSequence !== null && this.subEntries !== null)
-
-        const subEntries = this.subEntries.get(this.parameterSequence.NAME)
-        if (subEntries !== undefined && this.parametersMapping.has(sequenceName)) {
-            const entryIndex = this.parametersMapping.get(sequenceName)!
-            const entry = subEntries[entryIndex]
+        const entry = this.findEntryToPlay(sequenceName)
+        if (entry !== null) {
             this.sequenceName = sequenceName
             this.runningSubSequence = null
             this.fillQueue(entry)
             await this.progressNext()
         }
+    }
+
+    // A parameter of the PARAMETER sequence, or any element by name: Wehikuł Czasu plays files whose top
+    // sequence has MODE = SEQUENCE by that sequence's name
+    private findEntryToPlay(name: string): SequenceFileEntry | null {
+        if (this.parameterSequence !== null && this.parametersMapping.has(name)) {
+            const subEntries = this.subEntries.get(this.parameterSequence.NAME)
+            return subEntries?.[this.parametersMapping.get(name)!] ?? null
+        }
+        return this.sequenceFile?.find((entry) => entry.NAME === name) ?? null
     }
 
     // Name of the sequence being played
