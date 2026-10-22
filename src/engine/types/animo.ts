@@ -38,6 +38,8 @@ export class Animo extends DisplayType<AnimoDefinition> {
 
     private annFile: ANN | null = null
     private sprite: AdvancedSprite | null = null
+    // Visibility set by scripts while no animation is loaded yet
+    private visibleWithoutSprite: boolean | null = null
 
     private textures = new Map<number, PIXI.Texture>()
     private hitmaps = new Map<number, Uint8Array>()
@@ -56,7 +58,16 @@ export class Animo extends DisplayType<AnimoDefinition> {
     }
 
     async init() {
-        this.annFile = await this.loadAnimation(this.definition.FILENAME)
+        try {
+            this.annFile = await this.loadAnimation(this.definition.FILENAME)
+        } catch (err) {
+            if (!(err instanceof InvalidObjectError)) {
+                throw err
+            }
+            // Keep the object, scripts may LOAD a real animation into it later
+            // (e.g. Czarodzieje LABIRYNT declares FILENAME=BLANK.ANN which doesn't exist)
+            logger.warn(`ANN file '${this.definition.FILENAME}' not found, ANIMO left empty`, { animo: this })
+        }
     }
 
     async applyDefaults() {
@@ -69,7 +80,7 @@ export class Animo extends DisplayType<AnimoDefinition> {
         )
         if (existingObjectWithFilename != null) {
             this.sprite = existingObjectWithFilename.sprite
-        } else {
+        } else if (this.annFile !== null) {
             await this.initSprite()
         }
     }
@@ -177,7 +188,8 @@ export class Animo extends DisplayType<AnimoDefinition> {
         this.sprite = new AdvancedSprite()
         this.sprite.name = `${this.name} [ANIMO]` // For PIXI Devtools
         this.sprite.eventMode = 'none'
-        this.sprite.visible = this.definition.VISIBLE
+        this.sprite.visible = this.visibleWithoutSprite ?? this.definition.VISIBLE
+        this.visibleWithoutSprite = null
         this.setPriority(this.definition.PRIORITY ?? 0)
 
         if (this.definition.TOCANVAS) {
@@ -505,20 +517,25 @@ export class Animo extends DisplayType<AnimoDefinition> {
 
     @method()
     SHOW() {
-        assert(this.sprite !== null)
-        this.sprite.visible = true
+        this.setVisible(true)
     }
 
     @method()
     HIDE() {
-        assert(this.sprite !== null)
-        this.sprite.visible = false
+        this.setVisible(false)
+    }
+
+    private setVisible(visible: boolean) {
+        if (this.sprite === null) {
+            this.visibleWithoutSprite = visible
+        } else {
+            this.sprite.visible = visible
+        }
     }
 
     @method()
     ISVISIBLE(): boolean {
-        assert(this.sprite !== null)
-        return this.sprite.visible
+        return this.sprite?.visible ?? this.visibleWithoutSprite ?? this.definition.VISIBLE
     }
 
     @method()
@@ -703,14 +720,12 @@ export class Animo extends DisplayType<AnimoDefinition> {
 
     @method()
     GETNOF(): int {
-        assert(this.annFile !== null)
-        return this.annFile.header.framesCount
+        return this.annFile?.header.framesCount ?? 0
     }
 
     @method()
     GETNOE(): int {
-        assert(this.annFile !== null)
-        return this.annFile.events.length
+        return this.annFile?.events.length ?? 0
     }
 
     @method()
