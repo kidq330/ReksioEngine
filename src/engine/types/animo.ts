@@ -653,6 +653,23 @@ export class Animo extends DisplayType<AnimoDefinition> {
     }
 
     @method()
+    GETWIDTH(): int {
+        return this.currentFrameImage()?.width ?? 0
+    }
+
+    @method()
+    GETHEIGHT(): int {
+        return this.currentFrameImage()?.height ?? 0
+    }
+
+    private currentFrameImage() {
+        if (this.annFile === null || this.currentEvent === null) {
+            return null
+        }
+        return this.annFile.annImages[this.currentEvent.framesImageMapping[this.currentFrame]] ?? null
+    }
+
+    @method()
     GETNOFINEVENT(name: string): int {
         return this.getEvent(name)?.framesCount ?? 0
     }
