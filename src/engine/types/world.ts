@@ -135,6 +135,10 @@ export class World extends Type<WorldDefinition> {
         this.getBody(id).linked = animo
     }
 
+    // Joints between bodies (MIOTLY's chain) aren't simulated
+    @method()
+    JOIN(first: int, second: int, ...args: double[]) {}
+
     @method()
     UNLINK(id: int) {
         this.getBody(id).linked = null

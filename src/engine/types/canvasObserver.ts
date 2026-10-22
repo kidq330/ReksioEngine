@@ -25,6 +25,11 @@ export class CanvasObserver extends Type<CanvasObserverDefinition> {
         this.engine.rendering.redrawAll()
     }
 
+    @method()
+    MOVEBKG(x: int, y: int) {
+        this.engine.rendering.moveBackground(x, y)
+    }
+
     // The canvas is redrawn every frame, so redrawing immediately is the same as REFRESH
     @method()
     REDRAW() {

@@ -33,12 +33,18 @@ export class RenderingManager {
     }
 
     onSceneChange() {
+        this.canvasBackground.position.set(0, 0)
         this.displayObjectsInDefinitionOrder = []
         this.resetCursor()
     }
 
     setBackground(texture: Texture) {
         this.canvasBackground.texture = texture
+    }
+
+    moveBackground(x: number, y: number) {
+        this.canvasBackground.x += x
+        this.canvasBackground.y += y
     }
 
     clearBackground() {
