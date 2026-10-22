@@ -27,11 +27,14 @@ export class Application extends ParentType<ApplicationDefinition> {
                 pathJoin('DANE', this.definition.PATH, this.name + '.cnv')
             )
 
+            const tickerWasStarted = this.engine.app.ticker.started
             this.engine.app.ticker.stop()
             this.scope = this.engine.scopeManager.newScope('application')
             await loadDefinition(this.engine, this.scope, applicationDefinition, this)
             await doReady(this.scope)
-            this.engine.app.ticker.start()
+            if (tickerWasStarted) {
+                this.engine.app.ticker.start()
+            }
         }
     }
 

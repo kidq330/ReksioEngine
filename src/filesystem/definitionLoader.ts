@@ -223,6 +223,8 @@ export const doReady = async (scope: Scope) => {
 }
 
 export const createObject = async (engine: Engine, definition: CNVObject, parent: ParentType<any> | null) => {
+    // Objects can be created while a scene is loading, which must not restart the ticker
+    const tickerWasStarted = engine.app.ticker.started
     engine.app.ticker.stop()
 
     const instance = createTypeInstance(engine, parent, definition)
@@ -236,7 +238,9 @@ export const createObject = async (engine: Engine, definition: CNVObject, parent
     await instance.applyDefaults()
     instance.isReady = true
     await instance.ready()
-    engine.app.ticker.start()
+    if (tickerWasStarted) {
+        engine.app.ticker.start()
+    }
 
     return instance
 }
