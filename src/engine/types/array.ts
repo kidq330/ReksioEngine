@@ -185,8 +185,10 @@ export class ArrayObject extends ValueType<ArrayDefinition, (ScalarValue | null)
             )
             this.value = entries.map((entry) => this.fromEntry(entry))
         } catch (err) {
+            // Scripts probe for optional files and check the size afterwards (Czarodzieje's WST0.ARR dialogs,
+            // save files before a new game), so a missing file only leaves the array as it was
             if (err instanceof FileNotFoundError) {
-                logger.error(
+                logger.warn(
                     `Failed to load array from "${path}"`,
                     {
                         array: this,
