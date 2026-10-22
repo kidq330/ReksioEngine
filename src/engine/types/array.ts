@@ -64,7 +64,7 @@ export class ArrayObject extends ValueType<ArrayDefinition, (ScalarValue | null)
     }
 
     private checkedPosition(action: string, index: number) {
-        assert(index < this.value.length, generateMessage(action, index, this.value))
+        assert(index >= 0 && index < this.value.length, generateMessage(action, index, this.value))
         return index
     }
 
