@@ -873,8 +873,14 @@ export class Animo extends DisplayType<AnimoDefinition> {
         clone.anchorOffsetX = this.anchorOffsetX
         clone.anchorOffsetY = this.anchorOffsetY
 
+        // Clones of an ANIMO without an animation stay empty too
+        if (this.sprite === null) {
+            clone.visibleWithoutSprite = this.visibleWithoutSprite
+            return clone
+        }
+
         await clone.initSprite()
-        clone.sprite!.visible = this.sprite!.visible
+        clone.sprite!.visible = this.sprite.visible
         clone.setPriority(this.priority)
         return clone
     }
