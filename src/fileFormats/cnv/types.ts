@@ -353,11 +353,13 @@ const IntegerStructure = {
 export type KeyboardDefinition = TypeDefinition & {
     ONKEYDOWN?: callbacks<string>
     ONKEYUP?: callbacks<string>
+    ONCHAR?: callbacks<string>
 }
 
 const KeyboardStructure = {
     ONKEYDOWN: optional(callbacks(string)),
     ONKEYUP: optional(callbacks(string)),
+    ONCHAR: optional(callbacks(string)),
 }
 
 export type MatrixDefinition = TypeDefinition & {

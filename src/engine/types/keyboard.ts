@@ -14,13 +14,14 @@ const keysMapping = {
     Digit2: '2',
 } as any
 
-type KeyState = { name: string; state: boolean }
+type KeyEvent = { event: 'ONKEYDOWN' | 'ONKEYUP' | 'ONCHAR'; name: string }
 
 export class Keyboard extends Type<KeyboardDefinition> {
     private keysState = new Map<string, boolean>()
-    private changeQueue: KeyState[] = []
+    private changeQueue: KeyEvent[] = []
     private enabled: boolean = true
     private autoRepeat: boolean = false
+    private latestCharacter: string | null = null
 
     private readonly onKeyDownCallback: (event: KeyboardEvent) => void
     private readonly onKeyUpCallback: (event: KeyboardEvent) => void
@@ -42,19 +43,30 @@ export class Keyboard extends Type<KeyboardDefinition> {
     }
 
     async tick() {
-        for (const change of this.changeQueue) {
-            if (change.state) {
-                await this.callbacks.run('ONKEYDOWN', change.name)
-            } else {
-                await this.callbacks.run('ONKEYUP', change.name)
-            }
-        }
+        const changes = this.changeQueue
         this.changeQueue = []
+        for (const change of changes) {
+            if (change.event === 'ONCHAR') {
+                this.latestCharacter = change.name
+            }
+            await this.callbacks.run(change.event, change.name)
+        }
+    }
+
+    @method()
+    ENABLE() {
+        this.enabled = true
     }
 
     @method()
     DISABLE() {
         this.enabled = false
+    }
+
+    // The last typed character (Czarodzieje builds cheat codes from it in ONCHAR)
+    @method()
+    GETLATESTKEY(): string | null {
+        return this.latestCharacter
     }
 
     @method()
@@ -79,6 +91,10 @@ export class Keyboard extends Type<KeyboardDefinition> {
 
         if (this.enabled) {
             this.setKeyState(event.code, true)
+            // ONCHAR's parameter is the typed character, case-sensitive (ONCHAR^1, ONCHAR^s, ONCHAR^P)
+            if (event.key.length === 1) {
+                this.changeQueue.push({ event: 'ONCHAR', name: event.key })
+            }
         }
     }
 
@@ -91,11 +107,13 @@ export class Keyboard extends Type<KeyboardDefinition> {
     private setKeyState(keyCode: string, value: boolean) {
         const mapped = keysMapping[keyCode]
         if (mapped === undefined) {
-            logger.warn(`Unsupported keyboard key code ${keyCode}`, {
+            // Letters still reach scripts through ONCHAR
+            logger.debug(`Unsupported keyboard key code ${keyCode}`, {
                 supportedKeys: Object.keys(keysMapping),
             })
+            return
         }
         this.keysState.set(mapped, value)
-        this.changeQueue.push({ name: mapped, state: value })
+        this.changeQueue.push({ event: value ? 'ONKEYDOWN' : 'ONKEYUP', name: mapped })
     }
 }
