@@ -284,6 +284,7 @@ The priority table is explicitly partly guessed (`// todo: this was just placed 
 
     **[G]**
 
+-   CLASS definition files use the extension `.class` (`MAINMENU.class`) and are encrypted and structured like CNV files. Czarodzieje ships 5, Wehikuł Czasu 3 and Kapitan Nemo 10.
 -   Scene MUSIC is loaded relative to the game root. **[G]**
 
 ### 2.7 Binary and auxiliary data files
@@ -677,7 +678,19 @@ Only these five are implemented [interpreter/interpreter.ts:107-256]. An unknown
 
 **[?]** `@RETURN` inside an inline `@IF` branch returns only from that branch's code, not from the enclosing behaviour, because each code string is its own return boundary. The original behaviour needs checking.
 
-**[?] Candidates for unimplemented globals.** In `PIKLIB8.dll` the strings next to `IF`, `LOOP`, `WHILE`, `BREAK` and `RETURN` include `ONEBREAK`, `CONTINUE`, `STRING`, `INT`, `BOOL`, `DOUBLE`, `CREATE`, `RUNONTIMER`, `GETCURRENTSCENE`, `GETAPPLICATIONNAME`, `MSGBOX`, `CONV` and `STRUCT`. The TS engine has none of them. These are unverified hints. None of them appears as an `@` call in the three analysed titles; Skarb Piratów uses only `@IF`, `@BREAK` and `@LOOP`, Ufo only `@IF`, and the demo none. Later titles may use them (§8.1).
+**Unimplemented globals.** In `PIKLIB8.dll` the strings next to `IF`, `LOOP`, `WHILE`, `BREAK` and `RETURN` include `ONEBREAK`, `CONTINUE`, `STRING`, `INT`, `BOOL`, `DOUBLE`, `CREATE`, `RUNONTIMER`, `GETCURRENTSCENE`, `GETAPPLICATIONNAME`, `MSGBOX`, `CONV` and `STRUCT`. The TS engine implements none of them. Across the six analysed titles (§8.1), the following are used:
+
+-   **`@INT(name, init)`, `@STRING(name, init)`, `@BOOL(name, init)`, `@DOUBLE(name, init)`** declare a local variable of that type. They are used heavily in Kapitan Nemo (628 calls) and a few times in Czarodzieje `.class` files. The name is a quoted string and the initial value is any parameter, for example:
+
+    ```
+    @INT("DX2",[IMGPASEK^GETWIDTH()@3]);DX2^SET([DX2-IMGKROPA^GETWIDTH()]);
+    ```
+
+    After the declaration the variable is addressed by its bare name (`DX2^SET(…)`), and it is also used inside the `BFITMPn` behaviours that the block's `@IF`s call, e.g. `@BOOL("BCZYGRA",FALSE);…;@IF("BCZYGRA","_","TRUE","BFITMP0","")`. So its scope extends at least into behaviours run from the declaring block. **[G]** Whether it is dynamic (visible to every callee until the block ends) or something else needs the original. Redeclaring an existing name is common, because each run of the handler redeclares it.
+
+-   **`@MSGBOX(text)`**, 36 calls in Wehikuł Czasu, e.g. `@MSGBOX("GONZO__SAVEPOINT_FAILED")`. It is a debugging message box and can be implemented as a log line.
+
+`ONEBREAK`, `CONTINUE`, `CREATE`, `RUNONTIMER`, `GETCURRENTSCENE`, `GETAPPLICATIONNAME`, `CONV` and `STRUCT` are not used as `@` calls in any of the six titles. **[?]**
 
 ### 4.9 BEHAVIOUR, CONDITION, COMPLEXCONDITION, EXPRESSION
 
@@ -773,7 +786,7 @@ Only these five are implemented [interpreter/interpreter.ts:107-256]. An unknown
     -   `ONCHANGED` fires when a set changes the value.
     -   `ONBRUTALCHANGED` fires on _every_ set, even when the value is unchanged. It fires after ONCHANGED.
 -   **`ANIMO^ADDBEHAVIOUR("EVENT$PARAM", "BEH")`** registers a behaviour as a handler at runtime. `$` separates the parameter.
--   **[?] ONSIGNAL.** Ufo uses `IWAV:ONSIGNAL^3={THIS^SET(1);}` and `IBLA3X:ONSIGNAL^-125=BB_S("ABLA3")`. The TS engine has a `signal(name)` hook, but ONSIGNAL is in no schema and nothing raises signals. Neither the trigger (a `SIGNAL`/`SEND` method?) nor the parameter semantics are known.
+-   **[?] ONSIGNAL.** Ufo uses `IWAV:ONSIGNAL^3={THIS^SET(1);}` and `IBLA3X:ONSIGNAL^-125=BB_S("ABLA3")`. The TS engine has a `signal(name)` hook, but ONSIGNAL is in no schema and nothing raises signals. Neither the trigger (a `SIGNAL`/`SEND` method?) nor the parameter semantics are known. The WORLD plugin is one known source (§8.2).
 
 ---
 
@@ -911,8 +924,8 @@ MAT^SET([I_FIELD_INDEX%I_LEVEL_WIDTH],[I_FIELD_INDEX@I_LEVEL_WIDTH],IC_FIELD_COD
 
 ### 7.3 Open questions
 
-1. What do **`CONV…`**, **`#` direct references**, `#`-methods and **bare `METHOD()`** calls mean? What other **`@` globals** exist (ONEBREAK, STRING, INT, CREATE, …)?
-2. What raises **ONSIGNAL**, and what is its parameter?
+1. What do **`CONV…`**, **`#` direct references**, `#`-methods and **bare `METHOD()`** calls mean? What do the unused **`@` globals** do (ONEBREAK, CONTINUE, CREATE, RUNONTIMER, …), and what exactly is the scope of `@INT`/`@STRING` locals (§4.8)?
+2. Which events does a plugin raise through **ONSIGNAL**, and what do the numeric parameters from WORLD identify (§8.2)?
 3. Do the original **bracket expressions** respect parentheses and quotes, and how are negative literals written inside them?
 4. Is **`@RETURN` inside an `@IF` branch** local to the branch? Does `@BREAK` inside an `@IF` behaviour branch really escape to the enclosing loop?
 5. Is **name resolution** in the original lexical per container (as here) or dynamic (always current scene first)?
@@ -921,7 +934,7 @@ MAT^SET([I_FIELD_INDEX%I_LEVEL_WIDTH],[I_FIELD_INDEX@I_LEVEL_WIDTH],IC_FIELD_COD
 8. Is **SPEAKING's field** `ANIMOFN` (data) or `ANIMOFX` (schema)?
 9. How does the original handle **properties assigned before TYPE**, and objects of **unknown TYPE**?
 10. Do callbacks receive the event parameter as **`$1`**? The TS engine only passes arguments for MATRIX.
-11. Which of the Piklib 8 types and methods (§8.1) do later titles use, and do they need any syntax not covered here?
+11. Do _Kretes w Akcji_ and the other BlooMoo titles need syntax beyond §3? The three later titles analysed in §8.1 do not. Do the new `GRBUFFER` and `INTERNET` types appear in any script?
 
 ---
 
@@ -929,33 +942,93 @@ MAT^SET([I_FIELD_INDEX%I_LEVEL_WIDTH],[I_FIELD_INDEX@I_LEVEL_WIDTH],IC_FIELD_COD
 
 ### 8.1 Engine versions and how the language evolved
 
-| Title / build                              | Engine DLL                                   | Exported C++ symbols | Uppercase vocabulary strings                             |
-| ------------------------------------------ | -------------------------------------------- | -------------------- | -------------------------------------------------------- |
-| _Reksio i Ufo_ demo                        | `PIKLIB71.dll` (Piklib 7.1)                  | 3,576                | 764                                                      |
-| _Reksio i Skarb Piratów_ (GamesFiles copy) | `PIKLIB8.dll` (a different build from Ufo's) | 4,365                | 1,293 (identical to Ufo's apart from 3 non-word strings) |
-| _Reksio i Ufo_                             | `PIKLIB8.dll` + `Matrix.dll`                 | 4,372                | 1,296                                                    |
+Six titles were analysed: the three from the GamesFiles repository and three from the patched community releases (_Czarodzieje_, _Wehikuł Czasu_, _Kapitan Nemo_). Script dates come from the `LASTMODIFYTIME` properties in the title's CNV files. DLL dates are PE link timestamps. Exports and classes come from the PE export table, demangled with `llvm-undname`.
 
-Observations:
+| Title                    | Scripts up to             | Engine DLL (link date)        | Plugin DLLs                             | Exports | C++ classes |
+| ------------------------ | ------------------------- | ----------------------------- | --------------------------------------- | ------- | ----------- |
+| _Reksio i Ufo_ demo      | 2003-03                   | `PIKLIB71.dll` (2003-04-02)   | —                                       | 3,505   | 184         |
+| _Reksio i Skarb Piratów_ | 2002                      | `PIKLIB8.dll` (2004-08-19)    | `Kolorowanka.dll`                       | 4,281   | 207         |
+| _Reksio i Ufo_           | 2003, a few files 2004-08 | `PIKLIB8.dll` (2004-08-19)    | `Matrix.dll`                            | 4,281   | 207         |
+| _Reksio i Czarodzieje_   | 2004-05                   | `PIKLIB8.dll` (2004-05-19)    | `World.dll` + `Sekai.dll`               | 4,223   | 204         |
+| _Reksio i Wehikuł Czasu_ | 2004-12                   | `BlooMooDLL.dll` (2004-10-27) | `World.dll` + `Sekai.dll`, `sndDLL.dll` | 4,425   | 223         |
+| _Reksio i Kapitan Nemo_  | 2006-09                   | `bloomoodll.dll` (2006-07-17) | `snddll.dll`                            | 4,746   | 236         |
 
--   **No syntax differences were found.** The titles differ in which constructs and types they use, and how often, not in the grammar. The TS CNV parser and statement parser accept every code block of all three titles: 4,646 in Skarb Piratów, 4,680 in Ufo and 670 in the demo. The only file-level failures are four unreferenced, corrupted Ufo files (§2.2).
--   **The API grew.** Piklib 8 adds the runtime classes CLASS, DATABASE, MULTIARRAY, STRUCT (`CMC_Structure`), PATTERN, JOYSTICK, SCROLL, VIRTUALGRAPHICSOBJECT and CANVAS, plus the `CANVASOBSERVER` spelling. Piklib 7.1 has NETPEER and the older plugin interface `CDLLUnitInterface`, both absent from 8. Script-visible type and method names almost double, from 764 to 1,296 vocabulary strings.
--   **WORLD** (stubbed in the TS engine) and **RAND as a declarable TYPE** appear in neither DLL. WORLD must come from a later engine build or a plugin. The single `TYPE=RAND` object in Ufo is probably ignored by the original; `RANDOM` itself is a built-in (§5).
--   **Idioms shifted between titles,** while the grammar stayed the same:
+Notes on the table:
 
-    Approximate counts (regular-expression scan of the decrypted scripts):
+-   The Skarb Piratów and Ufo copies carry a PIKLIB8 build from August 2004, three months _newer_ than the one shipped with Czarodzieje. The Skarb Piratów and Ufo DLLs differ in checksum but have identical export tables. A few Ufo scripts were also edited in July–August 2004. Engine DLLs were evidently updated in re-releases, so a title's engine is not necessarily the one it was written against.
+-   **BlooMoo** is the renamed Piklib. It keeps the same `CMC_<Type>` / `CMC_<Type>_Runner` object model. Kapitan Nemo's build is linked against the MSVC 8 runtime and its `APPLICATION` declares `BLOOMOO_VERSION=BW.1.0.0`, a property the TS schema does not know.
+-   `sndDLL.dll` exports only `sf_open`, `sf_readf_short` and `sf_close` (libsndfile), so it is an audio decoder, not a script extension.
+-   Counting upper-case strings in the DLL (the "vocabulary") is noisy, because x86 code fragments such as `PQSUVW` match too. Use the export table, or the per-runner string clusters (§8.3), for exact comparisons.
 
-    | Construct                                         | Skarb Piratów  | Ufo          | Ufo demo   |
-    | ------------------------------------------------- | -------------- | ------------ | ---------- |
-    | `@IF` / `@BREAK` / `@LOOP`                        | 52 / 34 / 1    | 9 / 0 / 0    | 0          |
-    | CONDITION / COMPLEXCONDITION / EXPRESSION objects | 810 / 127 / 42 | 403 / 20 / 8 | 47 / 0 / 0 |
-    | `[..]` bracket expressions                        | 19             | 481          | 60         |
-    | `$n` arguments                                    | 5              | 262          | 85         |
-    | `BEH(args)` callback values                       | 6              | 391          | 92         |
-    | `*` indirect calls                                | 3              | 0            | 0          |
+**The grammar did not change.** The TS CNV parser and statement parser accept every code block of all six titles, and every file except the four corrupted Ufo leftovers. The count below is the number of `{…}` values in CNV, DEF and `.class` files. Each block is parsed with `parseCode` after the same space removal the engine performs.
 
-    An implementation that only runs one title can therefore leave whole areas untested, for example `@IF` semantics with Ufo, or bracket arithmetic with Skarb Piratów.
+| Title         | CNV/DEF/CLASS files | SEQ files | Code blocks | Parse failures                                      |
+| ------------- | ------------------- | --------- | ----------- | --------------------------------------------------- |
+| Ufo demo      | 21                  | 8         | 576         | 0                                                   |
+| Skarb Piratów | 65                  | 76        | 2,952       | 0                                                   |
+| Ufo           | 102                 | 78        | 3,909       | 4 files (the unreferenced, corrupted files of §2.2) |
+| Czarodzieje   | 134                 | 42        | 5,274       | 0                                                   |
+| Wehikuł Czasu | 196                 | 104       | 11,794      | 0                                                   |
+| Kapitan Nemo  | 48                  | 59        | 8,228       | 0                                                   |
 
--   **Not yet analysed:** the later titles (Czarodzieje, Wehikuł Czasu, Kretes w Akcji, Kapitan Nemo, and others). Whether they need new syntax, or only new types and methods, is open. The ≈460 Piklib 8 vocabulary words that are neither implemented nor used by the three analysed titles are listed in the analysis notes. Examples are `NETCLIENT`, `GETDATESTRING`, `FADEIN`, `SETVIEWPORT`, `PLAYREVERSE`, `REMOVEBEHAVIOUR` and `SORTMANY`. They are the best guide to what the later titles exercise.
+The parser is lenient, so "parses" means "no ParseError", not "means what the author intended" (see §8.4 for blocks that parse but are broken). The ±0x20 byte corruption of §2.2 does not occur in the three later titles.
+
+**The API grew.**
+
+-   Piklib 8 adds the runtime classes CLASS, DATABASE, MULTIARRAY, STRUCT (`CMC_Structure`), PATTERN, JOYSTICK, SCROLL, VIRTUALGRAPHICSOBJECT and CANVAS, plus the `CANVASOBSERVER` spelling. Piklib 7.1 has NETPEER and the older plugin interface `CDLLUnitInterface`, both absent from Piklib 8.
+-   BlooMoo (Wehikuł Czasu) brings NETPEER back together with a file-transfer layer (`CFileSender_*`, `CFileReceiver_*`, `CNet*Message`).
+-   Kapitan Nemo's BlooMoo adds the types `GRBUFFER` (`CMC_GrBuffer`) and `INTERNET` (`CMC_Internet`), self-extraction and upgrade machinery (`CSelfExtract`, `CDownloadManagerIfc`), and new script-visible names such as `GETFPS`, `ISLBUTTONDOWN`, `REMOVEBEHAVIOURFORCE`, `REPLACECOLOR`, `GETWORDAT` and `ISFILEEXIST`.
+-   **WORLD** is not a built-in type. It is registered by the `World.dll` plugin, which scenes load with `DLLS=WORLD` (5 scenes in Czarodzieje, 6 in Wehikuł Czasu; §8.2). **RAND as a declarable TYPE** appears in no engine DLL. The single `TYPE=RAND` object in Ufo is probably ignored by the original; `RANDOM` itself is a built-in (§5).
+
+**Idioms shifted between titles,** while the grammar stayed the same. Approximate counts from a regular-expression scan of the decrypted CNV, DEF and `.class` files:
+
+| Construct                                         | Ufo demo   | Skarb Piratów  | Ufo          | Czarodzieje        | Wehikuł Czasu       | Kapitan Nemo       |
+| ------------------------------------------------- | ---------- | -------------- | ------------ | ------------------ | ------------------- | ------------------ |
+| `@IF` (5-argument / 3-argument)                   | 0          | 19 / 33        | 9 / 0        | 1,762 / 285        | 3,409 / 444         | 2,635 / 410        |
+| `@BREAK` / `@LOOP` / `@WHILE` / `@RETURN`         | 0          | 34 / 1 / 0 / 0 | 0            | 373 / 168 / 7 / 24 | 528 / 292 / 15 / 31 | 56 / 239 / 37 / 29 |
+| `@INT` / `@STRING` / `@BOOL` / `@DOUBLE`          | 0          | 0              | 0            | 3 / 1 / 0 / 0      | 0                   | 399 / 198 / 26 / 5 |
+| `@MSGBOX`                                         | 0          | 0              | 0            | 0                  | 36                  | 0                  |
+| CONDITION / COMPLEXCONDITION / EXPRESSION objects | 47 / 0 / 0 | 810 / 127 / 42 | 403 / 20 / 8 | 3 / 0 / 0          | 9 / 0 / 0           | 0                  |
+| BEHAVIOUR objects                                 | 194        | 1,948          | 1,438        | 3,915              | 7,761               | 4,436              |
+| CLASS / STRUCT / DATABASE objects                 | 0          | 0 / 0 / 0      | 0            | 7 / 17 / 17        | 8 / 10 / 11         | 13 / 5 / 6         |
+| `[..]` bracket expressions                        | 60         | 19             | 481          | 1,073              | 4,421               | 3,616              |
+| `$n` arguments                                    | 85         | 5              | 262          | 149                | 389                 | 243                |
+| `*` indirect references                           | 0          | 3              | 0            | 1,665              | 3,778               | 1,263              |
+| `OBJ\|FIELD` struct-field access                  | 0          | 0              | 0            | 710                | 133                 | 22                 |
+| `BEH(args)` callback values                       | 92         | 6              | 391          | 6                  | 18                  | 0                  |
+
+What the trend shows:
+
+-   From Czarodzieje on, control flow moves from CONDITION/COMPLEXCONDITION/EXPRESSION objects to inline `@IF`. CONDITION objects all but disappear.
+-   The 3-argument `@IF` with the logic mini-language of §3.7 is used 285–444 times per later title, so its **[G]** semantics matter. The scripts use `'`, `!'`, `<`, `>`, `<'`, `>'`, `&&` and `||`. No condition mixes `&&` with `||`, which is consistent with the no-mixing rule.
+-   `*` indirection, `|` field access, `.class` instances and DATABASE tables carry most of the data-driven logic of the later titles.
+-   Kapitan Nemo declares block-local variables with `@INT("NAME", init)`, `@STRING`, `@BOOL` and `@DOUBLE` (§4.8).
+-   `BFITMPn` behaviours, the targets of nearly every `@IF`, are generated code. The authoring tool compiled structured source of the form `@IF(cond){then}ELSE{else}` into a 5- or 3-argument `@IF` plus one behaviour per branch, named `BFITMP<n>`. §8.4 lists blocks where that compilation went wrong.
+
+An implementation that only runs one title can therefore leave whole areas untested. Examples are `@IF` semantics with Ufo, bracket arithmetic with Skarb Piratów, and local variables with anything older than Kapitan Nemo.
+
+**What the later titles need beyond the TS engine.** These come from a static resolution of `OBJ^METHOD` calls against the objects each file can see. It is approximate: names reused across scenes can misattribute a call, and GROUP calls are excluded because GROUP forwards them.
+
+-   **Globals.** `@INT`, `@STRING`, `@BOOL`, `@DOUBLE` and `@MSGBOX` are used but not implemented. In the TS engine an unknown `@NAME` is fatal (§4.8), so Kapitan Nemo stops at its first local-variable declaration.
+-   **Types.**
+    -   WORLD needs most of `World.dll`'s methods, including `FINDPATH` (125 calls in Wehikuł Czasu), `SETACTIVE`, `ADDFORCE`, `GETPOSITIONX/Y/Z`, `JOIN`, `REMOVEOBJECT` and `SETGRAVITYCENTER`.
+    -   PATTERN (Czarodzieje: `ADD`, `MOVE`, `GETGRAPHICSAT`, and the properties `LAYERS`, `GRIDX`, `GRIDY`, `WIDTH`, `HEIGHT`) is unimplemented.
+-   **Methods**, among others:
+    -   `SEQUENCE^PAUSE`/`RESUME` (over 200 calls each in Wehikuł Czasu);
+    -   `KEYBOARD^ENABLE`, `CNVLOADER^RELEASE`, `SCENE^PAUSE`, `SCENE^REMOVECLONES`;
+    -   `ANIMO^NEXTFRAME`/`PREVFRAME`/`GETENDX`/`GETENDY`;
+    -   `CANVAS_OBSERVER^PASTE`/`MOVEBKG`/`SETBKGPOS`/`ADD`;
+    -   `STRING^UPPER`/`REPLACEAT`/`CUT`, `ARRAY^REMOVE`, `DOUBLE^CLAMP`, `IMAGE^GETPIXEL`;
+    -   `INTEGER^ADDBEHAVIOUR` and `STRING^ADDBEHAVIOUR`/`REMOVEBEHAVIOUR` (Kapitan Nemo). These bind event handlers at run time, e.g. `ICOLLBELKASEL^ADDBEHAVIOUR(["ONBRUTALCHANGED^"+I5],"BEHCOLLBELKI")`.
+-   **Events and properties** the TS schema does not know:
+    -   `ONSIGNAL^<param>` on ANIMO: 506 handlers in Wehikuł Czasu, with numeric parameters and `ATGOAL`/`NOPATH` (§8.2);
+    -   `ONCHAR^<key>` on KEYBOARD;
+    -   `ONWINDOWFOCUSON`/`ONWINDOWFOCUSOFF` on CANVAS_OBSERVER;
+    -   `ONFOCUSON`/`ONFOCUSOFF` on IMAGE;
+    -   `HJUSTIFY` and `HYPERTEXT` on TEXT;
+    -   `RAW` on MOUSE.
+
+Not yet analysed: _Kretes w Akcji_ and the other BlooMoo titles, and the non-script data formats new in these releases: `.sek` (Sekai path-finding/physics meshes, magic `SEKAI81080701915004`), `.scn` (binary, apparently an editor scene description), `.fld` (text level grids) and `.wzl`.
 
 ### 8.2 Extension types (plugin DLLs)
 
@@ -972,6 +1045,17 @@ Observations:
         -   `GETCELLGFX`, `SETCELLGFX`, `GETCELLLINK`, `SETCELLLINK`, and the `GET`/`SETCELL{UP,DOWN,LEFT,RIGHT}LINK` variants;
         -   `SETGATE`, `ISINGATE`, `ISGATEEMPTY`, `CANHEROGOTO`, `CALCENEMYMOVEDIR`, `CALCENEMYMOVEDEST`.
 -   Skarb Piratów ships `Kolorowanka.dll` (a colouring book), not analysed yet.
+-   **`World.dll`** (Czarodzieje, Wehikuł Czasu; `DLLS=WORLD`) registers the WORLD type. It is a thin script binding over **`Sekai.dll`**, a physics and path-finding library with a C++ interface `ISekai` (`AddBody`, `AddForce`, `AddWayPoint`, `AddMeshWayPoint`, `FindPath`, `Follow`, `FollowPath`, `CollideMesh`, …). Its data files are the `.sek` meshes. WORLD's vocabulary:
+
+    -   Properties and callbacks: `FILENAME`, `ONINIT`, `ONDONE`, `ONSIGNAL`.
+    -   Bodies and forces: `ADDBODY`, `ADDOBJECT`, `REMOVEOBJECT`, `ADDFORCE`, `ADDGRAVITYEX`, `SETGRAVITY`, `SETGRAVITYCENTER`, `SETFORCE`, `SETOBJECTFORCE`, `SETMASS`, `SETVELOCITY`, `SETSPEED`, `SETMAXSPEED`, `SETBODYDYNAMICS`, `SETBODYPROPERTIES`, `SETOBJECTPROPERTIES`, `SETCOLLISIONTYPE`, `SETDISPERSION`, `SETLIMIT`, `ZEROALL`.
+    -   Joints: `JOIN2`, `JOINTSPEED`, `JOINTSTEER`, `UNLINK`, `PAUSELINK`, `RESUMELINK`, `BREAK`.
+    -   Paths: `FINDPATH`, `FOLLOWPATH`, `FOLLOW`, `FOLLOWROUTE`, `GOTOPATH`, `MOVETOPATH`, `ADDTOPATH`, `ADDWAYPOINT`, `ADDMESHWAYPOINT`, `REMOVEWAYPOINT`, `REMOVEROUTE`, `ENABLEMESH`, `COLLIDEMESH`, `ISMESHENABLED`, `ISMESHCOLLIDING`.
+    -   Queries and control: `GETPOSITIONX/Y/Z`, `GETROTATIONX/Y/Z`, `GETANGLE`, `GETSPEED`, `GETMOVEDISTANCE`, `GETCOLLISION`, `GETBKGPOSX/Y`, `SETBKGSIZE`, `SETREFOBJECT`, `SETMOVEFLAGS`, `SETACTIVE`, `SETALWAYSACTIVE`, `SETPOSITION`, `SETPOSITIONCOORD`, `SETANGLE`, `ROTATE`, `MOVETO`, `MOVEOBJECTS`, `USEFF`, `START`.
+
+    Scripts call `JOIN` and `SETG`, which are not in this list. They may be prefix-matched abbreviations of `JOIN2` and `SETGRAVITY…`, or calls the original silently ignores. **[?]**
+
+-   **`ONSIGNAL` is how WORLD reports back. [G]** `ONSIGNAL` is in the vocabulary of every engine build from Piklib 7.1 on, and of `Matrix.dll` and `World.dll`. It is therefore a generic event that ordinary objects can receive, and plugins can raise it. In the WORLD scenes, the scripts attach `ONSIGNAL^<param>` handlers to the ANIMO objects that the WORLD moves. The parameters are `ATGOAL` and `NOPATH` for path following, and numbers for the rest (506 handlers in Wehikuł Czasu), apparently body or contact identifiers. The TS schema rejects these handlers today (§4.11).
 
 An implementation should treat extension types like built-in ones, with one registry entry each. The spec should describe them in per-plugin appendices.
 
@@ -980,7 +1064,7 @@ An implementation should treat extension types like built-in ones, with one regi
 In decreasing order of authority:
 
 1. **The original binaries.**
-    - `PIKLIB8.dll` and `PIKLIB71.dll` export MSVC-mangled C++ symbols, which `llvm-undname` demangles.
+    - `PIKLIB71.dll`, `PIKLIB8.dll`, `BlooMooDLL.dll` and the plugin DLLs export MSVC-mangled C++ symbols, which `llvm-undname` demangles.
     - The object model is visible directly: `CMC_<Type>` classes hold state (e.g. `CMC_Integer::calculate/compare/convert/equals/serialize`), `CMC_<Type>_Runner` classes dispatch script methods by name, and supporting machinery includes `CMC_RunnerFactory::getRunner(int)`, `CMC_VariableFactory`, `CMC_StructureParser`, `CMC_Behaviour_Entry` and `CMElementsLoader`.
     - The script-visible strings are clustered per runner in `.rdata`. Mapping each runner's dispatch code to its strings in a disassembler yields the authoritative per-type method table, which this spec's §5 should eventually be checked against.
 2. **Running the original.** Run it under Wine with scripted input, capturing `OutputDebugStringA` / `CError` output and saved INI and ARR state, for questions about timing and ordering. The `Log.log` files shipped with the games are empty, so there is no ready-made trace.
@@ -1001,6 +1085,20 @@ Shipped scripts contain mistakes the original presumably survives, since the gam
 
 -   **Unbalanced string quotes,** e.g. Ufo `S66_WYBOR` has `ARRLOCALNAMES^ADD("ANNCAR0,"ANNCAR1","ANNCAR2","ANNCAR3")`. Arguments are split on commas without tracking quotes (§3.2), and a string literal only drops its closing quote when one is present (§3.3). So this still yields the four elements `ANNCAR0`, `ANNCAR1`, `ANNCAR2` and `ANNCAR3`, which is what the TS engine produces. The car-selection screen depends on this list.
 -   **Wrong operator characters** in dead files (`BUT_TAK>DISABLE()`), see §2.2.
+-   **Misspelt or malformed calls in the later titles:**
+    -   `TIMER^DISBLE`, `IMAGE^SETPTIORITY` and `ANIMO^SEFFPS` (Czarodzieje, Wehikuł Czasu);
+    -   `ANNOBJECT0^SETFRAME"STATE0",1)` with no opening parenthesis (Czarodzieje).
+-   **Statement prefix `!`** (Skarb Piratów only, 125 statements, e.g. `!REKSIO15^PLAY("ZADOWOLONY")`). It looks like a way to comment out a statement. The TS engine treats `!REKSIO15` as an unknown object, so the call is skipped, which has the same effect. **[?]**
+-   **Empty property name.** `SNDFIRE:={@IF(…)}` (Czarodzieje, `Dragon.cnv`) assigns to an empty property. The TS loader warns and ignores the line.
+-   **Mis-compiled `ELSE` branches** (§8.1, `BFITMPn`). In Kapitan Nemo `wioska_masajow.cnv`, twelve callbacks read like this:
+
+    ```
+    {@IF(BEHGETBUDOWAKURY^RUN(10),"_","0","BFITMP1083","");}ELSE{CURSOR^SET("STD");}}
+    ```
+
+    The `ELSE` branch was left behind as text, outside the compiled `@IF`. A generated behaviour in `lotbalonem.cnv` holds only the tail of a condition that contained quotes: `BFITMP86:CODE={||SOBJ2^FIND("IMGM")>-1){SOBJT^SET(SOBJ2);}`. These blocks parse, because the statement parser is lenient (`}ELSE{CURSOR` becomes an unknown call target), but the `ELSE` code never runs. That was presumably also the case in the original.
+
+-   **Backup and dead files shipped next to live ones.** Examples are `*old.cnv`, `*copy.cnv`, `*stary.cnv` and `!stare/` directories in the later titles, and the corrupted leftovers in Ufo (§2.2). They are never loaded, but they distort any static analysis that does not follow the load graph.
 -   **Missing assets:**
 
     -   Ufo `S75_PORT` declares `PRAWA.ANN`, which is not shipped.

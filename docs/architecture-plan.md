@@ -81,10 +81,14 @@ The import graph has one 60-file cycle covering `engine/**`, `filesystem/**`, `i
 
 ## 4. What the original engine and the game corpus tell us
 
-These points decide how the spec and the plan should be scoped. Methods: the scripts of three titles were decrypted and analysed, and the native engine DLLs that ship with the games were inspected.
+These points decide how the spec and the plan should be scoped. Methods: the scripts of six titles (the Ufo demo, Skarb Piratów, Ufo, Czarodzieje, Wehikuł Czasu and Kapitan Nemo) were decrypted and analysed, and the native engine and plugin DLLs that ship with the games were inspected.
 
--   **Engine versions.** The Reksio i Ufo demo ships `PIKLIB71.dll` (Piklib 7.1). The Reksio i Skarb Piratów and Reksio i Ufo releases in `ReksioEngine/GamesFiles` ship different builds of `PIKLIB8.dll` with the same script vocabulary.
--   **The binaries export about 4,300 MSVC-mangled C++ symbols** (3,576 in 7.1), and `llvm-undname` demangles them. They expose the original object model:
+-   **Engine versions.**
+    -   The Reksio i Ufo demo ships `PIKLIB71.dll` (Piklib 7.1).
+    -   Skarb Piratów, Ufo and Czarodzieje ship builds of `PIKLIB8.dll`.
+    -   Wehikuł Czasu and Kapitan Nemo ship `BlooMooDLL.dll` (2004 and 2006 builds), the renamed successor with the same object model.
+    -   The full table is in spec §8.1.
+-   **The binaries export 3,500–4,750 MSVC-mangled C++ symbols** (3,505 in 7.1, 4,281 in the August 2004 Piklib 8, 4,746 in the 2006 BlooMoo), and `llvm-undname` demangles them. They expose the original object model:
 
     -   `CMC_<Type>` classes hold state, for example `CMC_Integer::calculate/compare/convert/equals/serialize/netstore`.
     -   `CMC_<Type>_Runner` classes dispatch script methods.
@@ -95,8 +99,8 @@ These points decide how the spec and the plan should be scoped. Methods: the scr
 -   **Version differences are mostly API surface, not syntax.**
     -   Classes only in v8: `CMC_Class`, `CMC_Database`, `CMC_MultiArray`, `CMC_Structure`, `CMC_Pattern`, `CMC_Joystick`, `CMC_Scroll`, `CMC_VirtualGraphicsObject` and `CMC_Canvas`.
     -   Classes only in 7.1: `CMC_NetPeer`, the old plugin interface `CDLLUnitInterface`, and tree sequences.
-    -   The script vocabulary (uppercase identifier strings in the binary) grows from 764 to 1,296 entries.
-    -   `WORLD`, which the TS engine has stubs for, appears in neither build. It belongs to a later engine or to a plugin.
+    -   The script vocabulary (uppercase identifier strings in the binary, a noisy measure) grows from 764 to 1,296 entries.
+    -   `WORLD`, which the TS engine has stubs for, is in no engine build. It is registered by the `World.dll` plugin (Czarodzieje, Wehikuł Czasu).
 -   **Plugins.** A scene's `DLLS=MATRIX` loads `Matrix.dll`, which registers the `MATRIX` type through `CMC_DLLExModuleInterface`. `Matrix.dll` has its own vocabulary, a superset of what Ufo uses: `GETCELLLINK`, `SETCELLGFX`, `LOAD`, `CLEAR`, `ONDONE`, and more. Skarb Piratów ships `Kolorowanka.dll` (a colouring book). A spec-level notion of _extension types_ is therefore needed.
 -   **Idioms changed between titles; the grammar did not.**
     -   Skarb Piratów uses `@IF`/`@BREAK`/`@LOOP`, `*indirect` references, CONDITION, COMPLEXCONDITION and EXPRESSION objects heavily.
@@ -110,7 +114,11 @@ These points decide how the spec and the plan should be scoped. Methods: the scr
 
     A useful spec has to define error recovery, not just the valid language.
 
--   **Not checked:** later titles (Czarodzieje, Wehikuł Czasu, Kretes w Akcji, Kapitan Nemo and others). The analysis environment could not reach archive.org or iso.zagrajwreksia.pl. The 7.1 → 8 delta suggests mostly new types and methods, but this should be confirmed (see phase S2).
+-   **Later titles** (Czarodzieje, Wehikuł Czasu, Kapitan Nemo; spec §8.1). The grammar is unchanged: every code block of all six analysed titles parses. What changes is the API and the idioms:
+    -   Control flow moves from CONDITION objects to inline `@IF`, together with heavy use of `*` indirection, `|` struct fields, CLASS and DATABASE.
+    -   Kapitan Nemo uses the local-variable globals `@INT`/`@STRING`/`@BOOL`/`@DOUBLE`. The TS engine treats these as fatal errors, so that title cannot run today.
+    -   Czarodzieje and Wehikuł Czasu depend on the WORLD physics/path-finding plugin (`World.dll` over `Sekai.dll`), which the TS engine only stubs.
+    -   _Kretes w Akcji_ and the other BlooMoo titles are still unchecked.
 
 ## 5. Target architecture
 
