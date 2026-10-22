@@ -139,6 +139,12 @@ export class Image extends DisplayType<ImageDefinition> {
     }
 
     @method()
+    ISVISIBLE(): boolean {
+        assert(this.sprite !== null)
+        return this.sprite.visible
+    }
+
+    @method()
     GETPOSITIONX(): int {
         assert(this.sprite !== null)
         return this.sprite.x

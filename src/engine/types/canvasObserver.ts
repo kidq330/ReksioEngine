@@ -25,6 +25,12 @@ export class CanvasObserver extends Type<CanvasObserverDefinition> {
         this.engine.rendering.redrawAll()
     }
 
+    // The canvas is redrawn every frame, so redrawing immediately is the same as REFRESH
+    @method()
+    REDRAW() {
+        this.engine.rendering.redrawAll()
+    }
+
     @method()
     REMOVE(objectName: string) {
         const object = this.engine.getObject(objectName)
