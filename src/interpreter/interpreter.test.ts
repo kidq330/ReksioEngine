@@ -20,6 +20,14 @@ describe('interpreter', () => {
         expect(a.getValue()).toBe(5)
     })
 
+    test('INTEGER^LENGTH returns the length of a vector', async () => {
+        const a = engine.integer('A', 7)
+        const b = engine.integer('B')
+        await engine.run('B^SET(A^LENGTH(3,4));')
+        expect(b.getValue()).toBe(5)
+        expect(a.getValue()).toBe(7)
+    })
+
     test('method arguments are converted to declared types', async () => {
         const a = engine.integer('A', 1)
         await engine.run('A^ADD("5");')

@@ -1,7 +1,7 @@
 import { ParentType, ValueType } from './index'
 import { Engine } from '../index'
 import { IntegerDefinition } from '../../fileFormats/cnv/types'
-import { method, valueAsInteger, int } from '../../common/types'
+import { method, valueAsInteger, int, double } from '../../common/types'
 
 export class Integer extends ValueType<IntegerDefinition, number> {
     constructor(engine: Engine, parent: ParentType<any> | null, definition: IntegerDefinition) {
@@ -10,6 +10,12 @@ export class Integer extends ValueType<IntegerDefinition, number> {
 
     async ready() {
         await this.callbacks.run('ONINIT')
+    }
+
+    // Length of the vector (x, y), the variable itself doesn't change
+    @method()
+    LENGTH(x: double, y: double): double {
+        return Math.hypot(x, y)
     }
 
     @method()
