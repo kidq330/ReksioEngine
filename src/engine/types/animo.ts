@@ -460,6 +460,26 @@ export class Animo extends DisplayType<AnimoDefinition> {
     }
 
     @method()
+    async NEXTFRAME() {
+        await this.stepFrame(1)
+    }
+
+    @method()
+    async PREVFRAME() {
+        await this.stepFrame(-1)
+    }
+
+    // Shows the next or previous frame of the current event, wrapping around
+    private async stepFrame(step: number) {
+        if (this.currentEvent === null || this.currentEvent.framesCount === 0) {
+            return
+        }
+        const count = this.currentEvent.framesCount
+        this.currentFrame = (((this.currentFrame + step) % count) + count) % count
+        await this.changeFrame(this.currentEvent, this.currentFrame)
+    }
+
+    @method()
     SETBACKWARD() {
         this.backward = true
     }
