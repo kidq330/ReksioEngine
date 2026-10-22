@@ -37,7 +37,7 @@ export class Image extends DisplayType<ImageDefinition> {
 
     async ready() {
         assert(this.sprite !== null)
-        this.engine.rendering.addToStage(this.sprite)
+        this.engine.rendering.addToStage(this.sprite, this)
         await this.callbacks.run('ONINIT')
     }
 
@@ -198,7 +198,7 @@ export class Image extends DisplayType<ImageDefinition> {
 
         const clone = (await super.clone()) as unknown as Image
         clone.sprite = spriteClone
-        this.engine.rendering.addToStage(clone.sprite)
+        this.engine.rendering.addToStage(clone.sprite, clone)
         clone.setPriority(this.priority)
         return clone
     }

@@ -29,8 +29,6 @@ export class Engine {
 
     public currentScene: Scene | null = null
     public previousScene: Scene | null = null
-    // Display objects that existed before the current scene was loaded (owned by application/episode objects)
-    private stageObjectsBeforeScene: Set<DisplayObject> = new Set()
 
     public saveFile: SaveFile
 
@@ -179,18 +177,26 @@ export class Engine {
 
             // Alert when rendering stage wasn't completely cleared after all destroys.
             // For debugging purposes.
+            // Objects of the application, episode and their class instances stay on stage.
+            const clearedScene = this.currentScene
+            const belongsToClearedScene = (obj: DisplayObject) => {
+                for (let owner = this.rendering.getOwner(obj); owner !== null; owner = owner.parent) {
+                    if (owner === clearedScene) {
+                        return true
+                    }
+                }
+                return this.rendering.getOwner(obj) === null
+            }
             const leakedObjects = this.app.stage.children.filter(
                 (obj) =>
                     ![loadingFreezeOverlay, this.rendering.canvasBackground].includes(obj as any) &&
-                    !this.stageObjectsBeforeScene.has(obj)
+                    belongsToClearedScene(obj)
             )
             if (scopeToClear && leakedObjects.length > 0) {
                 logger.error('Display objects leak detected', {
                     leakedObjects,
                 })
             }
-
-            this.stageObjectsBeforeScene = new Set(this.app.stage.children)
 
             this.previousScene = this.currentScene
             this.currentScene = this.getObject<Scene>(sceneName)

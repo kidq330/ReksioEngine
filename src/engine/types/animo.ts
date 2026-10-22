@@ -193,7 +193,7 @@ export class Animo extends DisplayType<AnimoDefinition> {
         this.setPriority(this.definition.PRIORITY ?? 0)
 
         if (this.definition.TOCANVAS) {
-            this.engine.rendering.addToStage(this.sprite)
+            this.engine.rendering.addToStage(this.sprite, this)
         }
 
         this.currentEvent = this.getEvent(this.getDefaultEvent() ?? '')
@@ -567,7 +567,7 @@ export class Animo extends DisplayType<AnimoDefinition> {
         if (enabled) {
             if (this.buttonInteractArea === null) {
                 this.buttonInteractArea = new Graphics()
-                this.engine.rendering.addToStage(this.buttonInteractArea)
+                this.engine.rendering.addToStage(this.buttonInteractArea, this)
                 this.buttonLogic.registerInteractive(this.buttonInteractArea, showPointer)
             }
 

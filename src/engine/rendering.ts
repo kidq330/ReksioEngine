@@ -1,6 +1,6 @@
 import { Application, DisplayObject, Graphics, IPointData, Rectangle, Sprite, Texture } from 'pixi.js'
 import { assert } from '../common/errors'
-import { DisplayType } from './types'
+import { DisplayType, Type } from './types'
 import loadingCursor from '../../static/loading-cursor.png'
 
 export class RenderingManager {
@@ -11,6 +11,7 @@ export class RenderingManager {
     private readonly blackTexture
 
     private dirtyRects: Rectangle[] = []
+    private readonly owners = new WeakMap<DisplayObject, Type<any>>()
 
     constructor(private app: Application) {
         this.blackTexture = createColorTexture(
@@ -58,9 +59,14 @@ export class RenderingManager {
         this.setCursor('auto')
     }
 
-    addToStage(sprite: DisplayObject) {
+    addToStage(sprite: DisplayObject, owner: Type<any>) {
+        this.owners.set(sprite, owner)
         this.app.stage.addChild(sprite)
         this.sortObjects()
+    }
+
+    getOwner(sprite: DisplayObject): Type<any> | null {
+        return this.owners.get(sprite) ?? null
     }
 
     removeFromStage(sprite: DisplayObject) {

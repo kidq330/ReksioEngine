@@ -23,7 +23,7 @@ export class Text extends Type<TextDefinition> {
         this.text.y = y1
         this.text.anchor.set(0.5, 0)
         this.text.visible = this.definition.VISIBLE
-        this.engine.rendering.addToStage(this.text)
+        this.engine.rendering.addToStage(this.text, this)
     }
 
     async ready() {
