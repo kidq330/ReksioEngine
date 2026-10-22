@@ -159,6 +159,12 @@ export class Sequence extends Type<SequenceDefinition> {
         }
     }
 
+    // Name of the sequence being played
+    @method()
+    GETEVENTNAME(): string {
+        return this.sequenceName ?? ''
+    }
+
     @method()
     ISPLAYING(): boolean {
         return this.sequenceName !== null
