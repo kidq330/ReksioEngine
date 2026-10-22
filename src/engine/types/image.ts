@@ -162,6 +162,50 @@ export class Image extends DisplayType<ImageDefinition> {
         return this.sprite.getAlphaAt(new Point(x, y))
     }
 
+    private originalPixels: Uint8Array | null = null
+
+    // Lowers the image's alpha to another graphic's alpha in the rectangle starting at (x, y), in the image's
+    // own coordinates. RESET restores the original first. Wehikuł Czasu's LABIRYNTY cuts torch light around
+    // the players out of a dark overlay this way every frame.
+    @method()
+    MERGEALPHA2(x: int, y: int, name: string, reset: boolean = false) {
+        assert(this.sprite !== null)
+        const baseTexture = this.sprite.texture.baseTexture
+        const pixels = (baseTexture.resource as PIXI.BufferResource).data as Uint8Array
+        if (this.originalPixels === null) {
+            this.originalPixels = pixels.slice()
+        }
+        if (reset) {
+            pixels.set(this.originalPixels)
+        }
+
+        const other = this.getObject<DisplayType<any>>(name)?.getRenderObject() ?? null
+        if (other === null || other.hitmap === undefined) {
+            baseTexture.update()
+            return
+        }
+
+        const width = baseTexture.width
+        const height = baseTexture.height
+        const maskWidth = other.texture.width
+        const maskHeight = other.texture.height
+        for (let my = 0; my < maskHeight; my++) {
+            const py = y + my
+            if (py < 0 || py >= height) {
+                continue
+            }
+            for (let mx = 0; mx < maskWidth; mx++) {
+                const px = x + mx
+                if (px < 0 || px >= width) {
+                    continue
+                }
+                const alphaIndex = (py * width + px) * 4 + 3
+                pixels[alphaIndex] = Math.min(pixels[alphaIndex], other.hitmap[my * maskWidth + mx])
+            }
+        }
+        baseTexture.update()
+    }
+
     private maskContainer: Container | null = null
     private otherObjectsAlphaSpriteCache = new Map<string, Sprite>()
 
