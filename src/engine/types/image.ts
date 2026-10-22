@@ -5,11 +5,15 @@ import { Container, Graphics, Point, Sprite } from 'pixi.js'
 import { loadSprite } from '../../filesystem/assetsLoader'
 import { AdvancedSprite } from '../rendering'
 import { method, int } from '../../common/types'
+import { ButtonLogicComponent, Event as FSMEvent, State } from '../components/button'
 import * as PIXI from 'pixi.js'
 
 export class Image extends DisplayType<ImageDefinition> {
     public sprite: AdvancedSprite | null = null
     private opacity = 255
+
+    private buttonLogic = new ButtonLogicComponent(this.onButtonStateChange.bind(this))
+    private buttonInteractArea: Graphics | null = null
 
     async init() {
         await this.initSprite(this.definition.FILENAME)
@@ -44,6 +48,56 @@ export class Image extends DisplayType<ImageDefinition> {
     destroy() {
         assert(this.sprite !== null)
         this.engine.rendering.removeFromStage(this.sprite)
+        this.removeButtonInteractArea()
+    }
+
+    async tick(elapsedMS: number) {
+        await this.buttonLogic.tick()
+    }
+
+    // Same button mode as ANIMO's, without events to play (e.g. Czarodzieje's sliding recipe card in ALCHEMY)
+    @method()
+    async SETASBUTTON(enabled: boolean, showPointer: boolean) {
+        assert(this.sprite !== null)
+        if (enabled) {
+            if (this.buttonInteractArea === null) {
+                this.buttonInteractArea = new Graphics()
+                this.buttonInteractArea.name = `${this.name} (IMAGE Button)` // For PIXI Devtools
+                this.engine.rendering.addToStage(this.buttonInteractArea, this)
+                this.buttonLogic.registerInteractive(this.buttonInteractArea, showPointer)
+            }
+            this.buttonInteractArea.hitArea = this.sprite.getBounds()
+            this.buttonInteractArea.zIndex = this.sprite.zIndex
+            await this.buttonLogic.enable()
+        } else {
+            this.removeButtonInteractArea()
+            await this.buttonLogic.disable()
+        }
+    }
+
+    private removeButtonInteractArea() {
+        if (this.buttonInteractArea !== null) {
+            this.buttonLogic.unregisterInteractive(this.buttonInteractArea)
+            this.engine.rendering.removeFromStage(this.buttonInteractArea)
+            this.buttonInteractArea = null
+        }
+    }
+
+    private async onButtonStateChange(prevState: State, event: FSMEvent, newState: State) {
+        switch (newState) {
+            case State.HOVERED:
+                await this.callbacks.run(event === FSMEvent.UP ? 'ONRELEASE' : 'ONFOCUSON')
+                break
+            case State.STANDARD:
+                if (event !== FSMEvent.ENABLE) {
+                    await this.callbacks.run('ONFOCUSOFF')
+                }
+                break
+            case State.PRESSED:
+                await this.callbacks.run('ONCLICKED')
+                await this.callbacks.run('ONCLICK')
+                break
+        }
     }
 
     @method()
