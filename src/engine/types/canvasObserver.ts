@@ -30,9 +30,11 @@ export class CanvasObserver extends Type<CanvasObserverDefinition> {
         this.engine.rendering.moveBackground(x, y)
     }
 
+    // Sets the point of the background shown in the top-left corner of the screen. Wehikuł Czasu's ARCADE
+    // scrolls with SETBKGPOS(scroll) and moves the objects by -scroll at the same time.
     @method()
     SETBKGPOS(x: int, y: int) {
-        this.engine.rendering.setBackgroundPosition(x, y)
+        this.engine.rendering.setBackgroundPosition(-x, -y)
     }
 
     // Enables ONWINDOWFOCUSON/OFF notifications in the original; window focus isn't tracked
