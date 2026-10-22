@@ -8,6 +8,7 @@ import { method, int } from '../../common/types'
 import { AdvancedSprite } from '../rendering'
 import { Scope } from '../scope'
 import { logger } from '../logging'
+import { FileNotFoundError } from '../../filesystem/fileLoader'
 
 export type XRayInfo = {
     type: string
@@ -203,7 +204,17 @@ export class ValueType<DefinitionType extends ValueTypeDefinition, TypeOfValue> 
     @method()
     async COPYFILE(from: string, to: string) {
         console.debug(`Copying file ${from} to ${to}`)
-        const sourceData = await this.engine.filesystem.getFile(await this.engine.resolvePath(from))
+        let sourceData: ArrayBuffer
+        try {
+            sourceData = await this.engine.filesystem.getFile(await this.engine.resolvePath(from))
+        } catch (err) {
+            // Wehikuł Czasu's new game copies defaults of minigames that aren't shipped (e.g. TUNEL_DEF.ARR)
+            if (err instanceof FileNotFoundError) {
+                logger.warn(`COPYFILE: '${from}' doesn't exist, nothing copied`)
+                return
+            }
+            throw err
+        }
         await this.engine.filesystem.saveFile(await this.engine.resolvePath(to), sourceData)
     }
 
