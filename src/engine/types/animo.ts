@@ -8,7 +8,7 @@ import { ANN, Event } from '../../fileFormats/ann'
 import { ButtonLogicComponent, Event as FSMEvent, State } from '../components/button'
 import { loadSound } from '../../filesystem/assetsLoader'
 import { FileNotFoundError } from '../../filesystem/fileLoader'
-import { AdvancedSprite, createHitmapFromImageBytes } from '../rendering'
+import { AdvancedSprite, createHitmapFromImageBytes, mergeAlpha } from '../rendering'
 import { method, int } from '../../common/types'
 import { CollisionsComponent } from '../components/collisions'
 import { Sound } from '../audio'
@@ -43,6 +43,7 @@ export class Animo extends DisplayType<AnimoDefinition> {
     private visibleWithoutSprite: boolean | null = null
 
     private textures = new Map<number, PIXI.Texture>()
+    private originalPixels = new Map<PIXI.BaseTexture, Uint8Array>()
     private hitmaps = new Map<number, Uint8Array>()
     private sounds = new Map<string, Sound>()
 
@@ -496,6 +497,38 @@ export class Animo extends DisplayType<AnimoDefinition> {
     @method()
     SETFORWARD() {
         this.backward = false
+    }
+
+    // Cuts another object's alpha into the current frame, starting from the frame's original pixels, so
+    // only the latest position of the mask is visible. (x, y) are relative to the ANIMO's position.
+    // Wehikuł Czasu's CIEMNAJASKINIA moves a light around Reksio through a dark overlay this way.
+    @method()
+    MERGEALPHA(x: int, y: int, name: string) {
+        assert(this.sprite !== null)
+        const baseTexture = this.sprite.texture.baseTexture
+        const pixels = (baseTexture.resource as PIXI.BufferResource).data as Uint8Array
+        let originalPixels = this.originalPixels.get(baseTexture)
+        if (originalPixels === undefined) {
+            originalPixels = pixels.slice()
+            this.originalPixels.set(baseTexture, originalPixels)
+        }
+        pixels.set(originalPixels)
+
+        const other = this.getObject<DisplayType<any>>(name)?.getRenderObject() ?? null
+        if (other !== null && other.hitmap !== undefined) {
+            const offset = this.getFrameOffset()
+            mergeAlpha(
+                pixels,
+                baseTexture.width,
+                baseTexture.height,
+                x - offset.x,
+                y - offset.y,
+                other.hitmap,
+                other.texture.width,
+                other.texture.height
+            )
+        }
+        baseTexture.update()
     }
 
     // SETANCHOR(x, y) sets the anchor point in pixels relative to the animation's origin,

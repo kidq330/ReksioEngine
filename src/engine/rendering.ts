@@ -210,6 +210,33 @@ export const createHitmapFromImageBytes = (bytes: Uint8Array) => {
     return hitmap
 }
 
+// Lowers the alpha of RGBA pixels to a mask's alpha where the mask, placed at (x, y), covers them
+export const mergeAlpha = (
+    pixels: Uint8Array,
+    width: number,
+    height: number,
+    x: number,
+    y: number,
+    mask: Uint8Array,
+    maskWidth: number,
+    maskHeight: number
+) => {
+    for (let my = 0; my < maskHeight; my++) {
+        const py = y + my
+        if (py < 0 || py >= height) {
+            continue
+        }
+        for (let mx = 0; mx < maskWidth; mx++) {
+            const px = x + mx
+            if (px < 0 || px >= width) {
+                continue
+            }
+            const alphaIndex = (py * width + px) * 4 + 3
+            pixels[alphaIndex] = Math.min(pixels[alphaIndex], mask[my * maskWidth + mx])
+        }
+    }
+}
+
 export const drawRectangle = (
     graphics: Graphics,
     dimensions: Rectangle,

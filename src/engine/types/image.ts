@@ -3,7 +3,7 @@ import { ImageDefinition } from '../../fileFormats/cnv/types'
 import { assert } from '../../common/errors'
 import { Container, Graphics, Point, Sprite } from 'pixi.js'
 import { loadSprite } from '../../filesystem/assetsLoader'
-import { AdvancedSprite } from '../rendering'
+import { AdvancedSprite, mergeAlpha } from '../rendering'
 import { method, int } from '../../common/types'
 import { ButtonLogicComponent, Event as FSMEvent, State } from '../components/button'
 import * as PIXI from 'pixi.js'
@@ -185,24 +185,16 @@ export class Image extends DisplayType<ImageDefinition> {
             return
         }
 
-        const width = baseTexture.width
-        const height = baseTexture.height
-        const maskWidth = other.texture.width
-        const maskHeight = other.texture.height
-        for (let my = 0; my < maskHeight; my++) {
-            const py = y + my
-            if (py < 0 || py >= height) {
-                continue
-            }
-            for (let mx = 0; mx < maskWidth; mx++) {
-                const px = x + mx
-                if (px < 0 || px >= width) {
-                    continue
-                }
-                const alphaIndex = (py * width + px) * 4 + 3
-                pixels[alphaIndex] = Math.min(pixels[alphaIndex], other.hitmap[my * maskWidth + mx])
-            }
-        }
+        mergeAlpha(
+            pixels,
+            baseTexture.width,
+            baseTexture.height,
+            x,
+            y,
+            other.hitmap,
+            other.texture.width,
+            other.texture.height
+        )
         baseTexture.update()
     }
 
