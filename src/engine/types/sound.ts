@@ -72,6 +72,12 @@ export class Sound extends Type<SoundDefinition> {
         this.destroy()
     }
 
+    // 0..1000
+    @method()
+    SETVOLUME(volume: int) {
+        this.sound?.setVolume(Math.max(0, Math.min(1000, volume)) / 1000)
+    }
+
     @method()
     SETFREQ(frequency: int) {
         if (this.sound === null) {

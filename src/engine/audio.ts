@@ -200,6 +200,7 @@ export class Sound {
     public instances: SoundInstance[] = []
     // Playback rate relative to the original one, independent of the global speed
     public rate: number = 1
+    public volume: number = 1
 
     constructor(
         private manager: AudioManager,
@@ -213,6 +214,11 @@ export class Sound {
         this.instances.forEach((instance) => (instance.speed = this.rate * this.manager.speed))
     }
 
+    setVolume(volume: number) {
+        this.volume = volume
+        this.instances.forEach((instance) => (instance.volume = volume))
+    }
+
     _removeInstance(inst: SoundInstance) {
         const i = this.instances.indexOf(inst)
         if (i >= 0) {
@@ -223,6 +229,7 @@ export class Sound {
     play(opts: PlayOptions = {}) {
         const instance = new SoundInstance(this.manager.ctx, this, this.manager.master, {
             rate: this.rate * this.manager.speed,
+            volume: this.volume,
             ...opts,
         })
         this.instances.push(instance)
