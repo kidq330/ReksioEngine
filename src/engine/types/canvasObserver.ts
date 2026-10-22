@@ -30,6 +30,15 @@ export class CanvasObserver extends Type<CanvasObserverDefinition> {
         this.engine.rendering.moveBackground(x, y)
     }
 
+    @method()
+    SETBKGPOS(x: int, y: int) {
+        this.engine.rendering.setBackgroundPosition(x, y)
+    }
+
+    // Enables ONWINDOWFOCUSON/OFF notifications in the original; window focus isn't tracked
+    @method()
+    ENABLENOTIFY(enabled: boolean) {}
+
     // The canvas is redrawn every frame, so redrawing immediately is the same as REFRESH
     @method()
     REDRAW() {

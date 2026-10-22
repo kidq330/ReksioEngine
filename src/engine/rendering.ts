@@ -42,6 +42,10 @@ export class RenderingManager {
         this.canvasBackground.texture = texture
     }
 
+    setBackgroundPosition(x: number, y: number) {
+        this.canvasBackground.position.set(x, y)
+    }
+
     moveBackground(x: number, y: number) {
         this.canvasBackground.x += x
         this.canvasBackground.y += y
