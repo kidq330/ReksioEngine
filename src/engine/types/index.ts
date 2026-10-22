@@ -53,6 +53,23 @@ export class Type<DefinitionType extends TypeDefinition> {
         }
     }
 
+    // Removes clones number `from` to `to` (1-based, inclusive); -1 means all of them
+    removeClones(from: number = -1, to: number = -1) {
+        const first = from < 1 ? 1 : from
+        const last = to < 1 ? this.clones.length : Math.min(to, this.clones.length)
+        const removed = this.clones.slice(first - 1, last)
+        for (const clone of removed) {
+            clone.destroy()
+            this.parentScope?.remove(clone.name)
+        }
+        this.clones = this.clones.filter((clone) => !removed.includes(clone))
+    }
+
+    @method()
+    RESETCLONES() {
+        this.removeClones()
+    }
+
     @method()
     GETCLONEINDEX(): int {
         const object = this.getObject(this.definition.NAME)

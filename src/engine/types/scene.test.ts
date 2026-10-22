@@ -8,6 +8,17 @@ describe('SCENE', () => {
         engine = new TestEngine()
     })
 
+    test('REMOVECLONES removes a range of clones and RESETCLONES all of them', async () => {
+        const a = engine.integer('A')
+        await engine.run('A^CLONE(3);SCENE^REMOVECLONES("A",2,2);')
+        expect(a.clones.map((clone) => clone.name)).toEqual(['A_1', 'A_3'])
+        expect(engine.getObject('A_2')).toBeNull()
+
+        await engine.run('A^RESETCLONES();')
+        expect(a.clones).toEqual([])
+        expect(engine.getObject('A_3')).toBeNull()
+    })
+
     test('PAUSE stops running objects and RESUME continues only those', async () => {
         await engine.load(`
 OBJECT=RUNNING

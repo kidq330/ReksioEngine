@@ -147,6 +147,11 @@ export class Scene extends ParentType<SceneDefinition> {
     }
 
     @method()
+    REMOVECLONES(objectName: string, from: int, to: int) {
+        this.getObject(objectName)?.removeClones(from, to)
+    }
+
+    @method()
     ISPAUSED(): boolean {
         return this.pausedObjects !== null
     }
