@@ -2,6 +2,7 @@ import { BinaryBuffer } from '../utils'
 import { decompressCLZW as CLZWDecompress } from '../compression/clzw'
 import { decompressCRLE as CRLEDecompress } from '../compression/crle'
 import { CompressionType } from '../compression'
+import { decode as decodeJpeg } from 'jpeg-js'
 
 export interface CompressedImageHeader {
     compressionType: number
@@ -208,8 +209,16 @@ const decompressImageData = (buffer: BinaryBuffer, descriptor: CompressionDescri
                     descriptor.pixelLen
                 )
             )
-        case CompressionType.JPEG:
-            throw new Error(`Unsupported compression type: ${descriptor.compressionType}`)
+        case CompressionType.JPEG: {
+            // The original draws into a 16-bit surface, so the decoded colors are reduced to RGB565 too
+            const jpeg = decodeJpeg(new Uint8Array(buffer.read(descriptor.compressedLen)), {
+                useTArray: true,
+                formatAsRGBA: true,
+            })
+            return new Uint8Array(
+                extractRgb565(new Uint8ClampedArray(jpeg.data.buffer, jpeg.data.byteOffset, jpeg.data.length)).buffer
+            )
+        }
         default:
             throw new Error(`Unknown compression type: ${descriptor.compressionType}`)
     }
