@@ -1,7 +1,7 @@
 import { Type } from './index'
 import { TextDefinition } from '../../fileFormats/cnv/types'
 import * as PIXI from 'pixi.js'
-import { method } from '../../common/types'
+import { method, int } from '../../common/types'
 import { BitmapText } from 'pixi.js'
 import { Font } from './font'
 
@@ -33,6 +33,21 @@ export class Text extends Type<TextDefinition> {
     destroy() {
         if (this.text) {
             this.engine.rendering.removeFromStage(this.text)
+        }
+    }
+
+    @method()
+    SETCOLOR(r: int, g: int, b: int) {
+        if (this.text) {
+            this.text.tint = ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff)
+        }
+    }
+
+    @method()
+    SETPOSITION(x: int, y: int) {
+        if (this.text) {
+            this.text.x = x
+            this.text.y = y
         }
     }
 
