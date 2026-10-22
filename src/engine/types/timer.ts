@@ -71,6 +71,11 @@ export class Timer extends Type<TimerDefinition> {
     }
 
     @method()
+    GETTICKS(): int {
+        return this.currentTick
+    }
+
+    @method()
     RESET() {
         this.collectedTime = 0
         this.currentTick = 0
