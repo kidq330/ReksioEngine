@@ -26,6 +26,7 @@ export class Animo extends DisplayType<AnimoDefinition> {
     private buttonInteractArea: Graphics | null = null
 
     private fps: number = 16
+    private backward = false
     private timeSinceLastFrame: number = 0
 
     private positionX: number = 0
@@ -281,7 +282,13 @@ export class Animo extends DisplayType<AnimoDefinition> {
             }
         }
 
-        if (event.loopFramesEndIndex !== 0 && this.currentFrame === event.loopFramesEndIndex) {
+        if (this.backward) {
+            if (this.currentFrame <= 0) {
+                this.eventEndedLastTick = this.currentEvent
+            } else {
+                this.currentFrame--
+            }
+        } else if (event.loopFramesEndIndex !== 0 && this.currentFrame === event.loopFramesEndIndex) {
             // TODO: handle event.loopRepeatsCount
             this.currentFrame = event.loopFramesStartIndex
         } else if (this.currentFrame + 1 >= event.framesCount) {
@@ -450,6 +457,16 @@ export class Animo extends DisplayType<AnimoDefinition> {
     @method()
     RESUME() {
         this.isPlaying = true
+    }
+
+    @method()
+    SETBACKWARD() {
+        this.backward = true
+    }
+
+    @method()
+    SETFORWARD() {
+        this.backward = false
     }
 
     @method()
