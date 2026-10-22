@@ -5,7 +5,7 @@ import { Image } from './image'
 import { FederatedPointerEvent, Graphics, Point, Rectangle } from 'pixi.js'
 import { ButtonLogicComponent, Event, State } from '../components/button'
 import { Animo } from './animo'
-import { assert, NotImplementedError } from '../../common/errors'
+import { assert } from '../../common/errors'
 import { reference } from '../../fileFormats/common'
 import { method, int } from '../../common/types'
 
@@ -279,7 +279,63 @@ export class Button extends Type<ButtonDefinition> {
 
     @method()
     SETSTD(graphicObjectName: string, removeFromCanvas: boolean = false, onBoundingBox: boolean = false) {
-        throw new NotImplementedError()
+        const graphic = this.getGraphic(graphicObjectName)
+        const interactive = this.interactArea === null && this.logic.enabled
+
+        if (this.gfxStandard !== null) {
+            if (interactive) {
+                this.unregisterInteractive(this.gfxStandard)
+            }
+            if (this.gfxStandard !== this.gfxOnClick && this.gfxStandard !== this.gfxOnMove) {
+                this.gfxStandard.HIDE()
+            }
+        }
+
+        this.gfxStandard = graphic
+        if (graphic !== null) {
+            this.prepareGraphic(graphic)
+            if (interactive) {
+                this.registerInteractive(graphic)
+            }
+            if (this.logic.state !== State.DISABLED) {
+                graphic.SHOW()
+            }
+        }
+    }
+
+    @method()
+    SETONCLICK(graphicObjectName: string) {
+        this.gfxOnClick = this.replaceStateGraphic(this.gfxOnClick, graphicObjectName)
+    }
+
+    @method()
+    SETONMOVE(graphicObjectName: string) {
+        this.gfxOnMove = this.replaceStateGraphic(this.gfxOnMove, graphicObjectName)
+    }
+
+    // Graphics shown only while hovered or pressed start hidden, the next state change shows them
+    private replaceStateGraphic(previous: Image | Animo | null, graphicObjectName: string) {
+        if (previous !== null && previous !== this.gfxStandard) {
+            previous.HIDE()
+        }
+        const graphic = this.getGraphic(graphicObjectName)
+        if (graphic !== null) {
+            this.prepareGraphic(graphic)
+            if (graphic !== this.gfxStandard) {
+                graphic.HIDE()
+            }
+        }
+        return graphic
+    }
+
+    // An empty name removes the graphic
+    private getGraphic(graphicObjectName: string): Image | Animo | null {
+        if (graphicObjectName === '') {
+            return null
+        }
+        const graphic = this.getObject(graphicObjectName)
+        assert(graphic instanceof Image || graphic instanceof Animo, `'${graphicObjectName}' is not an IMAGE or ANIMO`)
+        return graphic
     }
 
     private registerInteractive(object: Image | Animo) {
