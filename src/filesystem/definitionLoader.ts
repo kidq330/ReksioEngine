@@ -39,6 +39,7 @@ import { Database } from '../engine/types/database'
 import { Class } from '../engine/types/class'
 import { logger } from '../engine/logging'
 import { World } from '../engine/types/world'
+import { Pattern } from '../engine/types/pattern'
 import { captureStackTrace, popStackFrame, pushStackFrame, StackFrame } from '../interpreter/stacktrace'
 import { Matrix } from '../engine/types/matrix'
 
@@ -104,6 +105,8 @@ const createTypeInstance = (engine: Engine, parent: ParentType<any> | null, defi
             return new Sequence(engine, parent, definition)
         case 'SOUND':
             return new Sound(engine, parent, definition)
+        case 'PATTERN':
+            return new Pattern(engine, parent, definition)
         case 'STATICFILTER':
             return new StaticFilter(engine, parent, definition)
         case 'STRING':

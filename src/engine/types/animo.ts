@@ -292,6 +292,14 @@ export class Animo extends DisplayType<AnimoDefinition> {
         }
     }
 
+    // Offset of the current frame's image from the object's position
+    getFrameOffset() {
+        return {
+            x: this.positionOffsetX - this.anchorOffsetX,
+            y: this.positionOffsetY - this.anchorOffsetY,
+        }
+    }
+
     public syncPosition() {
         assert(this.sprite !== null)
         this.sprite.x =

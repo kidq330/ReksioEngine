@@ -396,10 +396,28 @@ const MusicStructure = {
     FILENAME: string,
 }
 
-export type PatternDefinition = TypeDefinition
+export type PatternDefinition = TypeDefinition & {
+    VISIBLE?: boolean
+    TOCANVAS?: boolean
+    PRIORITY?: number
+    WIDTH?: number
+    HEIGHT?: number
+    GRIDX?: number
+    GRIDY?: number
+    LAYERS?: number
+    ONINIT?: callback
+}
 
 const PatterDefinitionStructure = {
-    // TODO
+    VISIBLE: optional(boolean),
+    TOCANVAS: optional(boolean),
+    PRIORITY: optional(number),
+    WIDTH: optional(number),
+    HEIGHT: optional(number),
+    GRIDX: optional(number),
+    GRIDY: optional(number),
+    LAYERS: optional(number),
+    ONINIT: optional(callback),
 }
 
 export type RandDefinition = TypeDefinition
