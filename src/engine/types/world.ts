@@ -37,6 +37,9 @@ type Body = {
     followSpeed: number
     lastMoveDistance: number
     angle: number
+    // Strength of the attraction of a gravity center (SETG), and the centers that attract this body
+    gravityStrength: number
+    attractors: number[]
 }
 
 type Graph = {
@@ -170,6 +173,32 @@ export class World extends Type<WorldDefinition> {
         force.z += z
     }
 
+    // Gravity centers attract other bodies with SETG / distance² (Wehikuł Czasu's NUREK and SAMOCHODZIK)
+    @method()
+    SETGRAVITYCENTER(id: int, enabled: boolean) {
+        if (!enabled) {
+            this.getBody(id).gravityStrength = 0
+        }
+    }
+
+    @method()
+    SETG(id: int, strength: double) {
+        this.getBody(id).gravityStrength = strength
+    }
+
+    @method()
+    ADDGRAVITYEX(id: int, centerId: int, enabled: boolean = true) {
+        const body = this.getBody(id)
+        body.attractors = body.attractors.filter((attractor) => attractor !== centerId)
+        if (enabled) {
+            body.attractors.push(centerId)
+        }
+    }
+
+    // Mass, friction and damping parameters of the physics engine aren't simulated
+    @method()
+    SETBODYDYNAMICS(id: int, ...args: double[]) {}
+
     @method()
     SETMAXSPEED(id: int, speed: double) {
         this.getBody(id).maxSpeed = speed
@@ -214,6 +243,12 @@ export class World extends Type<WorldDefinition> {
     // Direction of the last movement in degrees, 0 is right and 90 is up
     @method()
     GETANGLE(id: int): double {
+        return this.getBody(id).angle
+    }
+
+    // Bodies don't rotate on their own, report the direction of movement
+    @method()
+    GETROTATIONZ(id: int): double {
         return this.getBody(id).angle
     }
 
@@ -326,6 +361,8 @@ export class World extends Type<WorldDefinition> {
                 followSpeed: 0,
                 lastMoveDistance: 0,
                 angle: 0,
+                gravityStrength: 0,
+                attractors: [],
             }
             this.bodies.set(id, body)
         }
@@ -356,6 +393,21 @@ export class World extends Type<WorldDefinition> {
     }
 
     private integrate(body: Body, seconds: number) {
+        for (const centerId of body.attractors) {
+            const center = this.bodies.get(centerId)
+            if (center === undefined || center.gravityStrength === 0) {
+                continue
+            }
+            const dx = center.position.x - body.position.x
+            const dy = center.position.y - body.position.y
+            const dz = center.position.z - body.position.z
+            const distance = Math.max(Math.hypot(dx, dy, dz), GRAPH_CELL_SIZE)
+            const acceleration = center.gravityStrength / (distance * distance)
+            body.force.x += (dx / distance) * acceleration * body.mass
+            body.force.y += (dy / distance) * acceleration * body.mass
+            body.force.z += (dz / distance) * acceleration * body.mass
+        }
+
         const v = body.velocity
         v.x += (this.gravity.x + body.force.x / body.mass) * seconds
         v.y += (this.gravity.y + body.force.y / body.mass) * seconds

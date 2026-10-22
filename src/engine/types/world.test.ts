@@ -38,6 +38,16 @@ describe('WORLD', () => {
         expect(world.GETANGLE(1)).toBeCloseTo(45)
     })
 
+    test('gravity centers attract bodies', async () => {
+        await engine.run(
+            'W^SETPOSITION(1,400,300,0);W^SETPOSITION(2,500,300,0);W^SETGRAVITYCENTER(1,TRUE);W^SETG(1,1000000);W^ADDGRAVITYEX(2,1,TRUE);W^START();'
+        )
+        await step(0.1)
+
+        expect(world.GETPOSITIONX(2)).toBeLessThan(500)
+        expect(world.GETPOSITIONX(1)).toBe(400)
+    })
+
     test('nothing moves until START', async () => {
         await engine.run('W^SETPOSITION(1,400,300,0);W^SETVELOCITY(1,100,0,0);')
         await step(0.1)
