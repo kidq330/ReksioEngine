@@ -1,7 +1,7 @@
 import { reference } from '../fileFormats/common'
 import { ScriptingManager } from './scripting'
 import { loadDefinition, doReady } from '../filesystem/definitionLoader'
-import { Application, Rectangle, Sprite, Texture } from 'pixi.js'
+import { Application, DisplayObject, Rectangle, Sprite, Texture } from 'pixi.js'
 import { Scene } from './types/scene'
 import { loadSound, loadTexture } from '../filesystem/assetsLoader'
 import { SaveFile, SaveFileManager } from './saveFile'
@@ -29,6 +29,8 @@ export class Engine {
 
     public currentScene: Scene | null = null
     public previousScene: Scene | null = null
+    // Display objects that existed before the current scene was loaded (owned by application/episode objects)
+    private stageObjectsBeforeScene: Set<DisplayObject> = new Set()
 
     public saveFile: SaveFile
 
@@ -178,13 +180,17 @@ export class Engine {
             // Alert when rendering stage wasn't completely cleared after all destroys.
             // For debugging purposes.
             const leakedObjects = this.app.stage.children.filter(
-                (obj) => ![loadingFreezeOverlay, this.rendering.canvasBackground].includes(obj as any)
+                (obj) =>
+                    ![loadingFreezeOverlay, this.rendering.canvasBackground].includes(obj as any) &&
+                    !this.stageObjectsBeforeScene.has(obj)
             )
-            if (leakedObjects.length > 0) {
+            if (scopeToClear && leakedObjects.length > 0) {
                 logger.error('Display objects leak detected', {
                     leakedObjects,
                 })
             }
+
+            this.stageObjectsBeforeScene = new Set(this.app.stage.children)
 
             this.previousScene = this.currentScene
             this.currentScene = this.getObject<Scene>(sceneName)
