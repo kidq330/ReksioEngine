@@ -1,7 +1,6 @@
 import { Type } from './index'
 import { MouseDefinition } from '../../fileFormats/cnv/types'
 import { FederatedPointerEvent, Point } from 'pixi.js'
-import { NotImplementedError } from '../../common/errors'
 import { method, int } from '../../common/types'
 
 type MouseEvent = {
@@ -144,8 +143,9 @@ export class Mouse extends Type<MouseDefinition> {
 
     @method()
     SETPOSITION(x: int, y: int) {
-        // This is kinda impossible. We would have to hide cursor and emulate it.
-        throw new NotImplementedError()
+        // Browsers can't move the system cursor, so only the position reported to scripts changes
+        // until the next real mouse move
+        this.mousePosition = new Point(x, y)
     }
 
     private onMouseMove(event: FederatedPointerEvent) {
