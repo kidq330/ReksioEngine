@@ -90,9 +90,13 @@ export class Integer extends ValueType<IntegerDefinition, number> {
         return await this.setValue(Math.abs(value))
     }
 
+    // RANDOM(range) or RANDOM(offset, range)
     @method()
-    async RANDOM(offset: int, range: int): Promise<int> {
-        return Math.floor(Math.random() * range) + offset
+    async RANDOM(offsetOrRange: int, range?: int): Promise<int> {
+        if (range === undefined) {
+            return Math.floor(Math.random() * offsetOrRange)
+        }
+        return Math.floor(Math.random() * range) + offsetOrRange
     }
 
     getValue(): number {
