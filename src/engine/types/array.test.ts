@@ -102,6 +102,11 @@ describe('ARRAY', () => {
         expect(array.getValue().map((element) => element?.getValue())).toEqual([10, 15, 2])
     })
 
+    test('SUB subtracts the value from every element', async () => {
+        await engine.run('ARR^ADD(0, 800, 1.5);ARR^SUB(-100);')
+        expect(array.getValue().map((element) => element?.getValue())).toEqual([100, 900, 101.5])
+    })
+
     test('ADDAT keeps the type of the element', async () => {
         await engine.run('ARR^ADD(5);ARR^ADDAT(0, 1.5);')
         expect(array.getValue()[0]).toBeInstanceOf(Integer)

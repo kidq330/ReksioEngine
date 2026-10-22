@@ -119,6 +119,14 @@ export class ArrayObject extends ValueType<ArrayDefinition, (ScalarValue | null)
         }
     }
 
+    // Subtracts the value from every element (Czarodzieje's DRAGON shifts the positions of its scrolling backgrounds)
+    @method()
+    async SUB(value: double) {
+        for (let i = 0; i < this.value.length; i++) {
+            await this.modifyAt(i, 'SUB', value)
+        }
+    }
+
     @method()
     async SUBAT(position: int, value: double) {
         await this.modifyAt(position, 'SUB', value)
