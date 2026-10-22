@@ -9,6 +9,11 @@ import { logger } from '../logging'
 
 export class Sound extends Type<SoundDefinition> {
     private sound: ISound | null = null
+
+    // The loaded audio, SEQUENCE speaking entries can play it directly
+    get audio() {
+        return this.sound
+    }
     private callbacksQueue: string[] = []
 
     async init() {

@@ -16,6 +16,7 @@ import { loadSound } from '../../filesystem/assetsLoader'
 import { createObject } from '../../filesystem/definitionLoader'
 import { method } from '../../common/types'
 import { Sound, SoundInstance } from '../audio'
+import { Sound as SoundObject } from './sound'
 import { logger } from '../logging'
 
 const paramsCharacterSet = '123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz{|}~'
@@ -283,13 +284,20 @@ export class Sequence extends Type<SequenceDefinition> {
                 logger.debug(`Playing sound '${speaking.WAVFN}'`, {
                     sequence: this,
                 })
-                const sound = this.sounds.get(speaking.WAVFN)
+                // WAVFN is a file name or the name of a SOUND object (Czarodzieje's SEQBLANK plays SNDATGOAL,
+                // which scripts LOAD before playing the sequence)
+                const soundObject = this.getObject(speaking.WAVFN)
+                const sound =
+                    this.sounds.get(speaking.WAVFN) ?? (soundObject instanceof SoundObject ? soundObject.audio : null)
                 if (sound) {
                     this.playingSound = sound.play({
                         onEnd: () => {
                             this.endedSpeakingSoundsQueue.push(speaking)
                         },
                     })
+                } else {
+                    // Without a sound nothing would end the speech
+                    this.endedSpeakingSoundsQueue.push(speaking)
                 }
 
                 const startEvent = speaking.PREFIX + '_START'
