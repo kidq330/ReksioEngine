@@ -42,6 +42,8 @@ export class Sequence extends Type<SequenceDefinition> {
 
     private loop: boolean = false
     private loopIndex: number = 0
+    private paused = false
+    private progressPending = false
 
     private readonly onAnimoEventFinishedCallback: (eventName: string) => Promise<void>
 
@@ -151,6 +153,7 @@ export class Sequence extends Type<SequenceDefinition> {
             const entryIndex = this.parametersMapping.get(sequenceName)!
             const entry = subEntries[entryIndex]
             this.sequenceName = sequenceName
+            this.runningSubSequence = null
             this.fillQueue(entry)
             await this.progressNext()
         }
@@ -174,14 +177,21 @@ export class Sequence extends Type<SequenceDefinition> {
 
     @method()
     PAUSE() {
+        this.paused = true
         this.activeAnimo?.PAUSE()
         this.playingSound?.pause()
     }
 
+    // A sequence paused when an element finished continues with the next one
     @method()
-    RESUME() {
+    async RESUME() {
+        this.paused = false
         this.activeAnimo?.RESUME()
         this.playingSound?.resume()
+        if (this.progressPending) {
+            this.progressPending = false
+            await this.progressNext()
+        }
     }
 
     @method()
@@ -191,6 +201,8 @@ export class Sequence extends Type<SequenceDefinition> {
         this.runningSubSequence = null
         this.loop = false
         this.loopIndex = 0
+        this.paused = false
+        this.progressPending = false
         this.activeAnimo?.events.unregister(Animo.Events.ONFINISHED, this.onAnimoEventFinishedCallback)
         this.activeAnimo = null
         this.playingSound?.stop()
@@ -244,6 +256,27 @@ export class Sequence extends Type<SequenceDefinition> {
 
     private async progressNext() {
         if (this.sequenceName === null) {
+            return
+        }
+
+        // ONFINISHED^<element> runs when an element of the sequence finishes. Wehikuł Czasu's intro pauses the
+        // sequence there and resumes it later. Only parametrised handlers run, so default handlers keep
+        // running once per sequence.
+        const finished = this.runningSubSequence
+        this.runningSubSequence = null
+        if (
+            finished !== null &&
+            finished.NAME !== this.sequenceName &&
+            this.callbacks.hasParametrized('ONFINISHED', finished.NAME)
+        ) {
+            const sequenceName = this.sequenceName
+            await this.callbacks.run('ONFINISHED', finished.NAME)
+            if (this.sequenceName !== sequenceName) {
+                return
+            }
+        }
+        if (this.paused) {
+            this.progressPending = true
             return
         }
 

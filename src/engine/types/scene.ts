@@ -134,15 +134,16 @@ export class Scene extends ParentType<SceneDefinition> {
     }
 
     @method()
-    RESUME() {
-        for (const object of this.pausedObjects ?? []) {
+    async RESUME() {
+        const pausedObjects = this.pausedObjects ?? []
+        this.pausedObjects = null
+        for (const object of pausedObjects) {
             if (object instanceof Timer) {
                 object.ENABLE()
             } else {
-                object.RESUME()
+                await object.RESUME()
             }
         }
-        this.pausedObjects = null
     }
 
     @method()
