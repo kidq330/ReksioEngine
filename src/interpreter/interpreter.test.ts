@@ -66,6 +66,14 @@ describe('interpreter', () => {
         expect(a.getValue()).toBe(52)
     })
 
+    test('a substituted argument starting with a digit stays text unless it is a number', async () => {
+        const s = engine.string('S')
+        const a = engine.integer('A')
+        await engine.run('S^SET($1);A^SET($1);', ['1_ENEMY0.ANN'])
+        expect(s.getValue()).toBe('1_ENEMY0.ANN')
+        expect(a.getValue()).toBe(1)
+    })
+
     test('spaces are removed from the code', async () => {
         const a = engine.integer('MYVAR')
         await engine.run('MY VAR ^ SET(5 2);')

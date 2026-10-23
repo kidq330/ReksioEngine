@@ -419,6 +419,11 @@ export class Interpreter {
 
         switch (param.type) {
             case 'NumberLiteral': {
+                // Text starting with a digit that isn't a number stays text, e.g. a substituted file name:
+                // ANNENEMY^LOAD($2) with $2 = 1_ENEMY0.ANN (Kapitan Nemo's EIFELTOWER)
+                if (isNaN(Number(param.value))) {
+                    return createString(engine, param.value)
+                }
                 const value = ForceNumber(param.value)
                 return String(param.value).includes('.') ? createDouble(engine, value) : createInteger(engine, value)
             }
