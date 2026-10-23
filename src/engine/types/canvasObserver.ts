@@ -7,6 +7,7 @@ import { AdvancedSprite } from '../rendering'
 import { assert } from '../../common/errors'
 import { buildImage } from '../../fileFormats/img'
 import { logger } from '../logging'
+import { Animo } from './animo'
 
 export class CanvasObserver extends Type<CanvasObserverDefinition> {
     @method()
@@ -35,6 +36,21 @@ export class CanvasObserver extends Type<CanvasObserverDefinition> {
     @method()
     SETBKGPOS(x: int, y: int) {
         this.engine.rendering.setBackgroundPosition(-x, -y)
+    }
+
+    // Stamps the object's current graphic into the background as if the object stood at (x, y) of the
+    // background. Kapitan Nemo builds level maps this way, e.g. PASTE("ANNPOLA",[IX*IGRID],[IY*IGRID]).
+    @method()
+    PASTE(objectName: string, x: int, y: int) {
+        const object = this.engine.getObject(objectName)
+        const sprite = object instanceof DisplayType ? object.getRenderObject() : null
+        if (sprite === null) {
+            logger.warn(`PASTE: '${objectName}' has no graphic to paste`)
+            return
+        }
+
+        const offset = object instanceof Animo ? object.getFrameOffset() : { x: 0, y: 0 }
+        this.engine.rendering.pasteOnBackground(sprite, x + offset.x, y + offset.y)
     }
 
     // Enables ONWINDOWFOCUSON/OFF notifications in the original; window focus isn't tracked

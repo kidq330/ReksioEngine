@@ -1,4 +1,4 @@
-import { Application, DisplayObject, Graphics, IPointData, Rectangle, Sprite, Texture } from 'pixi.js'
+import { Application, DisplayObject, Graphics, IPointData, Rectangle, RenderTexture, Sprite, Texture } from 'pixi.js'
 import { assert } from '../common/errors'
 import { DisplayType, Type } from './types'
 import loadingCursor from '../../static/loading-cursor.png'
@@ -9,6 +9,8 @@ export class RenderingManager {
 
     public readonly canvasBackground: Sprite
     private readonly blackTexture
+    // The background with graphics pasted onto it, see pasteOnBackground
+    private pastedBackground: RenderTexture | null = null
 
     private dirtyRects: Rectangle[] = []
     private readonly owners = new WeakMap<DisplayObject, Type<any>>()
@@ -39,7 +41,30 @@ export class RenderingManager {
     }
 
     setBackground(texture: Texture) {
+        this.releasePastedBackground()
         this.canvasBackground.texture = texture
+    }
+
+    // Draws a sprite into the background image with its top-left corner at (x, y) of the background, where it
+    // stays after the sprite changes (CANVAS_OBSERVER^PASTE)
+    pasteOnBackground(sprite: Sprite, x: number, y: number) {
+        if (this.pastedBackground === null) {
+            const original = this.canvasBackground.texture
+            this.pastedBackground = RenderTexture.create({ width: original.width, height: original.height })
+            this.app.renderer.render(new Sprite(original), { renderTexture: this.pastedBackground })
+            this.canvasBackground.texture = this.pastedBackground
+        }
+
+        const stamp = new Sprite(sprite.texture)
+        stamp.anchor.copyFrom(sprite.anchor)
+        stamp.scale.copyFrom(sprite.scale)
+        stamp.position.set(x + stamp.width * stamp.anchor.x, y + stamp.height * stamp.anchor.y)
+        this.app.renderer.render(stamp, { renderTexture: this.pastedBackground, clear: false })
+    }
+
+    private releasePastedBackground() {
+        this.pastedBackground?.destroy(true)
+        this.pastedBackground = null
     }
 
     setBackgroundPosition(x: number, y: number) {
@@ -52,6 +77,7 @@ export class RenderingManager {
     }
 
     clearBackground() {
+        this.releasePastedBackground()
         this.canvasBackground.texture = this.blackTexture
     }
 
