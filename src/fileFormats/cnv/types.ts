@@ -535,7 +535,9 @@ const SystemDefinitionStructure = {}
 
 export type TextDefinition = TypeDefinition & {
     VISIBLE: boolean
-    VJUSTIFY?: boolean
+    // LEFT/CENTER/RIGHT and TOP/CENTER/BOTTOM; VJUSTIFY is also TRUE in older games
+    HJUSTIFY?: string
+    VJUSTIFY?: string
     TOCANVAS: boolean
     TEXT?: string
     RECT: Array<number>
@@ -548,7 +550,8 @@ export type TextDefinition = TypeDefinition & {
 
 const TextDefinitionStructure = {
     VISIBLE: boolean,
-    VJUSTIFY: optional(boolean),
+    HJUSTIFY: optional(string),
+    VJUSTIFY: optional(string),
     TOCANVAS: boolean,
     TEXT: optional(string),
     RECT: array(number),
