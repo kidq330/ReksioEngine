@@ -15,6 +15,7 @@
         "lsp-check": "node lsp/dist/check.js",
         "sweep": "cross-env TS_NODE_PROJECT=scripts/tsconfig.json TS_NODE_TRANSPILE_ONLY=1 node -r ts-node/register scripts/sweep/sweep.ts",
         "probe": "cross-env TS_NODE_PROJECT=scripts/tsconfig.json TS_NODE_TRANSPILE_ONLY=1 node -r ts-node/register scripts/sweep/probe.ts",
+        "disasm": "cross-env TS_NODE_PROJECT=scripts/tsconfig.json TS_NODE_TRANSPILE_ONLY=1 node -r ts-node/register scripts/dll/disasm.ts",
         "typecheck-scripts": "tsc -p scripts/tsconfig.json"
     },
     "private": true,
