@@ -82,6 +82,17 @@ export class Double extends ValueType<DoubleDefinition, number> {
     }
 
     @method()
+    async CLAMP(min: double, max: double): Promise<double> {
+        return await this.setValue(Math.min(max, Math.max(this.value, min)))
+    }
+
+    // Replaces the value with its square root, e.g. D1^SET([[D1*D1]+[D2*D2]]);D1^SQRT(); (Kapitan Nemo)
+    @method()
+    async SQRT(): Promise<double> {
+        return await this.setValue(Math.sqrt(this.value))
+    }
+
+    @method()
     GET(): double {
         return this.value
     }
