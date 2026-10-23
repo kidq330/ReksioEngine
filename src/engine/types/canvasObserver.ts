@@ -26,9 +26,11 @@ export class CanvasObserver extends Type<CanvasObserverDefinition> {
         this.engine.rendering.redrawAll()
     }
 
+    // Scrolls the view like SETBKGPOS, so the background moves the other way: RiC's MIOTLY and Kapitan Nemo move
+    // the objects lying on it by -d along with MOVEBKG(d), e.g. GROUPPATTERN^MOVE(0,[0-DY]);MOVEBKG(0,DY)
     @method()
     MOVEBKG(x: int, y: int) {
-        this.engine.rendering.moveBackground(x, y)
+        this.engine.rendering.moveBackground(-x, -y)
     }
 
     // Sets the point of the background shown in the top-left corner of the screen. Wehikuł Czasu's ARCADE
