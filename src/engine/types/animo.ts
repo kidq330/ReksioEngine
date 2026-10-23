@@ -741,6 +741,17 @@ export class Animo extends DisplayType<AnimoDefinition> {
         return this.sprite.getGlobalPosition().y
     }
 
+    // The right and bottom edges of the current frame, e.g. the feet of a walking character (Kapitan Nemo)
+    @method()
+    GETENDX(): int {
+        return this.GETPOSITIONX() + this.GETWIDTH()
+    }
+
+    @method()
+    GETENDY(): int {
+        return this.GETPOSITIONY() + this.GETHEIGHT()
+    }
+
     @method()
     GETFRAMENAME(frameID?: string | int, iFrameNo?: int): string | null {
         assert(this.currentEvent !== null)
