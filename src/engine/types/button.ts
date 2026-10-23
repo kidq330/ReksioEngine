@@ -273,8 +273,13 @@ export class Button extends Type<ButtonDefinition> {
     }
 
     @method()
-    SETRECT(objectName: string) {
-        this.setRect({ objectName })
+    // An object's bounds, or the rectangle itself in Kapitan Nemo: BUTPPMGMUSIC0^SETRECT(730,210,745,225)
+    SETRECT(objectNameOrX1: string | int, y1?: int, x2?: int, y2?: int) {
+        if (y1 !== undefined && x2 !== undefined && y2 !== undefined) {
+            this.setRect([Number(objectNameOrX1), y1, x2, y2])
+        } else {
+            this.setRect({ objectName: String(objectNameOrX1) })
+        }
     }
 
     @method()
