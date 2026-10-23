@@ -18,6 +18,9 @@ export class Mouse extends Type<MouseDefinition> {
     private mouseMoveListener: any
     private mouseClickListener: any
     private mouseReleaseListener: any
+    private buttonsListener: any
+    // Pressed buttons as in PointerEvent.buttons, bit 0 is the left one
+    private buttons = 0
 
     private clicksQueue: MouseEvent[] = []
     private lastClicksTime: Record<string, number> = {}
@@ -81,8 +84,12 @@ export class Mouse extends Type<MouseDefinition> {
         this.mouseMoveListener = this.onMouseMove.bind(this)
         this.mouseClickListener = this.onMouseClick.bind(this)
         this.mouseReleaseListener = this.onMouseRelease.bind(this)
+        this.buttonsListener = (event: FederatedPointerEvent) => (this.buttons = event.buttons)
 
         this.engine.app.stage.addListener('pointermove', this.mouseMoveListener)
+        this.engine.app.stage.addListener('pointerdown', this.buttonsListener)
+        this.engine.app.stage.addListener('pointerup', this.buttonsListener)
+        this.engine.app.stage.addListener('pointerupoutside', this.buttonsListener)
         if (this.callbacks.has('ONCLICK') || this.callbacks.has('ONDBLCLICK')) {
             this.engine.app.stage.addListener('pointerdown', this.mouseClickListener)
         }
@@ -116,9 +123,13 @@ export class Mouse extends Type<MouseDefinition> {
         this.engine.app.stage.removeListener('pointermove', this.mouseMoveListener)
         this.engine.app.stage.removeListener('pointerdown', this.mouseClickListener)
         this.engine.app.stage.removeListener('pointerup', this.mouseReleaseListener)
+        this.engine.app.stage.removeListener('pointerdown', this.buttonsListener)
+        this.engine.app.stage.removeListener('pointerup', this.buttonsListener)
+        this.engine.app.stage.removeListener('pointerupoutside', this.buttonsListener)
         this.mouseMoveListener = undefined
         this.mouseClickListener = undefined
         this.mouseReleaseListener = undefined
+        this.buttonsListener = undefined
     }
 
     @method()
@@ -129,6 +140,11 @@ export class Mouse extends Type<MouseDefinition> {
     @method()
     HIDE() {
         this.engine.rendering.setCursor('none')
+    }
+
+    @method()
+    ISLBUTTONDOWN(): boolean {
+        return (this.buttons & 1) !== 0
     }
 
     @method()
@@ -150,6 +166,7 @@ export class Mouse extends Type<MouseDefinition> {
 
     private onMouseMove(event: FederatedPointerEvent) {
         this.moved = true
+        this.buttons = event.buttons
         this.mousePosition = this.getMousePosition(event)
     }
 
