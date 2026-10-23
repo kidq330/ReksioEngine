@@ -83,6 +83,7 @@ export class ClassInstance extends ParentType<TypeDefinition> {
             return
         }
 
-        await object.RUNC(...args)
+        // Methods return values with @RETURN, e.g. Kapitan Nemo's GSAVE^GET("CS_SCENE_NAME")
+        return await object.RUNC(...args)
     }
 }
