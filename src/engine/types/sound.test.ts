@@ -19,4 +19,16 @@ SFX:FILENAME=MISSING.WAV
         expect(ok.getValue()).toBe(true)
         expect(engine.getObject<Sound>('SFX')!.ISPLAYING()).toBe(false)
     })
+
+    test('a 0-byte WAV is a silent placeholder', async () => {
+        engine.addFile('Wavs/_PUSTY_SFX0.WAV', new ArrayBuffer(0))
+        await engine.load(`
+OBJECT=SFX
+SFX:TYPE=SOUND
+SFX:FILENAME=_PUSTY_SFX0.WAV
+`)
+        await engine.run('SFX^PLAY();')
+        expect(engine.getObject<Sound>('SFX')!.ISPLAYING()).toBe(false)
+        expect(engine.errors).toHaveLength(0)
+    })
 })

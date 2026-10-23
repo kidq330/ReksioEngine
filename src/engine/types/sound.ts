@@ -3,7 +3,7 @@ import { loadSound } from '../../filesystem/assetsLoader'
 import { SoundDefinition } from '../../fileFormats/cnv/types'
 import { FileNotFoundError } from '../../filesystem/fileLoader'
 import { method, int } from '../../common/types'
-import { Sound as ISound } from '../audio'
+import { EmptySoundError, Sound as ISound } from '../audio'
 import { logger } from '../logging'
 
 export class Sound extends Type<SoundDefinition> {
@@ -109,6 +109,9 @@ export class Sound extends Type<SoundDefinition> {
                     },
                     err
                 )
+            } else if (err instanceof EmptySoundError) {
+                // Kapitan Nemo ships 0-byte placeholders (e.g. _PUSTY_SFX0.WAV) for sounds that get LOADed later
+                this.sound = null
             } else {
                 throw err
             }

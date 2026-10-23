@@ -10,6 +10,13 @@ export type PlayOptions = {
     onStop?: () => void
 }
 
+export class EmptySoundError extends Error {
+    constructor() {
+        super('Failed to decode audio data: empty buffer')
+        this.name = 'EmptySoundError'
+    }
+}
+
 export class SoundInstance extends EventTarget {
     private parentSound: Sound
 
@@ -306,7 +313,7 @@ export class AudioManager {
 
     async load(dataBuffer: ArrayBuffer) {
         if (dataBuffer.byteLength === 0) {
-            throw new Error('Failed to decode audio data: empty buffer')
+            throw new EmptySoundError()
         }
 
         const sampleRate = readWavSampleRate(dataBuffer)
