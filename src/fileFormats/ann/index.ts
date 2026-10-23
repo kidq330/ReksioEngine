@@ -53,7 +53,7 @@ export interface ANN {
     annImages: AnnImage[]
 }
 
-const parseHeader = (view: BinaryBuffer) => {
+export const parseHeader = (view: BinaryBuffer) => {
     const magic = view.getUint32()
     if (magic != 0x50564e) {
         throw new Error('Not an image')
@@ -115,7 +115,7 @@ const parseFrame = (view: BinaryBuffer) => {
     return frame
 }
 
-const parseEvent = (view: BinaryBuffer) => {
+export const parseEvent = (view: BinaryBuffer) => {
     const event = {} as Event
     event.name = stringUntilNull(decoder.decode(view.read(0x20)))
     event.framesCount = view.getUint16()
