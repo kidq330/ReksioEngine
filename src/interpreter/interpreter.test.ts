@@ -85,6 +85,13 @@ STLINE:FIELDS=NAME<STRING>,VALUE<STRING>
         expect(s.getValue()).toBe('PARYZ!')
     })
 
+    test('NAME_0 is the original object, even without clones', async () => {
+        const a = engine.integer('ANNEXPLOSION')
+        engine.string('S', 'ANNEXPLOSION_0')
+        await engine.run('*S^SET(3);ANNEXPLOSION_0^ADD(1);')
+        expect(a.getValue()).toBe(4)
+    })
+
     test('spaces are removed from the code', async () => {
         const a = engine.integer('MYVAR')
         await engine.run('MY VAR ^ SET(5 2);')

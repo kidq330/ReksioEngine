@@ -289,7 +289,13 @@ export class Engine {
     getObject<T extends Type<any>>(name: string | reference | null, parentScope: Scope | null = null): T | null {
         if (typeof name == 'string') {
             const currentScopeEntry = parentScope?.get<T>(name)
-            return currentScopeEntry ?? this.scopeManager.findByName(name, parentScope)
+            const object = currentScopeEntry ?? this.scopeManager.findByName<T>(name, parentScope)
+            // Clone number 0 is the original object, even before any CLONE: Kapitan Nemo's WYKOPALISKA plays its
+            // first explosion as ANNEXPLOSION_0 and finds its slot with GETCLONEINDEX, which is 0 for the original
+            if (object === null && name.endsWith('_0') && name.length > 2) {
+                return this.getObject<T>(name.slice(0, -2), parentScope)
+            }
+            return object
         } else if (name === null) {
             return null
         } else {
