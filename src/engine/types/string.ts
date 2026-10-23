@@ -42,6 +42,17 @@ export class String extends ValueType<StringDefinition, string> {
         await this.setValue(this.value.substring(start, end))
     }
 
+    // Overwrites the characters from index on, e.g. one digit of a puzzle state: S^REPLACEAT(ITMPEP5SN,ITMPEP5UP)
+    @method()
+    async REPLACEAT(index: int, text: string) {
+        await this.setValue(this.value.substring(0, index) + text + this.value.substring(index + text.length))
+    }
+
+    @method()
+    async UPPER() {
+        await this.setValue(this.value.toUpperCase())
+    }
+
     @method()
     GET(index?: int, length: int = 1): string {
         if (index === undefined) {
