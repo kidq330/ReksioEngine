@@ -16,6 +16,7 @@
         "sweep": "cross-env TS_NODE_PROJECT=scripts/tsconfig.json TS_NODE_TRANSPILE_ONLY=1 node -r ts-node/register scripts/sweep/sweep.ts",
         "probe": "cross-env TS_NODE_PROJECT=scripts/tsconfig.json TS_NODE_TRANSPILE_ONLY=1 node -r ts-node/register scripts/sweep/probe.ts",
         "disasm": "cross-env TS_NODE_PROJECT=scripts/tsconfig.json TS_NODE_TRANSPILE_ONLY=1 node -r ts-node/register scripts/dll/disasm.ts",
+        "decrypt-scripts": "cross-env TS_NODE_PROJECT=scripts/tsconfig.json TS_NODE_TRANSPILE_ONLY=1 node -r ts-node/register scripts/decrypt-scripts.ts",
         "typecheck-scripts": "tsc -p scripts/tsconfig.json"
     },
     "private": true,

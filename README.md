@@ -20,3 +20,10 @@ While the game is not fully playable yet - you can have a look at the current pr
 **Detailed progress**: https://github.com/orgs/ReksioEngine/projects/1
 
 ![Reksio Engine](https://github.com/user-attachments/assets/3e6c1ef5-4a5f-4c6a-b6f3-ac56ab2a347b)
+
+## Documentation and tools
+
+-   [`docs/scripting-language.md`](docs/scripting-language.md): the scripting language and file formats, as far as they are known.
+-   [`docs/architecture-plan.md`](docs/architecture-plan.md): an audit of the engine and a plan for it.
+-   [`scripts/README.md`](scripts/README.md): headless scene sweeps with regression baselines, a script probe, script decryption and a disassembler for the original DLLs.
+-   [`lsp/README.md`](lsp/README.md): a language server for the game scripts.
