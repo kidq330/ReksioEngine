@@ -2,7 +2,7 @@ import type { FunctionCall, Parameter, Statement, Expression, IndirectRef, Objec
 import { Engine } from '../engine'
 import { Type, ValueType } from '../engine/types'
 import { Struct } from '../engine/types/struct'
-import { callMethod, ForceNumber, valueAsDouble, valueAsInteger, valueAsString } from '../common/types'
+import { callMethod, ForceNumber, valueAsBool, valueAsDouble, valueAsInteger, valueAsString } from '../common/types'
 import { Rand } from '../engine/types/rand'
 import { System } from '../engine/types/system'
 import { CNVLoader } from '../engine/types/cnvloader'
@@ -16,6 +16,8 @@ import {
 } from '../common/errors'
 import { Integer } from '../engine/types/integer'
 import { String as CMCString } from '../engine/types/string'
+import { Bool } from '../engine/types/bool'
+import { Double } from '../engine/types/double'
 import {
     applyArithmetic,
     compareValues,
@@ -112,6 +114,10 @@ export class Interpreter {
             ['WHILE', this.handleWhile.bind(this)],
             ['RETURN', this.handleReturn.bind(this)],
             ['MSGBOX', this.handleMsgBox.bind(this)],
+            ['INT', (args) => this.handleDeclaration('INTEGER', args)],
+            ['STRING', (args) => this.handleDeclaration('STRING', args)],
+            ['BOOL', (args) => this.handleDeclaration('BOOL', args)],
+            ['DOUBLE', (args) => this.handleDeclaration('DOUBLE', args)],
         ])
     }
 
@@ -168,6 +174,36 @@ export class Interpreter {
     // A debugging message box in the original, logged instead of blocking the game
     private async handleMsgBox(args: Value[]): Promise<void> {
         logger.warn(`@MSGBOX: ${valueAsString(await unwrapValue(args[0] ?? null))}`)
+    }
+
+    // @INT("NAME",init) and friends declare a variable local to the running block. Local scopes are searched
+    // innermost first, so it is also visible to the behaviours the block calls.
+    private async handleDeclaration(type: 'INTEGER' | 'STRING' | 'BOOL' | 'DOUBLE', args: Value[]): Promise<void> {
+        const scope = this.context.engine.scopeManager.localScopes.at(-1)
+        if (scope === undefined) {
+            throw new RuntimeError(`Local variable declared outside of a script block`)
+        }
+
+        const name = valueAsString(await unwrapValue(args[0] ?? null))
+        const init = await unwrapValue(args[1] ?? null)
+        const { engine } = this.context
+        const definition = { TYPE: type, NAME: name, TOINI: false } as any
+        let variable: Type<any>
+        switch (type) {
+            case 'INTEGER':
+                variable = new Integer(engine, null, { ...definition, VALUE: valueAsInteger(init ?? 0) })
+                break
+            case 'STRING':
+                variable = new CMCString(engine, null, { ...definition, VALUE: valueAsString(init ?? '') })
+                break
+            case 'BOOL':
+                variable = new Bool(engine, null, { ...definition, VALUE: valueAsBool(init ?? false) })
+                break
+            case 'DOUBLE':
+                variable = new Double(engine, null, { ...definition, VALUE: valueAsDouble(init ?? 0) })
+                break
+        }
+        scope.set(name, variable)
     }
 
     private async handleReturn(args: Value[]): Promise<void> {

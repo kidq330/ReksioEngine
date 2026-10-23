@@ -125,6 +125,25 @@ describe('interpreter', () => {
         expect(a.getValue()).toBe(3)
     })
 
+    test('@INT, @STRING, @BOOL and @DOUBLE declare locals visible to called behaviours', async () => {
+        const out = engine.string('OUT')
+        engine.behaviour('SHOW', '{OUT^SET([N+1]);OUT^ADD(S);OUT^ADD(B);OUT^ADD(D);}')
+        engine.behaviour(
+            'BODY',
+            '{@INT("N",[2*3]);@STRING("S","X");@BOOL("B",TRUE);@DOUBLE("D",1.5);N^ADD(1);@IF("B","_","TRUE","SHOW","");}'
+        )
+        await engine.run('BODY^RUN();')
+        expect(out.getValue()).toBe('8XTRUE1.50000')
+        expect(engine.scopeManager.findByName('N')).toBeNull()
+    })
+
+    test('redeclaring a local resets it', async () => {
+        const out = engine.integer('OUT')
+        engine.behaviour('BODY', '{@INT("N",1);N^ADD(1);@INT("N",5);OUT^SET(N);}')
+        await engine.run('BODY^RUN();')
+        expect(out.getValue()).toBe(5)
+    })
+
     test('@RETURN returns value from behavior', async () => {
         const a = engine.integer('A')
         engine.behaviour('BODY', '{@RETURN(1234);}')
