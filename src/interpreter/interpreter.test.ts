@@ -151,6 +151,23 @@ describe('interpreter', () => {
         expect(a.getValue()).toBe(1234)
     })
 
+    test('@RETURN in an @IF branch returns from the behaviour running the @IF', async () => {
+        const a = engine.integer('A')
+        const after = engine.integer('AFTER')
+        engine.behaviour('FOUND', '{@RETURN(42);}')
+        engine.behaviour('GET', '{@IF("1","_","1","FOUND","");AFTER^SET(1);@RETURN(0);}')
+        await engine.run('A^SET(GET^RUN());')
+        expect(a.getValue()).toBe(42)
+        expect(after.getValue()).toBe(0)
+    })
+
+    test('@RETURN in a @LOOP body returns from the behaviour running the loop', async () => {
+        const a = engine.integer('A')
+        engine.behaviour('FIND', '{@LOOP("{@IF("_I_","_","2","{@RETURN(_I_);}","");}",0,5,1);@RETURN(-1);}')
+        await engine.run('A^SET(FIND^RUN());')
+        expect(a.getValue()).toBe(2)
+    })
+
     test('last result is not used as behavior return value', async () => {
         const a = engine.integer('A')
         const b = engine.integer('B')

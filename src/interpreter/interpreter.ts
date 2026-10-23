@@ -503,7 +503,10 @@ export async function runCode(
     caller: Type<any> | null,
     script: string,
     args: any[],
-    isSingleStatement: boolean
+    isSingleStatement: boolean,
+    // Set for branches of @IF, @LOOP and @WHILE, whose @RETURN returns from the block running them. Kapitan
+    // Nemo's save class returns values this way: GET:CODE={…;@IF("ITMPPOS",">","-1","BFITMP122",…);}
+    forwardReturn: boolean = false
 ): Promise<Value | undefined> {
     const processedScript = await substituteArguments(script.replaceAll(' ', ''), args)
     const ast = parseCode(processedScript)
@@ -518,7 +521,7 @@ export async function runCode(
             await interpreter.execute(ast)
         }
     } catch (err) {
-        if (err instanceof Return) {
+        if (err instanceof Return && !forwardReturn) {
             return err.value
         }
         if (err instanceof IgnorableError) {

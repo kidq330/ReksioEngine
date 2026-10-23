@@ -61,7 +61,7 @@ export class Behaviour extends Type<BehaviourDefinition> {
         }
     }
 
-    async executeCallback(args: any[] = []): Promise<any> {
+    async executeCallback(args: any[] = [], forwardReturn: boolean = false): Promise<any> {
         try {
             pushStackFrame(
                 StackFrame.builder()
@@ -71,7 +71,14 @@ export class Behaviour extends Type<BehaviourDefinition> {
                     .build()
             )
 
-            return await this.engine.scripting.executeCallback(null, this, this.definition.CODE, args)
+            return await this.engine.scripting.executeCallback(
+                null,
+                this,
+                this.definition.CODE,
+                args,
+                undefined,
+                forwardReturn
+            )
         } catch (err) {
             captureStackTrace(err)
             throw err
@@ -80,9 +87,10 @@ export class Behaviour extends Type<BehaviourDefinition> {
         }
     }
 
+    // Run as a branch of @IF, @LOOP or @WHILE: @RETURN inside also returns from the block that ran it
     async executeConditionalCallback(args: any[] = []) {
         if (await this.shouldRun()) {
-            return await this.executeCallback(args)
+            return await this.executeCallback(args, true)
         }
     }
 
