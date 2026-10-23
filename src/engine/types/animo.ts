@@ -596,16 +596,11 @@ export class Animo extends DisplayType<AnimoDefinition> {
             return
         }
 
-        const newEvent = eventNameOrFrameIdx.toString()
-        const newEventFrame = frameIdx
-
-        const event = this.getEvent(newEvent)
+        const event = this.findEventForSetFrame(eventNameOrFrameIdx)
         if (event === null) {
-            logger.warn(`SETFRAME: event "${newEvent}" does not exist, ignoring`, {
-                animo: this,
-            })
             return
         }
+        const newEventFrame = frameIdx === -1 ? 0 : frameIdx
 
         // Necessary in S63_OBOZ
         if (newEventFrame < event.framesCount) {
@@ -616,6 +611,20 @@ export class Animo extends DisplayType<AnimoDefinition> {
             // but they display something (like a keypad screen in S73_0_KOD in UFO)
             await this.forceRender()
         }
+    }
+
+    // Mirrors CMC_Animo_Runner::setFrame in PIKLIB8 and BlooMoo: an INTEGER is the event's index (-1 the
+    // current event), and a name is looked up with CAnimo::getFrameNo, which gives the first event when no
+    // event has that name. Kapitan Nemo's fuel counter relies on it: SETFRAME("LICZBY",n) on LICZBY.ANN, whose
+    // only event is "licz".
+    private findEventForSetFrame(eventNameOrIdx: string | number): Event | null {
+        if (this.annFile === null) {
+            return null
+        }
+        if (typeof eventNameOrIdx === 'number') {
+            return eventNameOrIdx === -1 ? this.currentEvent : (this.annFile.events[eventNameOrIdx] ?? null)
+        }
+        return this.getEvent(eventNameOrIdx) ?? this.annFile.events[0] ?? null
     }
 
     @method()
