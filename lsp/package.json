@@ -1,0 +1,15 @@
+{
+    "name": "reksio-lsp",
+    "version": "0.1.0",
+    "description": "Language server for the Piklib/BlooMoo scripts (CNV, DEF, CLASS) of the Reksio games",
+    "private": true,
+    "main": "dist/server.js",
+    "bin": {
+        "reksio-lsp": "dist/server.js",
+        "reksio-check": "dist/check.js"
+    },
+    "scripts": {
+        "build": "cd .. && yarn build-lsp",
+        "check": "node dist/check.js"
+    }
+}
