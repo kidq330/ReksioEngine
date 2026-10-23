@@ -32,6 +32,16 @@ describe('Database', () => {
             expect(await database.FIND('LABEL', 'MISSING', 0)).toBe(-1)
         })
 
+        test('FIND searches from the offset in BlooMoo games', async () => {
+            await engine.create({ TYPE: 'APPLICATION', NAME: 'GAME', BLOOMOO_VERSION: 'BW.1.0.0' } as any)
+            engine.addFile('DANE/SCENE/ITEMS.DTA', '1|A\r\n2|B\r\n3|A\r\n')
+            await database.LOAD('ITEMS.DTA')
+
+            expect(await database.FIND('LABEL', 'A', 0)).toBe(0)
+            expect(await database.FIND('LABEL', 'A', 1)).toBe(2)
+            expect(await database.FIND('LABEL', 'A', 3)).toBe(-1)
+        })
+
         test('LOAD keeps NULL in STRING fields and uses the default for other types', async () => {
             engine.addFile('DANE/SCENE/ITEMS.DTA', 'NULL|NULL')
             await database.LOAD('ITEMS.DTA')

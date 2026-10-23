@@ -59,6 +59,12 @@ export class Database extends Type<DatabaseDefinition> {
 
     @method()
     async FIND(column: string, value: string | double | boolean, offset: int): Promise<int> {
+        // BlooMoo searches from the offset: Kapitan Nemo plays a dialogue's lines with
+        // I1^SET(DBDIALOGI^FIND("ID",SDIALOGNAME,IDIALOGINDEKS)) until it gets -1
+        if (this.engine.scopeManager.isBlooMoo) {
+            return await this.findEntryWithValue(column, value, offset)
+        }
+
         const index = await this.findEntryWithValue(column, value)
         if (index === -1) {
             return -1
@@ -72,8 +78,8 @@ export class Database extends Type<DatabaseDefinition> {
         return index
     }
 
-    private async findEntryWithValue(column: string, value: any) {
-        for (let i = 0; i < this.content.length; i++) {
+    private async findEntryWithValue(column: string, value: any, start: number = 0) {
+        for (let i = Math.max(0, start); i < this.content.length; i++) {
             const entry = this.content[i]
             const entryValue = await entry.getField(column)?.getValue()
             if (entryValue === value || equalIgnoringCase(entryValue, value)) {

@@ -1,5 +1,5 @@
-import { DisplayType, ParentType, Type, XRayInfo } from './index'
-import { AnimoDefinition, ApplicationDefinition } from '../../fileFormats/cnv/types'
+import { DisplayType, ParentType, XRayInfo } from './index'
+import { AnimoDefinition } from '../../fileFormats/cnv/types'
 import { Engine } from '../index'
 import { assert, InvalidObjectError } from '../../common/errors'
 import * as PIXI from 'pixi.js'
@@ -745,7 +745,7 @@ export class Animo extends DisplayType<AnimoDefinition> {
     // offset there, and its default is TRUE: the cutscenes paste a frame at [0-GETPOSITIONX()] to keep its offset.
     @method()
     GETPOSITIONX(objectPosition?: boolean): int {
-        if (objectPosition ?? this.isBlooMoo()) {
+        if (objectPosition ?? this.engine.scopeManager.isBlooMoo) {
             return this.positionX
         }
         assert(this.sprite !== null)
@@ -754,16 +754,11 @@ export class Animo extends DisplayType<AnimoDefinition> {
 
     @method()
     GETPOSITIONY(objectPosition?: boolean): int {
-        if (objectPosition ?? this.isBlooMoo()) {
+        if (objectPosition ?? this.engine.scopeManager.isBlooMoo) {
             return this.positionY
         }
         assert(this.sprite !== null)
         return this.sprite.getGlobalPosition().y
-    }
-
-    private isBlooMoo() {
-        const application = this.engine.scopeManager.findByType<Type<ApplicationDefinition>>('APPLICATION')
-        return application?.definition.BLOOMOO_VERSION !== undefined
     }
 
     // The right and bottom edges of the current frame, e.g. the feet of a walking character (Kapitan Nemo)

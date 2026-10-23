@@ -66,6 +66,12 @@ export class ScopeManager {
         }
     }
 
+    // Kapitan Nemo's engine (BlooMoo) differs from Piklib in a few methods; only it declares BLOOMOO_VERSION
+    public get isBlooMoo() {
+        const application: Application | null = this.findByType('APPLICATION')
+        return application?.definition.BLOOMOO_VERSION !== undefined
+    }
+
     public get APPLICATION() {
         const application: Application | null = this.findByType('APPLICATION')
         assert(application != null)
