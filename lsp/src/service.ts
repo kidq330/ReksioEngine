@@ -123,7 +123,7 @@ export class LanguageService {
     }
 
     private relativeName(file: WorkspaceFile) {
-        return path.posix.basename(file.key)
+        return path.basename(uriToPath(file.uri))
     }
 
     // ---------------- diagnostics ----------------
@@ -227,7 +227,7 @@ export class LanguageService {
                             span: call.span,
                             severity: 'warning',
                             code: 'unknown-method',
-                            message: `${path.posix.basename(resolution.instance.classFile.key)} has no behaviour ${call.name}, the call does nothing`,
+                            message: `${this.relativeName(resolution.instance.classFile)} has no behaviour ${call.name}, the call does nothing`,
                         },
                     ]
                 }
@@ -420,7 +420,7 @@ export class LanguageService {
                     .find((object) => object.name === call.name)
                 const classFile = resolution.instance.classFile
                 return behaviour && classFile
-                    ? `Behaviour **${call.name}** of class \`${path.posix.basename(classFile.key)}\` (instance ${target.name})`
+                    ? `Behaviour **${call.name}** of class \`${this.relativeName(classFile)}\` (instance ${target.name})`
                     : `**${call.name}**: no such behaviour in the class of ${target.name}`
             }
         }
@@ -494,9 +494,7 @@ export class LanguageService {
                 return `**${resolution.name}**: current row of DATABASE ${resolution.object.name}`
             case 'classInstance': {
                 const instance = resolution.instance
-                const classFile = instance.classFile
-                    ? `\`${path.posix.basename(instance.classFile.key)}\``
-                    : 'unknown file'
+                const classFile = instance.classFile ? `\`${this.relativeName(instance.classFile)}\`` : 'unknown file'
                 return `**${resolution.name}**: instance of CLASS ${instance.classObject.name} (${classFile}), created with NEW in \`${this.relativeName(instance.file)}\``
             }
             case 'loopCounter':

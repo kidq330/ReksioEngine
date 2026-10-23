@@ -137,7 +137,7 @@ export const analyzeDocument = (document: CnvDocument, vocabulary: ScriptVocabul
                 continue
             }
 
-            checkValue(result, object, property, info)
+            checkValue(result, property, info)
 
             if (isCallbackKind(info.kind)) {
                 const analysis = analyzeCallbackValue(property.value, options)
@@ -176,7 +176,7 @@ export const analyzeDocument = (document: CnvDocument, vocabulary: ScriptVocabul
     return result
 }
 
-const checkValue = (result: DocumentAnalysis, object: CnvObject, property: CnvProperty, info: PropertyInfo) => {
+const checkValue = (result: DocumentAnalysis, property: CnvProperty, info: PropertyInfo) => {
     const value = property.value.text
     const problem = (message: string) =>
         result.problems.push({ span: property.valueSpan, severity: 'warning', code: 'invalid-value', message })
