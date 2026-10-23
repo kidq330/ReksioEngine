@@ -615,7 +615,7 @@ Consequence **[?]**: code owned by an application-level object cannot see scene 
 
 **Clones:** `OBJ^CLONE(n)` creates n copies named `OBJ_1`, `OBJ_2`, … (numbered by the total clone count) in OBJ's parent scope. `GETCLONEINDEX` returns 1.. for clones and 0 for the original [engine/types/index.ts:49-72]. **[G]** (the naming matches game data usage)
 
-Kapitan Nemo also addresses the original as `OBJ_0`: `ANNNAKLADKI^CLONE([I1-1]);@LOOP("{*["ANNNAKLADKI_"+_I_]^SETFRAME("IDLE",_I_);}",0,I1,1);GENEMIES^ADDCLONES("ANNNAKLADKI",0,[I1-1])`. CLONE therefore registers `OBJ_0` as an alias of the original, unless an object of that name exists. **[G]**
+Kapitan Nemo also addresses the original as `OBJ_0`: `ANNNAKLADKI^CLONE([I1-1]);@LOOP("{*["ANNNAKLADKI_"+_I_]^SETFRAME("IDLE",_I_);}",0,I1,1);GENEMIES^ADDCLONES("ANNNAKLADKI",0,[I1-1])`. WYKOPALISKA even plays `ANNEXPLOSION_0` before any CLONE, and finds its slot again with `GETCLONEINDEX`, which is 0 for the original. So a name `OBJ_0` that doesn't exist resolves to `OBJ` (`T:"NAME_0 is the original object, even without clones"`). **[G]**
 
 **Block-local variables** declared with `@INT`/`@STRING`/`@BOOL`/`@DOUBLE` (§4.8) go into the innermost local scope, so step 2 finds them from the declaring block and from every behaviour it runs. Step 1 comes first, so an object of the same name in the caller's own file would win; no shipped file declares a local named like one of its objects. **[G]**
 
@@ -1164,5 +1164,6 @@ Shipped scripts contain mistakes the original presumably survives, since the gam
     -   Wehikuł Czasu's TURNIEJ plays `SFX_TURNIEJSTART1.WAV` … `SFX_TURNIEJSTART4.WAV`, which are not shipped. PLAY of a SOUND that failed to load does nothing.
     -   Kapitan Nemo adds sound names built in loops (`GRSND^ADD(["KRET_I0"+[_I_+22]])`) to groups; some of the generated names don't exist, so GROUP^ADD warns.
     -   `ANSLONHEAD^PLAY("RUN",0)` and three similar calls pass a second argument to `ANIMO^PLAY`. It is ignored. **[?]**
+    -   SLON's `ANSLON_TIMER^RUN()` calls RUN on an ANIMO (`BLANK_TIMES.ANN`), which has no such method. The call is skipped.
 
     Expected behaviour: the object or the sound is unavailable, and the rest of the scene runs.
