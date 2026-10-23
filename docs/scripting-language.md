@@ -1072,6 +1072,7 @@ An implementation that only runs one title can therefore leave whole areas untes
 -   **`IMAGE^GETPIXEL(x, y)`** returns the colour as a signed 16-bit RGB565 number. DOROZKA and WYKOPALISKA compare it with constants such as −2048 (pure red), −1 (white) and 32377.
 -   **Class methods return values**, `@RETURN` inside `@IF` branches returns from the enclosing behaviour, STRUCT fields can be call targets, and constructors get the instance name as `$1` (§4.4, §4.8, §3.4). The save class (`clssave.class`, `GSAVE^GET`/`SET`) needs all four.
 -   **ANIMOs without a file.** The walker class declares `ANNCREATURE`, `ANNFRIEND` and `ANNMASK` with an empty FILENAME, then positions them, sets their priority and plays events before it LOADs an animation. The position and priority apply on LOAD, and PLAY does nothing until then.
+-   **`ANIMO^SETFRAME(event, frame)` with an unknown event name uses the first event.** Read from the binaries: `CMC_Animo_Runner::setFrame` (PIKLIB8 and Kapitan Nemo's BlooMoo alike) takes an INTEGER as the event's index (−1 = the current event) and looks a name up with `CAnimo::getFrameNo`, whose result starts at 0 and only changes on a case-insensitive match. `CAnimo::SetEventFrame(int, int)` then treats frame −1 as 0 and ignores frames past the event's end. LOTBALONEM's fuel counter depends on the fallback: it calls `ANCNT^SETFRAME("LICZBY",AMF)` on `LICZBY.ANN`, whose only event is `licz`. `PLAY` differs: `CAnimo::Play(name)` resolves names with `resolveEventName`, which returns −1, and then plays nothing. **[F]** (disassembly)
 -   **0-byte WAV files** (`_PUSTY_SFX0.WAV`, `_NULL_AMBIENT_SND.WAV`) are placeholders for sounds LOADed later. They load as silence.
 -   **Save slots.** A new game copies `$COMMON\SAVE\SLOT_DEF.DTA` to `SLOT<n>.DTA`, and `GSAVE^DBLOAD()` reads it after `SGSLOTNAME^SET(n)`. Scenes read their state from it, e.g. `GSAVE^GET("ARCADE_SCENE_NAME")` picks ARCADE's location. Running a scene without a loaded slot gives `ERROR` or `NULL` paths.
 
@@ -1161,7 +1162,6 @@ Shipped scripts contain mistakes the original presumably survives, since the gam
     -   The ANN frame sound list in `PIOTRUS.ANN` is `SFX\00rex1.wavSFX\00rex1.wav` (two names without the `;` separator).
     -   Wehikuł Czasu's new game (`MAINMENU.class`, `NEWGAMESTART`) copies `$COMMON\<minigame>_DEF.ARR` to the save slot for every minigame, but only `NUREK_DEF.ARR` and `KRZEMIENIE_DEF.ARR` ship. The TS engine treats COPYFILE of a missing file as a warning.
     -   Wehikuł Czasu's TURNIEJ plays `SFX_TURNIEJSTART1.WAV` … `SFX_TURNIEJSTART4.WAV`, which are not shipped. PLAY of a SOUND that failed to load does nothing.
-    -   Kapitan Nemo's LOTBALONEM sets frames of the event `LICZBY` in `LICZBY.ANN`, whose only event is called `licz`. The fuel counter never changes; the TS engine warns and ignores the SETFRAME.
     -   Kapitan Nemo adds sound names built in loops (`GRSND^ADD(["KRET_I0"+[_I_+22]])`) to groups; some of the generated names don't exist, so GROUP^ADD warns.
     -   `ANSLONHEAD^PLAY("RUN",0)` and three similar calls pass a second argument to `ANIMO^PLAY`. It is ignored. **[?]**
 
