@@ -112,4 +112,20 @@ describe('ARRAY', () => {
         expect(array.getValue()[0]).toBeInstanceOf(Integer)
         expect(array.getValue()[0]?.getValue()).toBe(6)
     })
+
+    test('REMOVE drops the first equal element, GETSUMVALUE adds them up', async () => {
+        await engine.run('ARR^ADD(1,2.5,"2",2);ARR^REMOVE(2);')
+        expect(array.getValue().map((v) => v?.getValue())).toEqual([1, 2.5, 2])
+        const sum = engine.double('SUM')
+        await engine.run('SUM^SET(ARR^GETSUMVALUE());')
+        expect(sum.getValue()).toBe(5.5)
+    })
+
+    test('COPYTO appends copies to another array', async () => {
+        const other = engine.add(
+            new ArrayObject(engine.asEngine(), engine.currentScene, { TYPE: 'ARRAY', NAME: 'OTHER' } as any)
+        )
+        await engine.run('ARR^ADD(1,2);OTHER^ADD(0);ARR^COPYTO("OTHER");ARR^CHANGEAT(0,9);')
+        expect(other.getValue().map((v) => v?.getValue())).toEqual([0, 1, 2])
+    })
 })

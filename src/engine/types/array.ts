@@ -152,6 +152,31 @@ export class ArrayObject extends ValueType<ArrayDefinition, (ScalarValue | null)
         this.value.splice(this.checkedPosition('remove', position), 1)
     }
 
+    // Removes the first element equal to the value, e.g. ARAG^REMOVE(SOBJ) when an object leaves the screen
+    @method()
+    async REMOVE(value: Value) {
+        const index = await this.findElement(value, this.value.keys())
+        if (index !== -1) {
+            this.value.splice(index, 1)
+        }
+    }
+
+    // Appends copies of the elements to another array. Kapitan Nemo always calls REMOVEALL on the target first,
+    // so whether the original clears it too is unknown.
+    @method()
+    async COPYTO(arrayName: string) {
+        const target = this.getObject(arrayName)
+        assert(target instanceof ArrayObject, `COPYTO: '${arrayName}' is not an ARRAY`)
+        for (const element of this.value) {
+            target.value.push(await copyValue(this.engine, element))
+        }
+    }
+
+    @method()
+    GETSUMVALUE(): double {
+        return this.value.reduce((sum, element) => sum + valueAsDouble(rawValue(element)), 0)
+    }
+
     @method()
     async INSERTAT(position: int, value: Value) {
         this.value.splice(this.checkedPosition('insert', position), 0, await copyValue(this.engine, value))
