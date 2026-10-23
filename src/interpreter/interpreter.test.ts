@@ -74,6 +74,17 @@ describe('interpreter', () => {
         expect(a.getValue()).toBe(1)
     })
 
+    test('a method can be called on a STRUCT field', async () => {
+        await engine.load(`
+OBJECT=STLINE
+STLINE:TYPE=STRUCT
+STLINE:FIELDS=NAME<STRING>,VALUE<STRING>
+`)
+        const s = engine.string('S')
+        await engine.run('STLINE|VALUE^SET("PARYZ");STLINE|VALUE^ADD("!");S^SET(STLINE|VALUE);')
+        expect(s.getValue()).toBe('PARYZ!')
+    })
+
     test('spaces are removed from the code', async () => {
         const a = engine.integer('MYVAR')
         await engine.run('MY VAR ^ SET(5 2);')

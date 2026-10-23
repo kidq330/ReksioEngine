@@ -485,8 +485,15 @@ export class Interpreter {
                 return this.getObject('THIS')
             case 'DirectRef':
                 throw new RuntimeError(`Unsupported ref: ${ref.type}`)
-            case 'Identifier':
+            case 'Identifier': {
+                // A STRUCT field as the target, e.g. Kapitan Nemo's STLINE|VALUE^SET(STMPVALUE)
+                const pipe = ref.name.indexOf('|')
+                if (pipe !== -1) {
+                    const struct = this.getObject(ref.name.slice(0, pipe))
+                    return struct instanceof Struct ? (struct.getField(ref.name.slice(pipe + 1)) ?? null) : null
+                }
                 return this.getObject(ref.name)
+            }
             case 'IndirectRef':
                 return this.getObject(valueAsString(await unwrapValue(await this.evaluateParameter(ref.inner))))
             default:
