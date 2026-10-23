@@ -97,6 +97,11 @@ export class Type<DefinitionType extends TypeDefinition> {
         clone.isReady = true
 
         this.parentScope?.set(clone.name, clone)
+        // Kapitan Nemo numbers the original 0 next to its clones, e.g. *["ANNNAKLADKI_"+_I_]^SETFRAME("IDLE",_I_)
+        const originalAlias = `${object.definition.NAME}_0`
+        if (this.parentScope !== null && this.parentScope.get(originalAlias) === null) {
+            this.parentScope.set(originalAlias, object)
+        }
         return clone
     }
 
