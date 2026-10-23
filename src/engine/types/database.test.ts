@@ -24,6 +24,14 @@ describe('Database', () => {
             expect(engine.errors).toHaveLength(0)
         })
 
+        test('FIND compares strings ignoring case', async () => {
+            engine.addFile('DANE/SCENE/ITEMS.DTA', '1|first\r\n2|cs_scene_name\r\n')
+            await database.LOAD('ITEMS.DTA')
+
+            expect(await database.FIND('LABEL', 'CS_SCENE_NAME', 0)).toBe(1)
+            expect(await database.FIND('LABEL', 'MISSING', 0)).toBe(-1)
+        })
+
         test('LOAD keeps NULL in STRING fields and uses the default for other types', async () => {
             engine.addFile('DANE/SCENE/ITEMS.DTA', 'NULL|NULL')
             await database.LOAD('ITEMS.DTA')

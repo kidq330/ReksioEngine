@@ -7,6 +7,11 @@ import { assert } from '../../common/errors'
 const decoder = new TextDecoder('windows-1250')
 const encoder = new TextEncoder()
 
+// Strings compare ignoring case like ARRAY^FIND: Kapitan Nemo's save files store lowercase names that it
+// looks up in uppercase, e.g. DBVARS^FIND("NAME","CS_SCENE_NAME",0) for cs_scene_name
+const equalIgnoringCase = (a: unknown, b: unknown) =>
+    typeof a === 'string' && typeof b === 'string' && a.toUpperCase() === b.toUpperCase()
+
 export class Database extends Type<DatabaseDefinition> {
     private baseStruct: Struct | null = null
     private content: Struct[] = []
@@ -71,7 +76,7 @@ export class Database extends Type<DatabaseDefinition> {
         for (let i = 0; i < this.content.length; i++) {
             const entry = this.content[i]
             const entryValue = await entry.getField(column)?.getValue()
-            if (entryValue === value) {
+            if (entryValue === value || equalIgnoringCase(entryValue, value)) {
                 return i
             }
         }
