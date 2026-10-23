@@ -192,7 +192,8 @@ export class Animo extends DisplayType<AnimoDefinition> {
         this.sprite.eventMode = 'none'
         this.sprite.visible = this.visibleWithoutSprite ?? this.definition.VISIBLE
         this.visibleWithoutSprite = null
-        this.setPriority(this.definition.PRIORITY ?? 0)
+        this.setPriority(this.priorityWithoutSprite ?? this.definition.PRIORITY ?? 0)
+        this.priorityWithoutSprite = null
 
         if (this.definition.TOCANVAS) {
             this.engine.rendering.addToStage(this.sprite, this)
@@ -202,6 +203,18 @@ export class Animo extends DisplayType<AnimoDefinition> {
         if (this.currentEvent) {
             await this.changeFrame(this.currentEvent, 0, false)
         }
+    }
+
+    // SETPRIORITY before the ANIMO has a sprite (empty FILENAME) applies on LOAD
+    private priorityWithoutSprite: number | null = null
+
+    setPriority(priority: number) {
+        if (this.sprite === null) {
+            this.priority = priority
+            this.priorityWithoutSprite = priority
+            return
+        }
+        super.setPriority(priority)
     }
 
     private getTexture(imageIndex: number): Texture {
@@ -635,23 +648,21 @@ export class Animo extends DisplayType<AnimoDefinition> {
 
     @method()
     async MOVE(xOffset: int, yOffset: int) {
-        assert(this.sprite !== null)
         await this.move(xOffset, yOffset)
     }
 
     async move(xOffset: number, yOffset: number) {
-        this.positionX += xOffset
-        this.positionY += yOffset
-        this.syncPosition()
-        await this.onMove()
+        await this.SETPOSITION(this.positionX + xOffset, this.positionY + yOffset)
     }
 
+    // Without a sprite yet (empty FILENAME, e.g. Kapitan Nemo's walker class) the position waits for a LOAD
     @method()
     async SETPOSITION(x: int, y: int) {
-        assert(this.sprite !== null)
-
         this.positionX = x
         this.positionY = y
+        if (this.sprite === null) {
+            return
+        }
         this.syncPosition()
         await this.onMove()
     }
@@ -928,8 +939,11 @@ export class Animo extends DisplayType<AnimoDefinition> {
         })
     }
 
+    // An ANIMO without a file has no events, so PLAY does nothing until a LOAD
     public getEvent(name: string): Event | null {
-        assert(this.annFile !== null)
+        if (this.annFile === null) {
+            return null
+        }
         return this.annFile.events.find((event) => event.name.toUpperCase() === name.toUpperCase()) ?? null
     }
 
