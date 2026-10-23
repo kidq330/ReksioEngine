@@ -2,6 +2,7 @@ import { Type } from './index'
 import { GroupDefinition } from '../../fileFormats/cnv/types'
 import { method, int } from '../../common/types'
 import { logger } from '../logging'
+import { ClassInstance } from './class'
 
 export class Group extends Type<GroupDefinition> {
     private objects: any[] = []
@@ -69,6 +70,9 @@ export class Group extends Type<GroupDefinition> {
         for (const object of this.objects) {
             if (methodName in object) {
                 await object[methodName](...args)
+            } else if (object instanceof ClassInstance) {
+                // Methods of class instances are their behaviours, e.g. Kapitan Nemo's GENEMIES^NEXTSTEP()
+                await object.__call(methodName, args)
             } else {
                 const argumentsString = args?.map((arg) => typeof arg).join(', ')
                 logger.warn(

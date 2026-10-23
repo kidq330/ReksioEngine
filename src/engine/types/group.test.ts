@@ -24,4 +24,26 @@ G:TYPE=GROUP
         expect(engine.getObject<Integer>('N_2')!.getValue()).toBe(7)
         expect(engine.getObject<Integer>('N_3')!.getValue()).toBe(0)
     })
+
+    test('methods are forwarded to class instances', async () => {
+        engine.addFile(
+            'common/classes/CLSENEMY.CLASS',
+            `
+OBJECT=NEXTSTEP
+NEXTSTEP:TYPE=BEHAVIOUR
+NEXTSTEP:CODE={STEPS^INC();}
+`
+        )
+        await engine.load(`
+OBJECT=CLSENEMYOBJ
+CLSENEMYOBJ:TYPE=CLASS
+CLSENEMYOBJ:DEF=CLSENEMY.CLASS
+
+OBJECT=G
+G:TYPE=GROUP
+`)
+        const steps = engine.integer('STEPS')
+        await engine.run('CLSENEMYOBJ^NEW("E1");CLSENEMYOBJ^NEW("E2");G^ADD("E1","E2");G^NEXTSTEP();')
+        expect(steps.getValue()).toBe(2)
+    })
 })
