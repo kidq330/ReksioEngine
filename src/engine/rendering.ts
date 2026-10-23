@@ -210,6 +210,18 @@ export const createHitmapFromImageBytes = (bytes: Uint8Array) => {
     return hitmap
 }
 
+// The colour of an RGBA pixel as the original's 16-bit RGB565 value, signed, or 0 outside the image
+export const pixelAsRgb565 = (pixels: Uint8Array, width: number, height: number, x: number, y: number) => {
+    x = Math.trunc(x)
+    y = Math.trunc(y)
+    if (x < 0 || y < 0 || x >= width || y >= height) {
+        return 0
+    }
+    const i = (y * width + x) * 4
+    const rgb565 = ((pixels[i] >> 3) << 11) | ((pixels[i + 1] >> 2) << 5) | (pixels[i + 2] >> 3)
+    return rgb565 >= 0x8000 ? rgb565 - 0x10000 : rgb565
+}
+
 // Lowers the alpha of RGBA pixels to a mask's alpha where the mask, placed at (x, y), covers them
 export const mergeAlpha = (
     pixels: Uint8Array,

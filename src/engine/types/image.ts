@@ -3,7 +3,7 @@ import { ImageDefinition } from '../../fileFormats/cnv/types'
 import { assert } from '../../common/errors'
 import { Container, Graphics, Point, Sprite } from 'pixi.js'
 import { loadSprite } from '../../filesystem/assetsLoader'
-import { AdvancedSprite, mergeAlpha } from '../rendering'
+import { AdvancedSprite, mergeAlpha, pixelAsRgb565 } from '../rendering'
 import { method, int } from '../../common/types'
 import { ButtonLogicComponent, Event as FSMEvent, State } from '../components/button'
 import * as PIXI from 'pixi.js'
@@ -160,6 +160,28 @@ export class Image extends DisplayType<ImageDefinition> {
     GETALPHA(x: int, y: int): int {
         assert(this.sprite !== null)
         return this.sprite.getAlphaAt(new Point(x, y))
+    }
+
+    @method()
+    GETWIDTH(): int {
+        assert(this.sprite !== null)
+        return this.sprite.texture.width
+    }
+
+    @method()
+    GETHEIGHT(): int {
+        assert(this.sprite !== null)
+        return this.sprite.texture.height
+    }
+
+    // The colour at (x, y) as the original's signed RGB565 value: Kapitan Nemo compares it to numbers like -2048
+    // (pure red) when reading collision masks and level maps
+    @method()
+    GETPIXEL(x: int, y: int): int {
+        assert(this.sprite !== null)
+        const baseTexture = this.sprite.texture.baseTexture
+        const pixels = (baseTexture.resource as PIXI.BufferResource).data as Uint8Array
+        return pixelAsRgb565(pixels, baseTexture.width, baseTexture.height, x, y)
     }
 
     private originalPixels: Uint8Array | null = null
