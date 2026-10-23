@@ -35,7 +35,8 @@ export class Class extends Type<ClassDefinition> {
     async NEW(name: string, ...args: Value[]) {
         assert(this.innerDefinition !== null)
 
-        const instance = new ClassInstance(this.engine, this, name, args)
+        // The constructor gets the instance's name as $1, e.g. Kapitan Nemo's NEW("LOG",FALSE) reads FALSE as $2
+        const instance = new ClassInstance(this.engine, this, name, [name, ...args])
         await instance.init()
         this.instances.push(instance)
         this.parentScope?.set(name, instance)

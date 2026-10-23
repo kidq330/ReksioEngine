@@ -31,4 +31,23 @@ CLSSAVEOBJ:DEF=CLSSAVE.CLASS
         expect(a.getValue()).toBe(42)
         expect(b.getValue()).toBe(-1)
     })
+
+    test('the constructor gets the instance name as $1', async () => {
+        engine.addFile(
+            'common/classes/CLSENEMY.CLASS',
+            `
+OBJECT=CONSTRUCTOR
+CONSTRUCTOR:TYPE=BEHAVIOUR
+CONSTRUCTOR:CODE={OUT^SET(["$1_"+$2]);}
+`
+        )
+        await engine.load(`
+OBJECT=CLSENEMYOBJ
+CLSENEMYOBJ:TYPE=CLASS
+CLSENEMYOBJ:DEF=CLSENEMY.CLASS
+`)
+        const out = engine.string('OUT')
+        await engine.run('CLSENEMYOBJ^NEW("ENEMY4",7);')
+        expect(out.getValue()).toBe('ENEMY4_7')
+    })
 })
