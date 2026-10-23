@@ -1,5 +1,5 @@
-import { DisplayType, ParentType, XRayInfo } from './index'
-import { AnimoDefinition } from '../../fileFormats/cnv/types'
+import { DisplayType, ParentType, Type, XRayInfo } from './index'
+import { AnimoDefinition, ApplicationDefinition } from '../../fileFormats/cnv/types'
 import { Engine } from '../index'
 import { assert, InvalidObjectError } from '../../common/errors'
 import * as PIXI from 'pixi.js'
@@ -729,27 +729,41 @@ export class Animo extends DisplayType<AnimoDefinition> {
         return Math.round(this.sprite.getGlobalPosition().y + this.sprite.height / 2)
     }
 
+    // Piklib returns where the current frame is drawn. BlooMoo (Kapitan Nemo) added a flag: TRUE gives the
+    // position set with SETPOSITION and FALSE the frame's, so GETPOSITIONX(FALSE)-GETPOSITIONX() is the frame
+    // offset there, and its default is TRUE: the cutscenes paste a frame at [0-GETPOSITIONX()] to keep its offset.
     @method()
-    GETPOSITIONX(): int {
+    GETPOSITIONX(objectPosition?: boolean): int {
+        if (objectPosition ?? this.isBlooMoo()) {
+            return this.positionX
+        }
         assert(this.sprite !== null)
         return this.sprite.getGlobalPosition().x
     }
 
     @method()
-    GETPOSITIONY(): int {
+    GETPOSITIONY(objectPosition?: boolean): int {
+        if (objectPosition ?? this.isBlooMoo()) {
+            return this.positionY
+        }
         assert(this.sprite !== null)
         return this.sprite.getGlobalPosition().y
+    }
+
+    private isBlooMoo() {
+        const application = this.engine.scopeManager.findByType<Type<ApplicationDefinition>>('APPLICATION')
+        return application?.definition.BLOOMOO_VERSION !== undefined
     }
 
     // The right and bottom edges of the current frame, e.g. the feet of a walking character (Kapitan Nemo)
     @method()
     GETENDX(): int {
-        return this.GETPOSITIONX() + this.GETWIDTH()
+        return this.GETPOSITIONX(false) + this.GETWIDTH()
     }
 
     @method()
     GETENDY(): int {
-        return this.GETPOSITIONY() + this.GETHEIGHT()
+        return this.GETPOSITIONY(false) + this.GETHEIGHT()
     }
 
     @method()

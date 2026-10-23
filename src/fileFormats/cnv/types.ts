@@ -67,6 +67,8 @@ export type ApplicationDefinition = TypeDefinition & {
     PATH: string
     EPISODES: Array<string>
     STARTWITH: string
+    // Only Kapitan Nemo has it, e.g. BW.1.0.0
+    BLOOMOO_VERSION?: string
 }
 
 const ApplicationStructure = {
@@ -78,6 +80,7 @@ const ApplicationStructure = {
     PATH: string,
     EPISODES: array(string),
     STARTWITH: string,
+    BLOOMOO_VERSION: optional(string),
 }
 
 export type ArrayDefinition = TypeDefinition & {
