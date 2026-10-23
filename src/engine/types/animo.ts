@@ -873,11 +873,6 @@ export class Animo extends DisplayType<AnimoDefinition> {
     }
 
     @method()
-    ADDBEHAVIOUR(callbackString: string, behaviourName: string) {
-        this.callbacks.addBehaviour(callbackString, behaviourName)
-    }
-
-    @method()
     MONITORCOLLISION(newState: boolean) {
         this.collisions.enabled = true
     }

@@ -47,6 +47,17 @@ export class Type<DefinitionType extends TypeDefinition> {
         return this.name
     }
 
+    // Every object can get event handlers attached and detached at runtime
+    @method()
+    ADDBEHAVIOUR(callbackString: string, behaviourName: string) {
+        this.callbacks.addBehaviour(callbackString, behaviourName)
+    }
+
+    @method()
+    REMOVEBEHAVIOUR(callbackString: string) {
+        this.callbacks.removeBehaviour(callbackString)
+    }
+
     @method()
     async CLONE(count: int = 1) {
         for (let i = 0; i < count; i++) {

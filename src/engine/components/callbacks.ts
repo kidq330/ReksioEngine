@@ -104,8 +104,23 @@ export class CallbacksComponent {
         }
     }
 
+    // "ONFINISHED$WALK" or, in Kapitan Nemo, "ONBRUTALCHANGED^5" (the CNV field syntax)
+    private parseCallbackString(callbackString: string): [string, any] {
+        const separator = callbackString.search(/[$^]/)
+        if (separator === -1) {
+            return [callbackString, undefined]
+        }
+
+        const callbackName = callbackString.substring(0, separator)
+        const param = callbackString.substring(separator + 1)
+        // Convert the parameter like the CNV loader does, so ONBRUTALCHANGED^5 of an INTEGER matches the value 5
+        const field = structureDefinitions[this.object.definition.TYPE]?.[callbackName] as FieldTypeEntry | undefined
+        const subType = (field as any)?.subType as FieldTypeEntry | undefined
+        return [callbackName, subType ? subType.processor(this.object.definition, callbackName, param, param) : param]
+    }
+
     addBehaviour(callbackString: string, behaviourName: string) {
-        const [callbackName, callbackParam] = callbackString.split('$')
+        const [callbackName, callbackParam] = this.parseCallbackString(callbackString)
 
         const newEntry = this.registry.get(callbackName) ?? {
             nonParametrized: null,
@@ -118,12 +133,26 @@ export class CallbacksComponent {
             constantArguments: [],
         }
 
-        if (callbackParam == undefined) {
+        if (callbackParam === undefined) {
             newEntry.nonParametrized = newCallback
         } else {
             newEntry.parametrized.set(callbackParam, newCallback)
         }
 
         this.registry.set(callbackName, newEntry)
+    }
+
+    removeBehaviour(callbackString: string) {
+        const [callbackName, callbackParam] = this.parseCallbackString(callbackString)
+        const entry = this.registry.get(callbackName)
+        if (entry === undefined) {
+            return
+        }
+
+        if (callbackParam === undefined) {
+            entry.nonParametrized = null
+        } else {
+            entry.parametrized.delete(callbackParam)
+        }
     }
 }
