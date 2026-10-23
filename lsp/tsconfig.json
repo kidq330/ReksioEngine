@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "target": "es2022",
+        "module": "commonjs",
+        "lib": ["es2022", "dom", "dom.iterable"],
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "skipLibCheck": true,
+        "noEmit": true
+    },
+    "include": ["src/**/*", "scripts/**/*", "test/**/*", "../src/typings.d.ts"]
+}
