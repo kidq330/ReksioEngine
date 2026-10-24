@@ -39,6 +39,28 @@ yarn sweep rikn --out sweep-results/rikn-base
 yarn sweep rikn --baseline sweep-results/rikn-base/summary.json
 ```
 
+## Walkthroughs: `yarn walkthrough`
+
+Plays a game from a JSON script on a manual clock with a fixed random seed, so every run is the same, and fails when an expectation doesn't hold or the game logs an error. The engine runs with `manualClock=true&seed=N`: time advances only through `engine.step(ms)` (1/60 s per frame), and sounds are silent and end when the clock passes their length.
+
+```sh
+yarn walkthrough scripts/walkthrough/rikn/new-game-to-paris.json [--scenes]   # --scenes lists the scenes passed
+```
+
+A walkthrough names the `game` (a key of `sweep/games.json`), a `start` scene, a `seed`, optional `allowedErrors` (substrings of errors to accept) and `steps`:
+
+| Step                                                                       | Does                                                                                   |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `{ "wait": 5000 }`                                                         | advances the game by 5 s                                                               |
+| `{ "waitFor": { "scene": "ARCADE", "vars": {"A": 1} }, "timeout": 60000 }` | advances until the condition holds; fails after the timeout (game time, default 30 s)  |
+| `{ "click": [400, 300] }`, `{ "clickObject": "BTNSZUFLADA0" }`             | clicks a point, or the centre of a button's rectangle or an object's graphic           |
+| `{ "key": "Escape" }`                                                      | presses a key ([Playwright key names](https://playwright.dev/docs/api/class-keyboard)) |
+| `{ "run": "A^SET(1);" }`                                                   | runs script code                                                                       |
+| `{ "expect": { "scene": "MENUSLOTY", "vars": { "S1": "PARYZ" } } }`        | fails unless the condition holds                                                       |
+| `{ "screenshot": "name" }`                                                 | saves `name.png`                                                                       |
+
+Results go to `sweep-results/walkthroughs/<name>/`: the screenshots, `end.png`, `log.txt` and `scenes.txt`.
+
 ## Running script code in a game: `yarn probe`
 
 Starts a game like `sweep` does, optionally switches scene, runs script code and prints variables:
