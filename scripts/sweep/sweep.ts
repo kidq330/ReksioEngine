@@ -96,6 +96,9 @@ const main = async () => {
                     if (config.setup) {
                         await runScript(page, config.setup)
                     }
+                    if (!options.locations && config.sceneSetup?.[target]) {
+                        await runScript(page, config.sceneSetup[target])
+                    }
                     if (options.locations) {
                         await runScript(page, config.locations!.code.replaceAll('%LOC%', target))
                         await changeScene(page, config.locations!.scene)

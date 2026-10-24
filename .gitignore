@@ -2,4 +2,5 @@
 dist/
 node_modules/
 *.map
-!.eslintrc.jssweep-results/
+!.eslintrc.js
+sweep-results/

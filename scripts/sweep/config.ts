@@ -8,6 +8,8 @@ export type GameConfig = {
     prelude?: string
     // Script code run before entering a tested scene, e.g. starting a new game in a save slot
     setup?: string
+    // Extra script code for particular scenes, run after `setup`, e.g. the minigame level a scene reads
+    sceneSetup?: Record<string, string>
     // Locations that one scene (an ARCADE) loads from a variable, swept with --locations
     locations?: {
         scene: string

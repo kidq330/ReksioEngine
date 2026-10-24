@@ -20,11 +20,14 @@
     },
     "riwc": {
         "title": "Reksio i Wehikuł Czasu",
-        "prelude": "START",
+        "prelude": "CS_INTRO0",
         "setup": "G_MENU^NEWGAMESTART();",
+        "sceneSetup": {
+            "LAS": "G_SARCADESCENELAST^SET(\"151\");",
+            "TURNIEJ": "G_SARCADESCENELAST^SET(\"151\");"
+        },
         "locations": {
             "scene": "ARCADE",
-            "prelude": "CS_INTRO0",
             "code": "G_SARCADESCENE^SET(\"%LOC%\");",
             "dir": "dane/game/przygoda/arcade",
             "exclude": ["ARCADE", "CLEAN", "C_*", "___*"]
