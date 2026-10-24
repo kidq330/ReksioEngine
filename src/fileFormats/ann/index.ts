@@ -37,6 +37,7 @@ export interface Frame {
     hasSounds: number
     transparency: number
     name: string
+    floats?: [number, number, number]
     sounds: string[]
 }
 
@@ -79,14 +80,13 @@ export const parseHeader = (view: BinaryBuffer) => {
     return ann
 }
 
+// A frame is a 30-byte record followed by the parts it has: the name, three floats, the sounds (in that order, as
+// CAnimo::Load3 in BlooMooDLL reads them). The record's pointers are whatever the editor had in memory, so only
+// whether they are zero matters.
 const parseFrame = (view: BinaryBuffer) => {
     const frame = {} as Frame
     frame.hasName = view.getUint32()
-    const hasUnknownData = view.getUint32()
-    if (hasUnknownData !== 0) {
-        const dataLen = view.getUint32()
-        view.skip(dataLen)
-    }
+    const hasFloats = view.getUint32()
     frame.positionX = view.getInt16()
     frame.positionY = view.getInt16()
     view.skip(4)
@@ -101,6 +101,14 @@ const parseFrame = (view: BinaryBuffer) => {
         frame.name = stringUntilNull(decoder.decode(view.read(nameSize)))
     } else {
         frame.name = ''
+    }
+
+    // Only in a few Kapitan Nemo cutscenes (e.g. 00A_INTRO\SCENA7W2.ANN), where the first changes from frame to
+    // frame and the others are 1.0. The engine reads 12 bytes whatever the length says; what it does with them is
+    // not known.
+    if (hasFloats !== 0) {
+        view.skip(4)
+        frame.floats = [view.getFloat32(), view.getFloat32(), view.getFloat32()]
     }
 
     if (frame.hasSounds !== 0) {
