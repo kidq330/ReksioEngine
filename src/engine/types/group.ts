@@ -55,15 +55,46 @@ export class Group extends Type<GroupDefinition> {
         return this.objects.length
     }
 
-    // The marker iterates over the members in the original; only its position is kept
+    // The marker iterates over the members, as CMC_Groupped does in Kapitan Nemo's BlooMoo: SETMARKERPOS keeps
+    // it between -1 and the last member, NEXT and PREV move it by one (whatever their argument), wrapping around,
+    // and return the member's name. EIFELTOWER scrolls its beams with S2^SET(*S1^PREV());*S2^MOVE(…)
     @method()
     SETMARKERPOS(position: int) {
-        this.marker = position
+        this.marker = Math.min(Math.max(position, -1), this.objects.length - 1)
     }
 
     @method()
     GETMARKERPOS(): int {
         return this.marker
+    }
+
+    @method()
+    RESETMARKER() {
+        this.marker = -1
+    }
+
+    @method()
+    NEXT(...ignored: any[]): string {
+        return this.moveMarker(1)
+    }
+
+    @method()
+    PREV(...ignored: any[]): string {
+        return this.moveMarker(-1)
+    }
+
+    @method()
+    GETNAMEATMARKER(): string {
+        return this.objects[this.marker]?.name ?? ''
+    }
+
+    private moveMarker(step: number): string {
+        if (this.objects.length === 0) {
+            return ''
+        }
+        const size = this.objects.length
+        this.marker = (((this.marker + step) % size) + size) % size
+        return this.objects[this.marker].name
     }
 
     async __call(methodName: string, args: any[]) {

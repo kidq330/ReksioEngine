@@ -25,6 +25,25 @@ G:TYPE=GROUP
         expect(engine.getObject<Integer>('N_3')!.getValue()).toBe(0)
     })
 
+    test('the marker walks the members with NEXT and PREV, wrapping around', async () => {
+        engine.integer('A')
+        engine.integer('B')
+        engine.integer('C')
+        const names = engine.string('NAMES')
+        const position = engine.integer('POSITION')
+        await engine.load(`
+OBJECT=G
+G:TYPE=GROUP
+`)
+        await engine.run(
+            'G^ADD("A","B","C");G^SETMARKERPOS(0);' +
+                'NAMES^SET([G^PREV()+G^PREV()+G^NEXT(5)+G^GETNAMEATMARKER()]);G^SETMARKERPOS(9);POSITION^SET(G^GETMARKERPOS());'
+        )
+        expect(names.getValue()).toBe('CBCC')
+        expect(position.getValue()).toBe(2)
+        expect(engine.errors).toEqual([])
+    })
+
     test('methods are forwarded to class instances', async () => {
         engine.addFile(
             'common/classes/CLSENEMY.CLASS',
