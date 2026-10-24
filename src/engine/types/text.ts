@@ -7,8 +7,12 @@ import { Font } from './font'
 
 export class Text extends Type<TextDefinition> {
     private text: PIXI.BitmapText | null = null
+    // Drawing order like a DisplayType's: Czarodzieje and Wehikuł Czasu put their texts at 500-50000 over the
+    // graphics, and Skarb Piratów raises them with SETPRIORITY
+    private priority = 0
 
     async applyDefaults() {
+        this.priority = this.definition.PRIORITY ?? 0
         const font = this.getObject<Font>(this.definition.FONT)
         if (font === null || font.bitmapFont === null) {
             return
@@ -27,6 +31,7 @@ export class Text extends Type<TextDefinition> {
         }
         this.text.visible = this.definition.VISIBLE
         this.engine.rendering.addToStage(this.text, this)
+        this.SETPRIORITY(this.priority)
     }
 
     async ready() {
@@ -36,6 +41,21 @@ export class Text extends Type<TextDefinition> {
     destroy() {
         if (this.text) {
             this.engine.rendering.removeFromStage(this.text)
+        }
+    }
+
+    @method()
+    GETPRIORITY(): int {
+        return this.priority
+    }
+
+    @method()
+    SETPRIORITY(priority: int) {
+        this.priority = priority
+        if (this.text) {
+            this.text.zIndex = priority
+            this.engine.rendering.putAtZindex(this.text, priority)
+            this.engine.rendering.sortObjects()
         }
     }
 
