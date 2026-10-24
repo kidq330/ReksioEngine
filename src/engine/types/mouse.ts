@@ -188,7 +188,7 @@ export class Mouse extends Type<MouseDefinition> {
 
         this.clicksQueue.push(clickEvent)
         if (type === 'click') {
-            const dateNow = Date.now()
+            const dateNow = this.engine.clock.now()
             const previousClick = this.lastClicksTime[key]
             if (previousClick && dateNow - previousClick < 200) {
                 this.clicksQueue.push({

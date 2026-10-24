@@ -229,7 +229,7 @@ export class Sequence extends Type<SequenceDefinition> {
 
         const subEntries = this.subEntries.get(entry.NAME)!
         if (entry.MODE === 'RANDOM') {
-            const subEntry = subEntries[Math.floor(Math.random() * subEntries.length)]
+            const subEntry = subEntries[Math.floor(this.engine.clock.random() * subEntries.length)]
             this.fillQueue(subEntry)
         } else {
             for (const subEntry of subEntries) {

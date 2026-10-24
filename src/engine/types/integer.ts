@@ -94,9 +94,9 @@ export class Integer extends ValueType<IntegerDefinition, number> {
     @method()
     async RANDOM(offsetOrRange: int, range?: int): Promise<int> {
         if (range === undefined) {
-            return Math.floor(Math.random() * offsetOrRange)
+            return Math.floor(this.engine.clock.random() * offsetOrRange)
         }
-        return Math.floor(Math.random() * range) + offsetOrRange
+        return Math.floor(this.engine.clock.random() * range) + offsetOrRange
     }
 
     getValue(): number {

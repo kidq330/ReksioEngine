@@ -42,7 +42,7 @@ export class System extends Type<SystemDefinition> {
     // Milliseconds counter, scripts use it to measure intervals
     @method()
     GETSYSTEMTIME(): int {
-        return Math.floor(performance.now())
+        return Math.floor(this.engine.clock.now())
     }
 
     // Czarodzieje only enables scrolling backgrounds in minigames above 799 MHz, report a fast machine

@@ -285,7 +285,7 @@ export class Animo extends DisplayType<AnimoDefinition> {
         const eventFrame = event.frames[this.currentFrame]
         if (eventFrame.sounds.length > 0) {
             const filenames = eventFrame.sounds
-            const randomFilename = filenames[Math.floor(Math.random() * filenames.length)]
+            const randomFilename = filenames[Math.floor(this.engine.clock.random() * filenames.length)]
 
             if (this.sounds.has(randomFilename)) {
                 logger.debug(`Playing sound '${randomFilename}'`, {

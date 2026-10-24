@@ -15,6 +15,7 @@ import { Episode } from './types/episode'
 import { Type } from './types'
 import Filesystem, { pathJoin } from '../filesystem'
 import { globalAudio, SoundInstance } from './audio'
+import { GameClock } from './clock'
 import { logger } from './logging'
 import { setFormatsLogger } from '../fileFormats/logger'
 
@@ -46,7 +47,10 @@ export class Engine {
         this.debug = new Debugging(this, this.options.debug ?? false, options.debugContainer ?? null)
         this.filesystem = new Filesystem(this.options.fileLoader, this.options.storage)
         this.saveFile = this.options.saveFile ?? SaveFileManager.empty(undefined)
+        this.clock = new GameClock({ manual: this.options.manualClock, seed: this.options.randomSeed })
     }
+
+    public readonly clock: GameClock
 
     async init() {
         try {
@@ -56,7 +60,9 @@ export class Engine {
 
             this.rendering.init()
 
-            if (!BUILD_VARS.manualTick) {
+            if (this.clock.isManual) {
+                globalAudio.useVirtualClock()
+            } else if (!BUILD_VARS.manualTick) {
                 this.app.ticker.add(() => this.tick(this.app.ticker.elapsedMS))
             }
             this.app.ticker.stop()
@@ -108,6 +114,14 @@ export class Engine {
             this.music.stop()
         }
         globalAudio.stopAll()
+    }
+
+    // Advances a manual clock by `ms` and runs one tick of the game, then draws the frame
+    async step(ms: number) {
+        this.clock.advance(ms)
+        globalAudio.advance(ms / 1000)
+        await this.tick(ms)
+        this.app.render()
     }
 
     // Scripts run to completion like in the original engine. A tick still waiting for something (e.g. a file

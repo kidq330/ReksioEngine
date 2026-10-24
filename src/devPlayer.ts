@@ -19,6 +19,9 @@ const areSavesEnabled = savesEnabledEntry == 'true' || savesEnabledEntry === nul
 
 const baseOptions = {
     startScene: urlParams.get('scene') ?? undefined,
+    // For tests: time advances only through engine.step(ms), random numbers repeat with the seed
+    manualClock: urlParams.get('manualClock') === 'true',
+    randomSeed: urlParams.has('seed') ? Number(urlParams.get('seed')) : undefined,
     debug: urlParams.has('debug') ? urlParams.get('debug') == 'true' : BUILD_VARS.debug,
     debugContainer: debugContainer,
     onExit: () => {

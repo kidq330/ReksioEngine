@@ -22,6 +22,10 @@ export type GamePlayerOptions = {
     onExit?: () => void
     onSceneChange?: (next: string, previous?: string) => void
     onSaveFileUpdate?: (saveFile: SaveFile) => void
+    // Time advances only through Engine.step (tests, walkthroughs); sounds are silent and end on that clock
+    manualClock?: boolean
+    // Seed for the game's random numbers, to repeat a run
+    randomSeed?: number
 }
 
 export class GamePlayerInstance {

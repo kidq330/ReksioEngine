@@ -17,7 +17,7 @@ export class Rand extends Type<RandDefinition> {
         }
 
         max = min + max
-        return Math.floor(Math.random() * (max - min)) + min
+        return Math.floor(this.engine.clock.random() * (max - min)) + min
     }
 
     @method()

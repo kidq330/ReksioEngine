@@ -2,6 +2,7 @@ import { Engine } from '../engine'
 import { Scope, ScopeManager } from '../engine/scope'
 import { ScriptingManager } from '../engine/scripting'
 import { SaveFileManager } from '../engine/saveFile'
+import { GameClock } from '../engine/clock'
 import { Type } from '../engine/types'
 import { Application } from '../engine/types/application'
 import { Scene } from '../engine/types/scene'
@@ -68,6 +69,7 @@ export class TestEngine {
     public scopeManager = new ScopeManager()
     public scripting = new ScriptingManager(this.asEngine())
     public saveFile = SaveFileManager.empty()
+    public clock = new GameClock({ manual: true, seed: 1 })
 
     public fileLoader = new MemoryFileLoader()
     public storage = new MemoryFileStorage()
