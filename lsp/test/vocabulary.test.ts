@@ -13,7 +13,10 @@ describe('vocabulary extracted from the engine sources', () => {
     test('reads method signatures like the @method() transformer', () => {
         const play = vocabulary.method('ANIMO', 'PLAY')!
         expect(play.decorated).toBe(true)
-        expect(play.params).toEqual([{ name: 'name', types: ['string'], optional: true, rest: false }])
+        expect(play.params).toEqual([
+            { name: 'name', types: ['string'], optional: true, rest: false },
+            { name: 'ignored', types: ['any'], optional: false, rest: true },
+        ])
         expect(formatMethodSignature('ANIMO', vocabulary.method('ANIMO', 'GETPOSITIONX')!)).toBe(
             'ANIMO^GETPOSITIONX(objectPosition?: boolean): int'
         )

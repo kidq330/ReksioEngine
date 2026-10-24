@@ -390,8 +390,9 @@ export class Animo extends DisplayType<AnimoDefinition> {
         }
     }
 
+    // A second argument is ignored, as in the original (Czarodzieje and Kapitan Nemo pass 0)
     @method()
-    async PLAY(name?: string) {
+    async PLAY(name?: string, ...ignored: any[]) {
         if (name === undefined) {
             this.SHOW()
             this.RESUME()
