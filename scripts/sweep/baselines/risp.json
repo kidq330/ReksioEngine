@@ -1,0 +1,302 @@
+{
+    "UFO": {
+        "errors": 0,
+        "warnings": 1,
+        "endScene": "UFO"
+    },
+    "POKONTROLI": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "CREDITS"
+    },
+    "ZAWAL": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "ZAWAL"
+    },
+    "POUFO": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "POUFO"
+    },
+    "OUTRO_1": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "OUTRO_1"
+    },
+    "OUTRO_2": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "OUTRO_2"
+    },
+    "OUTRO_3": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "OUTRO_4"
+    },
+    "OUTRO_4": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "OUTRO_5"
+    },
+    "OUTRO_5": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "OUTRO_6"
+    },
+    "OUTRO_6": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "OUTRO_6"
+    },
+    "OUTRO_7": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "OUTRO_7"
+    },
+    "OUTRO_8": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "OUTRO_8"
+    },
+    "24LASER": {
+        "errors": 0,
+        "warnings": 1,
+        "endScene": "24LASER"
+    },
+    "27BSTATEK": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "27BSTATEK"
+    },
+    "25B": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "25B"
+    },
+    "25PAPUGI": {
+        "errors": 1,
+        "warnings": 2,
+        "endScene": "25PAPUGI"
+    },
+    "26SKARB": {
+        "errors": 1,
+        "warnings": 0,
+        "endScene": "26SKARB"
+    },
+    "27STATEK": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "27STATEK"
+    },
+    "28ZUKI": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "28ZUKI"
+    },
+    "21MOST": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "21MOST"
+    },
+    "LAWAA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "LAWAA"
+    },
+    "LAWAB": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "LAWAB"
+    },
+    "LAWAC": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "LAWAC"
+    },
+    "CIEMNOSC": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "CIEMNOSC"
+    },
+    "16BLAWA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "16BLAWA"
+    },
+    "15BWTWAROGU": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "16BLAWA"
+    },
+    "MAPAPODZIEMI": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "MAPAPODZIEMI"
+    },
+    "OFERTA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "OFERTA"
+    },
+    "CREDITS": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "CREDITS"
+    },
+    "KONTROLA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "KONTROLA"
+    },
+    "INTRO1": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "INTRO1"
+    },
+    "INTRO2": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "INTRO2"
+    },
+    "INTRO3": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "INTRO3"
+    },
+    "MENUGLOWNE": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "MENUGLOWNE"
+    },
+    "LATAWIEC": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "LATAWIEC"
+    },
+    "NAWRAKU": {
+        "errors": 145,
+        "warnings": 0,
+        "endScene": "NAWRAKU"
+    },
+    "MAPA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "MAPA"
+    },
+    "3NAWRAKU": {
+        "errors": 1,
+        "warnings": 0,
+        "endScene": "3NAWRAKU"
+    },
+    "5ROBINSON": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "5ROBINSON"
+    },
+    "4PLAZA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "4PLAZA"
+    },
+    "TRAMPOLINA": {
+        "errors": 0,
+        "warnings": 1,
+        "endScene": "14PERLY"
+    },
+    "DOUFO": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "UFO"
+    },
+    "RZEKA1": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "RZEKA1"
+    },
+    "RZEKA2": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "RZEKA2"
+    },
+    "RZEKA3": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "RZEKA3"
+    },
+    "CUTSTATEK1": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "CUTSTATEK3"
+    },
+    "CUTSTATEK2": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "CUTSTATEK4"
+    },
+    "CUTSTATEK3": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "CUTSTATEK4"
+    },
+    "CUTSTATEK4": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "CUTSTATEK5"
+    },
+    "CUTSTATEK5": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "CUTSTATEK5"
+    },
+    "CUTSTATEK0": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "CUTSTATEK3"
+    },
+    "MAPAPUSTA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "MAPAPUSTA"
+    },
+    "MAPAPELNA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "MAPAPELNA"
+    },
+    "WIOSKA10": {
+        "errors": 0,
+        "warnings": 5,
+        "endScene": "WIOSKA10"
+    },
+    "KROLEWNA11": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "KROLEWNA11"
+    },
+    "URWISKO12": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "URWISKO12"
+    },
+    "PALISADA13": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "PALISADA13"
+    },
+    "14PERLY": {
+        "errors": 0,
+        "warnings": 1,
+        "endScene": "14PERLY"
+    },
+    "15POSAG": {
+        "errors": 2,
+        "warnings": 1,
+        "endScene": "15POSAG"
+    },
+    "KRETSIAKAPIE": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "KRETSIAKAPIE"
+    }
+}

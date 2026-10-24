@@ -1,0 +1,347 @@
+{
+    "ALEJA": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "ARCADE"
+    },
+    "BUDA": {
+        "errors": 0,
+        "warnings": 26,
+        "endScene": "ARCADE"
+    },
+    "CIEMNAJASKINIA": {
+        "errors": 0,
+        "warnings": 33,
+        "endScene": "ARCADE"
+    },
+    "CIEMNAJASKINIA2": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "EGIPTLEJ": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "ARCADE"
+    },
+    "FUTULEJ": {
+        "errors": 0,
+        "warnings": 27,
+        "endScene": "ARCADE"
+    },
+    "FUTUMAIN": {
+        "errors": 0,
+        "warnings": 18,
+        "endScene": "ARCADE"
+    },
+    "HANGAR": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "JASKINIE": {
+        "errors": 0,
+        "warnings": 18,
+        "endScene": "ARCADE"
+    },
+    "KOMIN": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "KOTLEONARDA": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "KROL3": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "KROL5": {
+        "errors": 0,
+        "warnings": 26,
+        "endScene": "ARCADE"
+    },
+    "KURNIKI": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "LABPIRAMIDA0": {
+        "errors": 0,
+        "warnings": 20,
+        "endScene": "ARCADE"
+    },
+    "LABPIRAMIDA1": {
+        "errors": 0,
+        "warnings": 20,
+        "endScene": "ARCADE"
+    },
+    "LABPIRAMIDA2": {
+        "errors": 0,
+        "warnings": 20,
+        "endScene": "ARCADE"
+    },
+    "LABPIRAMIDA3": {
+        "errors": 0,
+        "warnings": 20,
+        "endScene": "ARCADE"
+    },
+    "LABPIRAMIDA4": {
+        "errors": 0,
+        "warnings": 20,
+        "endScene": "ARCADE"
+    },
+    "LABPIRAMIDA5": {
+        "errors": 0,
+        "warnings": 20,
+        "endScene": "ARCADE"
+    },
+    "LABPIRAMIDA6": {
+        "errors": 0,
+        "warnings": 20,
+        "endScene": "ARCADE"
+    },
+    "LABPIRAMIDA7": {
+        "errors": 0,
+        "warnings": 20,
+        "endScene": "ARCADE"
+    },
+    "LABPIRAMIDA8": {
+        "errors": 0,
+        "warnings": 20,
+        "endScene": "ARCADE"
+    },
+    "LABZAKON0": {
+        "errors": 0,
+        "warnings": 20,
+        "endScene": "ARCADE"
+    },
+    "LABZAKON1": {
+        "errors": 0,
+        "warnings": 20,
+        "endScene": "ARCADE"
+    },
+    "LABZAKON2": {
+        "errors": 0,
+        "warnings": 20,
+        "endScene": "ARCADE"
+    },
+    "LABZAKON3": {
+        "errors": 0,
+        "warnings": 20,
+        "endScene": "ARCADE"
+    },
+    "LABZAKON4": {
+        "errors": 0,
+        "warnings": 20,
+        "endScene": "ARCADE"
+    },
+    "LABZAKON5": {
+        "errors": 0,
+        "warnings": 18,
+        "endScene": "ARCADE"
+    },
+    "LEJLOCK": {
+        "errors": 0,
+        "warnings": 48,
+        "endScene": "ARCADE"
+    },
+    "LEONARDO": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "MALARZ": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "MAMUT": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "ARCADE"
+    },
+    "NADROZA": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "ARCADE"
+    },
+    "NOSTRADAMUS": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "ARCADE"
+    },
+    "OBRAZY1": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "OBRAZY2": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "ARCADE"
+    },
+    "OBRAZY3": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "ARCADE"
+    },
+    "OBRAZY4": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "ARCADE"
+    },
+    "PANORAMA3": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "PANORAMA5": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "PANORAMA7": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "PIRAMIDA": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "ARCADE"
+    },
+    "PODROZA3": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "ARCADE"
+    },
+    "PODROZA5": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "ARCADE"
+    },
+    "PODWORKO": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "ARCADE"
+    },
+    "POMNIK": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "PREKOPIEC": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "PRELEJ": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "CS_WANDA"
+    },
+    "PRELEJ2": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "PREWARSZTAT": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "PRZEDDOMEMKRETESA": {
+        "errors": 0,
+        "warnings": 18,
+        "endScene": "ARCADE"
+    },
+    "ROZA3": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "ROZA5": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "RYNEK": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "ARCADE"
+    },
+    "RYNEK5": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "RYNEK7": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "ARCADE"
+    },
+    "SRELEJ3": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "ARCADE"
+    },
+    "SRELEJ5": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "ARCADE"
+    },
+    "SRELEJ7": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "ARCADE"
+    },
+    "STAW": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "STRAGAN": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "SZKOLA": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "TWIERDZA": {
+        "errors": 0,
+        "warnings": 18,
+        "endScene": "ARCADE"
+    },
+    "WARSZTAT": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "ZAJEZDNIA": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "ZAKON": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "ZAMEK3": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "ZAMEK5": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    }
+}

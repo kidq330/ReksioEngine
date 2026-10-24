@@ -1,0 +1,122 @@
+{
+    "START": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "MENUSLOTY"
+    },
+    "KONTROLA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "KONTROLA"
+    },
+    "MENUSLOTY": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "MENUSLOTY"
+    },
+    "ZAJEZDNIA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "ZAJEZDNIA"
+    },
+    "ARCADE": {
+        "errors": 0,
+        "warnings": 6,
+        "endScene": "ARCADE"
+    },
+    "CUTSCENKI": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "MENUSLOTY"
+    },
+    "EIFELTOWER": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "EIFELTOWER"
+    },
+    "DOROZKA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "DOROZKA"
+    },
+    "DZUNGLA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "DZUNGLA"
+    },
+    "TARGOWISKO": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "TARGOWISKO"
+    },
+    "WYKOPALISKA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "WYKOPALISKA"
+    },
+    "ONORIENTEXPRESS": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "ONORIENTEXPRESS"
+    },
+    "KONST_ECZKA": {
+        "errors": 0,
+        "warnings": 2,
+        "endScene": "KONST_ECZKA"
+    },
+    "LOTBALONEM": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "LOTBALONEM"
+    },
+    "TUNEL": {
+        "errors": 0,
+        "warnings": 20,
+        "endScene": "TUNEL"
+    },
+    "KOLEJ": {
+        "errors": 0,
+        "warnings": 92,
+        "endScene": "KOLEJ"
+    },
+    "HANOI": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "HANOI"
+    },
+    "ROWNOWAGA": {
+        "errors": 0,
+        "warnings": 1,
+        "endScene": "ROWNOWAGA"
+    },
+    "SLON": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "SLON"
+    },
+    "BDUSA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "BDUSA"
+    },
+    "NOTES": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "NOTES"
+    },
+    "MAPA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "MAPA"
+    },
+    "WEGORZE": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "WEGORZE"
+    },
+    "NAPISYOFERTA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "NAPISYOFERTA"
+    }
+}

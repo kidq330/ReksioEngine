@@ -1,0 +1,452 @@
+{
+    "S14_0_PRZEDKOGUTEM": {
+        "errors": 0,
+        "warnings": 1,
+        "endScene": "S14_0_PRZEDKOGUTEM"
+    },
+    "S14_2_PRZEDKOGUTEM": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S14_2_PRZEDKOGUTEM"
+    },
+    "S14_4_STARTRAKIETY": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S14_4_STARTRAKIETY"
+    },
+    "S23_0_SALUT": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S23_0_SALUT"
+    },
+    "S14_1_PRZEDKOGUTEM": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S14_1_PRZEDKOGUTEM"
+    },
+    "S1_0_INTRO1": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S1_0_INTRO1"
+    },
+    "S12_0_WBUDZIE": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S13_1_BUDA"
+    },
+    "S13_1_BUDA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S14_0_PRZEDKOGUTEM"
+    },
+    "S24_0_CHMURY": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S31_0_ZIEMIA"
+    },
+    "S31_0_ZIEMIA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S31_0_ZIEMIA"
+    },
+    "S35_0_WRAKIECIE": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S35_0_WRAKIECIE"
+    },
+    "S2_0_INTRO2": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S2_0_INTRO2"
+    },
+    "S24D": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S24D"
+    },
+    "S12_1_BUDA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S12_1_BUDA"
+    },
+    "S15_0_KURNIK": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S15_0_KURNIK"
+    },
+    "S15_1_KURNIK": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S15_1_KURNIK"
+    },
+    "S21_0_WARSZTAT": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S21_0_WARSZTAT"
+    },
+    "DECR": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "DECR"
+    },
+    "MENUGLOWNE": {
+        "errors": 0,
+        "warnings": 4,
+        "endScene": "MENUGLOWNE"
+    },
+    "S16_SPACEINVADERS": {
+        "errors": 0,
+        "warnings": 1,
+        "endScene": "S16_SPACEINVADERS"
+    },
+    "S14_3_PODWORKO": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S14_3_PODWORKO"
+    },
+    "S38_KALIBRACJA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S38_KALIBRACJA"
+    },
+    "S37_0_DROGAMLECZNA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S37_0_DROGAMLECZNA"
+    },
+    "S36_0_ROBOTY": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S36_0_ROBOTY"
+    },
+    "S34_0_KURAN": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S34_0_KURAN"
+    },
+    "S41_0_CRASH": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S41_0_CRASH"
+    },
+    "S45_0_CELA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S45_0_CELA"
+    },
+    "S47_0_MILOSC": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S47_0_MILOSC"
+    },
+    "S34_PRZELOT_A": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S34_PRZELOT_B"
+    },
+    "S34_PRZELOT_B": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S34_PRZELOT_B"
+    },
+    "S51_1_INDOR": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S51_1_INDOR"
+    },
+    "S54_0_WAWOZ": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S54_0_WAWOZ"
+    },
+    "S510_0_GENERATOR": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S510_0_GENERATOR"
+    },
+    "S56_0_WIOSKA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S56_0_WIOSKA"
+    },
+    "S51_0_INDOR": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S51_0_INDOR"
+    },
+    "S_GENERATOR_1": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S_GEN2"
+    },
+    "S_GEN2": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S_GEN2"
+    },
+    "S74_LOTNAJAJO_1": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S82_DOK"
+    },
+    "S74_LOTNAJAJO_2": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S82_DOK"
+    },
+    "S74_LOTNAJAJO_3": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S82_DOK"
+    },
+    "S82_DOK": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S82_DOK"
+    },
+    "S88_0_KURATOR": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S88_0_KURATOR"
+    },
+    "S72_0_BRAMA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S72_0_BRAMA"
+    },
+    "S73_0_KOD": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S73_0_KOD"
+    },
+    "S75_PORT": {
+        "errors": 0,
+        "warnings": 1,
+        "endScene": "S75_PORT"
+    },
+    "S76": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S71_DROGA"
+    },
+    "S83_LABIRYNT": {
+        "errors": 0,
+        "warnings": 1,
+        "endScene": "S83_LABIRYNT"
+    },
+    "S84_MOSTEK": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S85_SLONCE"
+    },
+    "S58_0_PUSTELNIK": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S58_0_PUSTELNIK"
+    },
+    "S42_0_SKLADZIK": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S42_0_SKLADZIK"
+    },
+    "S52_0_WIOSKA": {
+        "errors": 0,
+        "warnings": 1,
+        "endScene": "S52_0_WIOSKA"
+    },
+    "S52_1_WIOSKA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S52_1_WIOSKA"
+    },
+    "O1A": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "O1A"
+    },
+    "O1B": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "O1B"
+    },
+    "S610_ZAMEK": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S610_ZAMEK"
+    },
+    "S64_BRAMA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S64_BRAMA"
+    },
+    "S68_LEBIOLIGHT": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S68_LEBIOLIGHT"
+    },
+    "S69_0_LEBIODKA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S69_0_LEBIODKA"
+    },
+    "S71_DROGA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S71_DROGA"
+    },
+    "S66_WYBOR": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S66_WYBOR"
+    },
+    "O2": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "O2"
+    },
+    "O3": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "O3"
+    },
+    "S33_METEORY": {
+        "errors": 0,
+        "warnings": 1,
+        "endScene": "S33_METEORY"
+    },
+    "CRMA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "CRMA"
+    },
+    "O4": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "O4"
+    },
+    "O5": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "O5"
+    },
+    "O6": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "O6"
+    },
+    "KO": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "KO"
+    },
+    "S49_OBRAZKI": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S49_OBRAZKI"
+    },
+    "S61_LADOWANIE": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S61_LADOWANIE"
+    },
+    "S63_OBOZ": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S63_OBOZ"
+    },
+    "S53_0_PLAT1": {
+        "errors": 0,
+        "warnings": 2,
+        "endScene": "S53_0_PLAT1"
+    },
+    "S55_0_PLAT2": {
+        "errors": 0,
+        "warnings": 2,
+        "endScene": "S55_0_PLAT2"
+    },
+    "S57_0_PLAT3": {
+        "errors": 0,
+        "warnings": 2,
+        "endScene": "S57_0_PLAT3"
+    },
+    "S59_0_PLAT4": {
+        "errors": 0,
+        "warnings": 2,
+        "endScene": "S59_0_PLAT4"
+    },
+    "S65_ZAMEK": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S65_ZAMEK"
+    },
+    "X": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "X"
+    },
+    "F1": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "F1"
+    },
+    "F2": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "F2"
+    },
+    "S46_ODKURZACZ": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S46_ODKURZACZ"
+    },
+    "S42_1_SKLADZIK": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S42_1_SKLADZIK"
+    },
+    "S43_LRBIN": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S43_LRBIN"
+    },
+    "S85_SLONCE": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S85_SLONCE"
+    },
+    "S62_PAKMAN": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S62_PAKMAN"
+    },
+    "S67_WYSCIGI": {
+        "errors": 3,
+        "warnings": 1,
+        "endScene": "S67_WYSCIGI"
+    },
+    "D": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "D"
+    },
+    "S86_JAJO": {
+        "errors": 0,
+        "warnings": 1,
+        "endScene": "S86_JAJO"
+    },
+    "S44_511_PODKOP": {
+        "errors": 0,
+        "warnings": 4,
+        "endScene": "S44_511_PODKOP"
+    },
+    "INTRO_LANG": {
+        "errors": 0,
+        "warnings": 5,
+        "endScene": "INTRO_LANG"
+    },
+    "OFERTA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "OFERTA"
+    }
+}

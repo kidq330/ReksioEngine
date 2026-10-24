@@ -1,0 +1,177 @@
+{
+    "ARCADE": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "INTRO_4": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "INTRO_4"
+    },
+    "INTRO_3": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "INTRO_3"
+    },
+    "INTRO_2": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "INTRO_2"
+    },
+    "INTRO_1": {
+        "errors": 0,
+        "warnings": 2,
+        "endScene": "INTRO_1"
+    },
+    "MAGIC": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "MAGIC"
+    },
+    "HILLS": {
+        "errors": 0,
+        "warnings": 1,
+        "endScene": "HILLS"
+    },
+    "LIMBO": {
+        "errors": 42,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "DIALOGS": {
+        "errors": 0,
+        "warnings": 1,
+        "endScene": "DIALOGS"
+    },
+    "CHOICE": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "CHOICE"
+    },
+    "START": {
+        "errors": 0,
+        "warnings": 2,
+        "endScene": "INTRO_1"
+    },
+    "LEBIODKA": {
+        "errors": 0,
+        "warnings": 4,
+        "endScene": "LEBIODKA"
+    },
+    "C_UCIECZKA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "C_UCIECZKA"
+    },
+    "CREDITS": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "CREDITS"
+    },
+    "OUTRO_1": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "OUTRO_1"
+    },
+    "OUTRO_2": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "OUTRO_2"
+    },
+    "OUTRO_3": {
+        "errors": 0,
+        "warnings": 2,
+        "endScene": "OUTRO_3"
+    },
+    "OUTRO_4": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "OUTRO_4"
+    },
+    "OUTRO_5": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "OUTRO_5"
+    },
+    "OUTRO_6": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "OUTRO_6"
+    },
+    "OUTRO_7": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "OUTRO_7"
+    },
+    "OFERTA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "OFERTA"
+    },
+    "PRZYLOT": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "PRZYLOT"
+    },
+    "PRZYLOT_2": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "PRZYLOT_2"
+    },
+    "TELE_1": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "TELE_1"
+    },
+    "TELE_2": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "TELE_2"
+    },
+    "KONTROLA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "KONTROLA"
+    },
+    "BARANDALF": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "BARANDALF"
+    },
+    "CAT": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "CAT"
+    },
+    "FRED": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "FRED"
+    },
+    "KUBKI": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "KUBKI"
+    },
+    "MIOTLY": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "MIOTLY"
+    },
+    "LABIRYNT": {
+        "errors": 0,
+        "warnings": 12,
+        "endScene": "LABIRYNT"
+    },
+    "DRAGON": {
+        "errors": 0,
+        "warnings": 1,
+        "endScene": "DRAGON"
+    },
+    "SHOOTER": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "SHOOTER"
+    }
+}

@@ -39,6 +39,14 @@ yarn sweep rikn --out sweep-results/rikn-base
 yarn sweep rikn --baseline sweep-results/rikn-base/summary.json
 ```
 
+[`sweep/baselines/`](sweep/baselines) has the results of the current engine for the patched releases from zagrajwreksia.pl: `<game>.json` for the scenes and `<game>-locations.json` for the ARCADE locations (`yarn sweep riwc --locations --baseline scripts/sweep/baselines/riwc-locations.json`). Update them when a change fixes errors. The errors they still list come from the game data or from entering a scene without the state the game would have:
+
+-   Ufo: S67_WYSCIGI needs the car chosen in S66_WYBOR.
+-   Ufo demo: four scenes are listed in its episode but not shipped.
+-   Skarb Piratów: scripts run behaviours that aren't defined (NAWRAKU's `BEH_KR` is commented out).
+-   Czarodzieje: LIMBO needs the scene the player came from; ALCHEMY calls `SETPTIORITY`, a typo.
+-   Wehikuł Czasu: CS_KROL reads the tournament results.
+
 ## Walkthroughs: `yarn walkthrough`
 
 Plays a game from a JSON script on a manual clock with a fixed random seed, so every run is the same, and fails when an expectation doesn't hold or the game logs an error. The engine runs with `manualClock=true&seed=N`: time advances only through `engine.step(ms)` (1/60 s per frame), and sounds are silent and end when the clock passes their length.

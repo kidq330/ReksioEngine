@@ -1,0 +1,112 @@
+{
+    "S14_0_PRZEDKOGUTEM": {
+        "errors": 0,
+        "warnings": 1,
+        "endScene": "S14_0_PRZEDKOGUTEM"
+    },
+    "S14_2_PRZEDKOGUTEM": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S14_2_PRZEDKOGUTEM"
+    },
+    "S14_4_STARTRAKIETY": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S14_4_STARTRAKIETY"
+    },
+    "S23_0_SALUT": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S23_0_SALUT"
+    },
+    "S14_1_PRZEDKOGUTEM": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S14_1_PRZEDKOGUTEM"
+    },
+    "S1_0_INTRO1": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S1_0_INTRO1"
+    },
+    "S12_0_WBUDZIE": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S13_1_BUDA"
+    },
+    "S13_1_BUDA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S14_0_PRZEDKOGUTEM"
+    },
+    "S24_0_CHMURY": {
+        "errors": 2,
+        "warnings": 0,
+        "endScene": "S24_0_CHMURY"
+    },
+    "S31_0_ZIEMIA": {
+        "errors": 3,
+        "warnings": 0,
+        "endScene": "S31_0_ZIEMIA"
+    },
+    "S35_0_WRAKIECIE": {
+        "errors": 2,
+        "warnings": 0,
+        "endScene": "S35_0_WRAKIECIE"
+    },
+    "S2_0_INTRO2": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S2_0_INTRO2"
+    },
+    "S24D_0_CHMURY": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S24D_0_CHMURY"
+    },
+    "S12_1_BUDA": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S12_1_BUDA"
+    },
+    "S15_0_KURNIK": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S15_0_KURNIK"
+    },
+    "S15_1_KURNIK": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S15_1_KURNIK"
+    },
+    "S21_0_WARSZTAT": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S21_0_WARSZTAT"
+    },
+    "DEMOCREDITS": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "DEMOCREDITS"
+    },
+    "MENUGLOWNE": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "MENUGLOWNE"
+    },
+    "S16_SPACEINVADERS": {
+        "errors": 0,
+        "warnings": 1,
+        "endScene": "S16_SPACEINVADERS"
+    },
+    "S14_3_PODWORKO": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "S14_3_PODWORKO"
+    },
+    "S38_KALIBRACJA": {
+        "errors": 3,
+        "warnings": 0,
+        "endScene": "S38_KALIBRACJA"
+    }
+}

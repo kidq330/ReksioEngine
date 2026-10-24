@@ -1,0 +1,287 @@
+{
+    "ARCADE": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "ARCADE"
+    },
+    "START": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "START"
+    },
+    "NUREK": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "NUREK"
+    },
+    "SAMOLOCIK": {
+        "errors": 0,
+        "warnings": 8,
+        "endScene": "SAMOLOCIK"
+    },
+    "SAMOCHODZIK": {
+        "errors": 0,
+        "warnings": 10,
+        "endScene": "SAMOCHODZIK"
+    },
+    "PIESZO": {
+        "errors": 0,
+        "warnings": 10,
+        "endScene": "PIESZO"
+    },
+    "CS_ZANURZENIEKRETA": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_ZANURZENIEKRETA"
+    },
+    "CS_ZANURZENIEZAWSZE": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "NUREK"
+    },
+    "CS_ODKRYCIELEJA": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_ODKRYCIELEJA"
+    },
+    "CS_STARTWEHIKULU": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_STARTWEHIKULU"
+    },
+    "CS_DEMONSTRACJA": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_DEMONSTRACJA"
+    },
+    "CS_PREWYBUCH": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_PREWYBUCH"
+    },
+    "CS_UPADEKPOJAZDU": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_UPADEKPOJAZDU"
+    },
+    "CS_HELIKOPTER": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_HELIKOPTER"
+    },
+    "CS_NOSTRA3": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_NOSTRA3"
+    },
+    "CS_SWIETLANAFUT": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_SWIETLANAFUT"
+    },
+    "CS_WROTKA": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_WROTKA"
+    },
+    "CS_WANDA": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_WANDA"
+    },
+    "CS_SFINKS": {
+        "errors": 0,
+        "warnings": 28,
+        "endScene": "ARCADE"
+    },
+    "CS_ZAKON7": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_ZAKON7"
+    },
+    "CS_KROL": {
+        "errors": 3,
+        "warnings": 7,
+        "endScene": "CS_KROL"
+    },
+    "CS_EGIPTLEJ1": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_EGIPTLEJ1"
+    },
+    "CS_EGIPTLEJ2": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_EGIPTLEJ2"
+    },
+    "CS_EGIPTLEJ2_OUTRO": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_EGIPTLEJ2_OUTRO"
+    },
+    "CS_EGIPTLEJ3": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_EGIPTLEJ3"
+    },
+    "CS_INTRO1": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_INTRO1"
+    },
+    "CS_INTRO2": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_INTRO2"
+    },
+    "CS_OUTROKRECIKI": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_OUTROKRECIKI"
+    },
+    "CS_NOSTRA5": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_NOSTRA5"
+    },
+    "CS_NOSTRA5_OUTRO": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_NOSTRA5_OUTRO"
+    },
+    "CS_OUTRONAPISY1": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_PREKOPIEC_OUTRO"
+    },
+    "CS_OUTRONAPISY2": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_UPADEKPOJAZDU_OUTRO"
+    },
+    "CS_OUTRONAPISY3": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_POJMANIE_OUTRO"
+    },
+    "CS_OUTRONAPISY4": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_OUTRONAPISY4"
+    },
+    "CS_OUTRONAPISY5": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_OUTRONAPISY5"
+    },
+    "CS_OUTRONAPISY6": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_KAPELUSZNIK2"
+    },
+    "CS_OUTROSTUDIO": {
+        "errors": 0,
+        "warnings": 11,
+        "endScene": "CS_OUTROSTUDIO"
+    },
+    "CS_POJMANIE": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_POJMANIE"
+    },
+    "CS_POJMANIE_OUTRO": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_POJMANIE_OUTRO"
+    },
+    "CS_PREKOPIEC": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_PREKOPIEC"
+    },
+    "CS_PREKOPIEC_OUTRO": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_PREKOPIEC_OUTRO"
+    },
+    "CS_STARYKRETES": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_STARYKRETES"
+    },
+    "CS_UPADEKPOJAZDU_OUTRO": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_UPADEKPOJAZDU_OUTRO"
+    },
+    "CS_XIX": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_XIX"
+    },
+    "CS_KAPELUSZNIK2": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_KAPELUSZNIK2"
+    },
+    "CS_KAPELUSZNIK": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "CS_KAPELUSZNIK"
+    },
+    "MAINNAPISY": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "MAINNAPISY"
+    },
+    "CS_INTRO0": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "CS_INTRO0"
+    },
+    "LAS": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "LAS"
+    },
+    "TURNIEJ": {
+        "errors": 0,
+        "warnings": 15,
+        "endScene": "TURNIEJ"
+    },
+    "KONTROLA": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "KONTROLA"
+    },
+    "HERBY": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "HERBY"
+    },
+    "HOUDINI": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "HOUDINI"
+    },
+    "KRZEMIENIE": {
+        "errors": 0,
+        "warnings": 30,
+        "endScene": "ARCADE"
+    },
+    "LABIRYNTY": {
+        "errors": 0,
+        "warnings": 21,
+        "endScene": "LABIRYNTY"
+    },
+    "SCIGACZ": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "SCIGACZ"
+    },
+    "TUNEL": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "TUNEL"
+    }
+}

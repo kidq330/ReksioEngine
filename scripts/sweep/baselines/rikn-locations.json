@@ -1,0 +1,57 @@
+{
+    "AWARIA_STATKU": {
+        "errors": 0,
+        "warnings": 11,
+        "endScene": "ARCADE"
+    },
+    "DZIKI_ZACHOD": {
+        "errors": 0,
+        "warnings": 19,
+        "endScene": "ARCADE"
+    },
+    "EGIPT": {
+        "errors": 0,
+        "warnings": 11,
+        "endScene": "ARCADE"
+    },
+    "KONSTANTYNOPOL": {
+        "errors": 0,
+        "warnings": 11,
+        "endScene": "ARCADE"
+    },
+    "KONST_PRZEDZIALY": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "ARCADE"
+    },
+    "MACHINA": {
+        "errors": 0,
+        "warnings": 11,
+        "endScene": "ARCADE"
+    },
+    "PARYZ": {
+        "errors": 0,
+        "warnings": 6,
+        "endScene": "ARCADE"
+    },
+    "SZANGRILA": {
+        "errors": 0,
+        "warnings": 11,
+        "endScene": "ARCADE"
+    },
+    "TEATRZYK": {
+        "errors": 0,
+        "warnings": 0,
+        "endScene": "ARCADE"
+    },
+    "WIOSKA_MASAJOW": {
+        "errors": 0,
+        "warnings": 11,
+        "endScene": "ARCADE"
+    },
+    "WYSPA": {
+        "errors": 0,
+        "warnings": 19,
+        "endScene": "ARCADE"
+    }
+}

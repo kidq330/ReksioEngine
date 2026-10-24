@@ -1,0 +1,262 @@
+{
+    "ALCHEMY": {
+        "errors": 3,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "ARRAS": {
+        "errors": 0,
+        "warnings": 11,
+        "endScene": "ARCADE"
+    },
+    "BARANMIOT": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "BIALO": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "CALINECZKA": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "DOMALCHOMIKA": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "DOMSPIEL": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "DRATEWKA": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "GABINETDYR": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "GABINETSNEJKA": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "GULDRYK": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "HOLGLOWNY": {
+        "errors": 0,
+        "warnings": 11,
+        "endScene": "ARCADE"
+    },
+    "JAGA": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "KAPTUREK": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "KORYTARZ": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "KROLEWNA": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "KROLOWA": {
+        "errors": 0,
+        "warnings": 11,
+        "endScene": "ARCADE"
+    },
+    "LABIRYNTH": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "LUSTRO": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "MIASTO": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "MIOTLISKO": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "MIOTSHOP": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "NORASZ": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "OLBRZYM": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "PIKLIBIA": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "PIKMIOT": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "PIWNICA": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "PODWIECZOREK1": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "PODWIECZOREK2": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "PODWIECZOREK3": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "POMPA": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "PRZEDSEZAMEM": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "PRZEPASC": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "PRZYSTAN": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "RATUSZ": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "RATUSZIN": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "SALA": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "SEZAM": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "SKLEPALCH": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "SMOK": {
+        "errors": 0,
+        "warnings": 11,
+        "endScene": "ARCADE"
+    },
+    "SNIEZKA": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "SZREKSIO": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "TELEP_KURNIKI": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "TELEP_PODWORKO": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "TELEP_WARSZTAT": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "TROL": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "TRZYWEJSCIA": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "UNIVBACK": {
+        "errors": 0,
+        "warnings": 11,
+        "endScene": "ARCADE"
+    },
+    "UNIVFRONT": {
+        "errors": 0,
+        "warnings": 9,
+        "endScene": "ARCADE"
+    },
+    "UNIVPIWNICA": {
+        "errors": 0,
+        "warnings": 10,
+        "endScene": "MAGIC"
+    },
+    "WMWEJSCIE": {
+        "errors": 0,
+        "warnings": 7,
+        "endScene": "ARCADE"
+    },
+    "WMWNETRZE": {
+        "errors": 0,
+        "warnings": 11,
+        "endScene": "ARCADE"
+    }
+}
