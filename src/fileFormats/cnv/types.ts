@@ -389,6 +389,8 @@ export type MouseDefinition = TypeDefinition & {
     ONRELEASE?: callbacks<string>
     ONINIT?: callback
     ONMOVE?: callback
+    // Empty or 0 wherever the games set it; what other values do is not known
+    RAW?: string
 }
 
 const MouseStructure = {
@@ -397,6 +399,7 @@ const MouseStructure = {
     ONRELEASE: optional(callbacks(string)),
     ONINIT: optional(callback),
     ONMOVE: optional(callback),
+    RAW: optional(string),
 }
 
 export type MultiArrayDefinition = TypeDefinition & {
@@ -548,6 +551,8 @@ export type TextDefinition = TypeDefinition & {
     MONITORCOLLISIONALPHA: boolean
     MONITORCOLLISION: boolean
     FONT: string
+    // Empty wherever the games set it; what a value does is not known
+    HYPERTEXT?: string
     ONINIT?: callback
 }
 
@@ -562,6 +567,7 @@ const TextDefinitionStructure = {
     MONITORCOLLISIONALPHA: boolean,
     MONITORCOLLISION: boolean,
     FONT: string,
+    HYPERTEXT: optional(string),
     ONINIT: optional(callback),
 }
 
