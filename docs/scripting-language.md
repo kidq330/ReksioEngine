@@ -485,6 +485,7 @@ operand   = parameter ;                         (* any §3.4 form, incl. nested 
 [interpreter/parser.ts:398-489; interpreter/interpreter.ts:443-444]
 
 -   `*REF^METHOD(args)` evaluates `REF` as a parameter, converts the result to a string, and uses that string as the target object's name. **[F]** (`T:"indirect object reference"`: `REF="A"`, `*REF^SET(3)` sets A.)
+-   `*[expression]^METHOD(args)` does the same with a bracket expression, as a statement or an argument: `*["A"+N]^SET(3)` with `N=1` sets A1. Czarodzieje, Wehikuł Czasu and Kapitan Nemo use this form 670 times (e.g. `*["BEHINITPLAN"+IPLANSZALAST]^RUN()`). Until this was fixed the TS parser took `["A"+N]` as a name, so these calls silently did nothing, and Kapitan Nemo's TUNEL hung in a `@WHILE` that waited for `*["ART"+TEMP]^GET(…)` to change a value. **[F]** (`T:"indirect object reference by a bracket expression…"`)
 -   `*NAME` and `*NAME(args)`, with no `^`, produce a call whose target is `*NAME` and whose method is also `NAME`. **[?]** Probably not the original meaning; unused in Ufo.
 
 ### 3.7 Logic-expression mini-language (3-argument `@IF`)

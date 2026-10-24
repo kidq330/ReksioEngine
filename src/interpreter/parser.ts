@@ -515,7 +515,9 @@ function _splitObjectMethod(text: string, offset: number): [ObjectRef | null, st
 function _refToParam(ref: ObjectRef): Parameter {
     switch (ref.type) {
         case 'Identifier':
-            return ref
+            // *[expression]^METHOD() names the object by the expression's value, e.g. Kapitan Nemo's
+            // *["BEHINITPLAN"+IPLANSZALAST]^RUN() or TUNEL's *["ART"+TEMP]^GETSIZE()
+            return ref.name.startsWith('[') ? parseParameter(ref.name, ref.start) : ref
         case 'ThisRef':
             return { type: 'Identifier', name: 'THIS', start: ref.start, end: ref.end }
         case 'DirectRef':

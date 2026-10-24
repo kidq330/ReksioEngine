@@ -54,6 +54,15 @@ describe('interpreter', () => {
         expect(a.getValue()).toBe(3)
     })
 
+    test('indirect object reference by a bracket expression, as a statement and as an argument', async () => {
+        const a1 = engine.integer('A1')
+        engine.integer('N', 1)
+        const size = engine.integer('SIZE')
+        await engine.run('*["A"+N]^SET(3);SIZE^SET(*["A"+N]^ADD(2));')
+        expect(a1.getValue()).toBe(5)
+        expect(size.getValue()).toBe(5)
+    })
+
     test('script arguments substitution', async () => {
         const a = engine.integer('A')
         await engine.run('A^SET($1);A^ADD($2);', [2, 3])
