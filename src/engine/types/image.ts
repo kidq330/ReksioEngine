@@ -32,10 +32,7 @@ export class Image extends DisplayType<ImageDefinition> {
     }
 
     private async load(path: string) {
-        const relativePath =
-            this.engine.currentScene !== null
-                ? await this.engine.currentScene.getRelativePath(path)
-                : await this.engine.resolvePath(path)
+        const relativePath = await this.resolveFilePath(path)
         return await loadSprite(this.engine.filesystem, relativePath)
     }
 

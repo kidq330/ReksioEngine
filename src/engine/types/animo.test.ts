@@ -1,5 +1,6 @@
 import { TestEngine } from '../../common/testUtils'
 import { Animo } from './animo'
+import { Episode } from './episode'
 
 describe('ANIMO', () => {
     test('SETFRAME resolves its event like the original: unknown names fall back to the first event', () => {
@@ -24,5 +25,17 @@ describe('ANIMO', () => {
         expect(animo.GETPOSITIONX(true)).toBe(120)
         expect(animo.GETPOSITIONX(false)).toBe(120)
         expect(animo.GETPOSITIONY(true)).toBe(45)
+    })
+
+    test('before any scene, files are looked up beside the episode script that declared the object', async () => {
+        const engine = new TestEngine()
+        ;(engine as any).currentScene = null
+        const episode = new Episode(engine.asEngine(), null, {
+            TYPE: 'EPISODE',
+            NAME: 'PRZYGODA',
+            PATH: 'game/przygoda',
+        } as any)
+        const animo = new Animo(engine.asEngine(), episode, { TYPE: 'ANIMO', NAME: 'ANNFADE' } as any)
+        expect(await (animo as any).resolveFilePath('G_FADE.ANN')).toBe('dane/game/przygoda/g_fade.ann')
     })
 })

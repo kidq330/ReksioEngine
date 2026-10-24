@@ -9,6 +9,7 @@ import { AdvancedSprite } from '../rendering'
 import { Scope } from '../scope'
 import { logger } from '../logging'
 import { FileNotFoundError } from '../../filesystem/fileLoader'
+import { pathJoin } from '../../filesystem'
 
 export type XRayInfo = {
     type: string
@@ -40,6 +41,22 @@ export class Type<DefinitionType extends TypeDefinition> {
 
         this.callbacks = new CallbacksComponent(engine, this)
         this.callbacks.autoRegister()
+    }
+
+    // A file named by the object, looked up next to the current scene's script, or before any scene has loaded
+    // (objects of the episode or the application) next to the script that declared the object: Kapitan Nemo's
+    // episode declares ANNFADE with G_FADE.ANN, which lies in dane/game/przygoda beside przygoda.cnv
+    protected async resolveFilePath(filename: string): Promise<string> {
+        if (this.engine.currentScene !== null) {
+            return this.engine.currentScene.getRelativePath(filename)
+        }
+        for (let owner = this.parent; owner !== null; owner = owner.parent) {
+            const ownerPath = owner.definition.PATH
+            if (typeof ownerPath === 'string' && ownerPath !== '') {
+                return this.engine.resolvePath(filename, pathJoin('DANE', ownerPath))
+            }
+        }
+        return this.engine.resolvePath(filename)
     }
 
     @method()
