@@ -631,8 +631,9 @@ export class Animo extends DisplayType<AnimoDefinition> {
         this.fps = fps
     }
 
+    // Arguments are ignored, as in the original: Kapitan Nemo's TUNEL calls ANNBABELKIW_1^SHOW("BABELKI")
     @method()
-    SHOW() {
+    SHOW(...ignored: any[]) {
         this.setVisible(true)
     }
 

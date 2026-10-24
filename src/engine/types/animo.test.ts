@@ -1,6 +1,7 @@
 import { TestEngine } from '../../common/testUtils'
 import { Animo } from './animo'
 import { Episode } from './episode'
+import { allLogs } from '../logging'
 
 describe('ANIMO', () => {
     test('SETFRAME resolves its event like the original: unknown names fall back to the first event', () => {
@@ -16,6 +17,13 @@ describe('ANIMO', () => {
         expect(find(0)).toBe(events[0])
         expect(find(-1)).toBe(events[1])
         expect(find(5)).toBeNull()
+    })
+
+    test('PLAY and SHOW accept and ignore extra arguments, as the original does', async () => {
+        const engine = new TestEngine()
+        engine.add(new Animo(engine.asEngine(), engine.currentScene, { TYPE: 'ANIMO', NAME: 'ANSLON' } as any))
+        await engine.run('ANSLON^SHOW("BABELKI");ANSLON^PLAY("RUN",0);')
+        expect(allLogs.map((log) => log.text)).not.toContain('More arguments given than method accepts')
     })
 
     test('GETPOSITIONX with any argument is the position set with SETPOSITION', async () => {
