@@ -148,6 +148,10 @@ export class Sequence extends Type<SequenceDefinition> {
     async PLAY(sequenceName: string) {
         const entry = this.findEntryToPlay(sequenceName)
         if (entry !== null) {
+            // A sequence is paused by pausing the element it plays, so the new one plays even after PAUSE:
+            // Wehikuł Czasu's CS_INTRO2 does SEQCS^PAUSE();…;SEQCS^PLAY("PLAY2"); when an element finishes
+            this.paused = false
+            this.progressPending = false
             this.sequenceName = sequenceName
             this.runningSubSequence = null
             this.fillQueue(entry)
