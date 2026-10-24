@@ -39,18 +39,36 @@ export const openGame = async (page: Page, serverUrl: string, scene?: string, cl
 
 const FRAME_MS = 1000 / 60
 
+// Real time a step of the game may take before the game is considered stuck (waiting for something that never
+// comes, e.g. a scene load that failed halfway)
+const STEP_TIMEOUT_MS = 120000
+
 // Advances a game on a manual clock by whole frames, drawing only the last one
 export const advanceGame = async (page: Page, ms: number) => {
     const frames = Math.max(1, Math.round(ms / FRAME_MS))
-    await page.evaluate(
-        async ([frames, frameMs]) => {
-            const engine = (globalThis as any).engine
-            for (let i = 0; i < frames; i++) {
-                await engine.step(frameMs, i === frames - 1)
-            }
-        },
-        [frames, FRAME_MS]
-    )
+    let timer: NodeJS.Timeout | undefined
+    const timeout = new Promise<never>((_, reject) => {
+        timer = setTimeout(
+            () => reject(new Error(`the game got stuck: ${ms} ms of game time took over ${STEP_TIMEOUT_MS} ms`)),
+            STEP_TIMEOUT_MS
+        )
+    })
+    try {
+        await Promise.race([
+            page.evaluate(
+                async ([frames, frameMs]) => {
+                    const engine = (globalThis as any).engine
+                    for (let i = 0; i < frames; i++) {
+                        await engine.step(frameMs, i === frames - 1)
+                    }
+                },
+                [frames, FRAME_MS]
+            ),
+            timeout,
+        ])
+    } finally {
+        clearTimeout(timer)
+    }
 }
 
 // Lets `ms` of game time pass
