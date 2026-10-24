@@ -62,4 +62,6 @@ yarn disasm RiKN/bloomoodll.dll '?getFrameNo@CAnimo'       # disassemble the one
 yarn disasm RiKN/bloomoodll.dll 0x100ab3d0 --length 0x400  # disassemble from an address
 ```
 
+Call labels name the export at the call's target. `PIKLIB8.dll` was linked with identical-code folding, so a label there can name another function with the same body (e.g. `CMC_Mouse::getPosY` for `CMC_Animo::getAnimo`); BlooMoo DLLs call through per-function stubs, so their labels are exact. Virtual calls (`call *0xd4(%eax)`) aren't labelled: read the class's vtable, whose exported `??_7…` symbols `--list` shows. An object pointer may point at a secondary vtable, e.g. the `{for CXObject}` one.
+
 The script runners are `CMC_<Type>_Runner::<method>` (e.g. `?setFrame@CMC_Animo_Runner`); they unpack the arguments and call the `C<Type>` class. This is how `docs/scripting-language.md` settles questions marked **[F]** (disassembly), such as how `SETFRAME` resolves event names.

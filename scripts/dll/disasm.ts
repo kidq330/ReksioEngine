@@ -13,7 +13,10 @@ export const parseExports = (dump: string): Exports => {
     for (const match of dump.matchAll(/\[\s*(\d+)\] \+base\[\s*\d+\]\s+([0-9a-f]+) Export RVA/g)) {
         rvaByOrdinal.set(Number(match[1]), parseInt(match[2], 16))
     }
-    const names = dump.slice(dump.indexOf('[Ordinal/Name Pointer] Table'))
+    // The name table runs until the next section of the dump (e.g. the relocations, whose lines look alike)
+    const namesStart = dump.indexOf('[Ordinal/Name Pointer] Table')
+    const namesEnd = dump.indexOf('\n\n', namesStart)
+    const names = dump.slice(namesStart, namesEnd === -1 ? undefined : namesEnd)
     const byAddress = new Map<number, string>()
     const byName = new Map<string, number>()
     for (const match of names.matchAll(/\[\s*(\d+)\] (\S+)/g)) {
@@ -30,8 +33,11 @@ const objdump = (args: string[]) => execFileSync('objdump', args, { encoding: 'u
 
 const demangle = (name: string) => {
     try {
-        const out = execFileSync('llvm-undname', [name], { encoding: 'utf8' }).trim().split('\n')
-        return out[out.length - 1] || name
+        const out = execFileSync('llvm-undname', [name], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })
+            .trim()
+            .split('\n')
+        const demangled = out[out.length - 1]
+        return demangled && !demangled.startsWith('error') && demangled !== 'HIGHLOW' ? demangled : name
     } catch {
         return name
     }
