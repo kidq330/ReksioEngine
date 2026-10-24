@@ -54,3 +54,51 @@ describe('Sound.setRate', () => {
         expect(sound.sampleRate).toBe(22050)
     })
 })
+
+describe('virtual clock', () => {
+    test('a sound ends when the virtual clock passes its duration, a looping one never does', () => {
+        const manager = new AudioManager()
+        manager.useVirtualClock()
+        const sound = new Sound(manager, { duration: 1.5, sampleRate: 22050 } as AudioBuffer)
+        let ended = 0
+        sound.play({ onEnd: () => ended++ })
+        sound.play({ loop: true, onEnd: () => ended++ })
+
+        manager.advance(1)
+        expect(ended).toBe(0)
+        expect(sound.isPlaying).toBe(true)
+        manager.advance(0.5)
+        expect(ended).toBe(1)
+        manager.advance(10)
+        expect(ended).toBe(1)
+        expect(sound.isPlaying).toBe(true)
+    })
+
+    test('pausing keeps the position on the virtual clock', () => {
+        const manager = new AudioManager()
+        manager.useVirtualClock()
+        const sound = new Sound(manager, { duration: 2, sampleRate: 22050 } as AudioBuffer)
+        let ended = false
+        sound.play({ onEnd: () => (ended = true) })
+        manager.advance(1.5)
+        sound.pause()
+        manager.advance(5)
+        sound.resume()
+        manager.advance(0.4)
+        expect(ended).toBe(false)
+        manager.advance(0.1)
+        expect(ended).toBe(true)
+    })
+
+    test('stopping a paused sound discards it', () => {
+        const manager = new AudioManager()
+        manager.useVirtualClock()
+        const sound = new Sound(manager, { duration: 2, sampleRate: 22050 } as AudioBuffer)
+        sound.play()
+        sound.pause()
+        sound.stop()
+        sound.resume()
+        expect(sound.isPlaying).toBe(false)
+        expect(sound.instances).toHaveLength(0)
+    })
+})

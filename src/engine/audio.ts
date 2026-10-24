@@ -20,8 +20,9 @@ export class EmptySoundError extends Error {
 export class SoundInstance extends EventTarget {
     private parentSound: Sound
 
-    private readonly ctx: AudioContext
-    private readonly gain: GainNode
+    private readonly manager: AudioManager
+    // Created on the first real playback; with a virtual clock nothing reaches WebAudio
+    private gain: GainNode | null = null
 
     private _isPlaying = false
     private _volume = 1
@@ -36,12 +37,10 @@ export class SoundInstance extends EventTarget {
     private finished = false
     private stopRequested = false
 
-    constructor(ctx: AudioContext, parentSound: Sound, master: GainNode, opts: PlayOptions = {}) {
+    constructor(manager: AudioManager, parentSound: Sound, opts: PlayOptions = {}) {
         super()
-        this.ctx = ctx
+        this.manager = manager
         this.parentSound = parentSound
-        this.gain = new GainNode(ctx)
-        this.gain.connect(master)
 
         this.initialOpts = {
             loop: opts.loop ?? false,
@@ -73,10 +72,14 @@ export class SoundInstance extends EventTarget {
         this.finished = true
 
         this._isPlaying = false
+        this.manager._setPlaying(this, false)
         this.cleanupSource()
 
-        // Remove from parent list so instances don’t accumulate
-        this.parentSound._removeInstance(this)
+        // Remove finished playbacks from the parent's list so instances don't accumulate. A paused one stays,
+        // so that the sound's RESUME finds it.
+        if (reason !== 'pause') {
+            this.parentSound._removeInstance(this)
+        }
 
         if (reason === 'end') {
             this.initialOpts.onEnd?.()
@@ -87,7 +90,12 @@ export class SoundInstance extends EventTarget {
     }
 
     private buildSource() {
-        const src = new AudioBufferSourceNode(this.ctx, { buffer: this.parentSound.buffer })
+        if (this.gain === null) {
+            this.gain = new GainNode(this.manager.ctx)
+            this.gain.connect(this.manager.master)
+            this.applyGain()
+        }
+        const src = new AudioBufferSourceNode(this.manager.ctx, { buffer: this.parentSound.buffer })
         src.loop = this.initialOpts.loop
         src.playbackRate.value = this.initialOpts.rate
         src.connect(this.gain)
@@ -108,26 +116,30 @@ export class SoundInstance extends EventTarget {
         this.finished = false
         this.stopRequested = false
 
-        const src = this.buildSource()
         const startOffset = Math.max(0, this.initialOpts.start ?? this.offset)
         this.offset = startOffset
-        this.startedAt = this.ctx.currentTime
-
-        src.start(0, startOffset)
+        this.startedAt = this.manager.currentTime
+        if (!this.manager.isVirtual) {
+            this.buildSource().start(0, startOffset)
+        }
         this._isPlaying = true
+        this.manager._setPlaying(this, true)
         this.initialOpts.onStart?.()
 
         return this
     }
 
     stop() {
-        if (!this.source || this.finished) {
+        if (!this._isPlaying) {
+            // A paused playback is discarded, so that RESUME doesn't bring it back
+            this.parentSound._removeInstance(this)
+            this.offset = 0
             return
         }
         this.stopRequested = true
 
         try {
-            this.source.stop()
+            this.source?.stop()
         } catch {
             /* ignore */
         }
@@ -136,15 +148,15 @@ export class SoundInstance extends EventTarget {
     }
 
     pause() {
-        if (!this.source || this.finished) {
+        if (!this._isPlaying) {
             return
         }
 
-        const elapsed = (this.ctx.currentTime - this.startedAt) * this.currentRate
+        const elapsed = (this.manager.currentTime - this.startedAt) * this.currentRate
         this.offset = (this.offset + elapsed) % this.parentSound.buffer.duration
 
         try {
-            this.source.stop()
+            this.source?.stop()
         } catch {
             /* ignore */
         }
@@ -152,10 +164,21 @@ export class SoundInstance extends EventTarget {
     }
 
     resume() {
-        if (this.source || !this.finished) {
+        if (this._isPlaying || !this.finished) {
             return
         }
         this.play()
+    }
+
+    // With a virtual clock, ends the playback once the clock has passed the end of the sound
+    advanceVirtual() {
+        if (!this._isPlaying || this.initialOpts.loop) {
+            return
+        }
+        const played = this.offset + (this.manager.currentTime - this.startedAt) * this.currentRate
+        if (played >= this.parentSound.buffer.duration) {
+            this.finalize('end')
+        }
     }
 
     get isPlaying() {
@@ -163,6 +186,9 @@ export class SoundInstance extends EventTarget {
     }
 
     private applyGain(): void {
+        if (this.gain === null) {
+            return
+        }
         // If muted or volume is out of range, clamp accordingly
         this.gain.gain.value = this._muted ? 0 : Math.max(0, Math.min(1, this._volume))
     }
@@ -187,12 +213,14 @@ export class SoundInstance extends EventTarget {
 
     set speed(v: number) {
         const newRate = Math.max(0.01, v)
-        if (this.source) {
-            const elapsed = (this.ctx.currentTime - this.startedAt) * this.currentRate
+        if (this._isPlaying) {
+            const elapsed = (this.manager.currentTime - this.startedAt) * this.currentRate
             this.offset = (this.offset + elapsed) % this.parentSound.buffer.duration
-            this.startedAt = this.ctx.currentTime
+            this.startedAt = this.manager.currentTime
 
-            this.source.playbackRate.value = newRate
+            if (this.source) {
+                this.source.playbackRate.value = newRate
+            }
         }
 
         this.currentRate = newRate
@@ -234,7 +262,7 @@ export class Sound {
     }
 
     play(opts: PlayOptions = {}) {
-        const instance = new SoundInstance(this.manager.ctx, this, this.manager.master, {
+        const instance = new SoundInstance(this.manager, this, {
             rate: this.rate * this.manager.speed,
             volume: this.volume,
             ...opts,
@@ -290,6 +318,41 @@ export class AudioManager {
     private _master: GainNode | null = null
     private sounds: Sound[] = []
     public speed: number = 1
+    // Seconds of a virtual clock that advance() moves, or null for the AudioContext's own clock. Sounds then
+    // stay silent and end when the virtual clock passes their duration, so games run deterministically.
+    private virtualTime: number | null = null
+
+    useVirtualClock() {
+        this.virtualTime = 0
+    }
+
+    get isVirtual() {
+        return this.virtualTime !== null
+    }
+
+    get currentTime(): number {
+        return this.virtualTime ?? this.ctx.currentTime
+    }
+
+    advance(seconds: number) {
+        if (this.virtualTime === null) {
+            return
+        }
+        this.virtualTime += seconds
+        for (const instance of [...this.playing]) {
+            instance.advanceVirtual()
+        }
+    }
+
+    private playing = new Set<SoundInstance>()
+
+    _setPlaying(instance: SoundInstance, playing: boolean) {
+        if (playing) {
+            this.playing.add(instance)
+        } else {
+            this.playing.delete(instance)
+        }
+    }
 
     get ctx(): AudioContext {
         if (this._ctx === null) {
