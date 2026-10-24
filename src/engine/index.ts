@@ -75,7 +75,11 @@ export class Engine {
         }
     }
 
-    async start() {
+    start() {
+        return this.whileLoading(this.loadGame())
+    }
+
+    private async loadGame() {
         try {
             await this.filesystem.init()
 
@@ -118,9 +122,22 @@ export class Engine {
         globalAudio.stopAll()
     }
 
+    // Starting the game and changing scenes. The game doesn't run meanwhile (the ticker is stopped), so a manual
+    // clock waits for them too: otherwise how long files take to load would change what happens in the game.
+    private loading = new Set<Promise<unknown>>()
+
+    private whileLoading<T>(work: Promise<T>): Promise<T> {
+        this.loading.add(work)
+        work.finally(() => this.loading.delete(work)).catch(() => undefined)
+        return work
+    }
+
     // Advances a manual clock by `ms` and runs one tick of the game, then draws the frame unless told not to
     // (drawing is the slow part of a headless run, and the game's logic doesn't depend on it)
     async step(ms: number, draw: boolean = true) {
+        while (this.loading.size > 0) {
+            await Promise.allSettled(this.loading)
+        }
         this.clock.advance(ms)
         globalAudio.advance(ms / 1000)
         await this.tick(ms)
@@ -185,7 +202,11 @@ export class Engine {
         this.debug.updateXRay()
     }
 
-    async changeScene(sceneName: string) {
+    changeScene(sceneName: string) {
+        return this.whileLoading(this.loadScene(sceneName))
+    }
+
+    private async loadScene(sceneName: string) {
         this.options.onSceneChange?.(sceneName, this.currentScene?.name)
         this.app.ticker.stop()
         this.rendering.onSceneChange()
