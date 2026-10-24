@@ -9,7 +9,36 @@ import { buildImage } from '../../fileFormats/img'
 import { logger } from '../logging'
 import { Animo } from './animo'
 
+type FocusEvent = 'ONWINDOWFOCUSON' | 'ONWINDOWFOCUSOFF'
+
 export class CanvasObserver extends Type<CanvasObserverDefinition> {
+    // Window focus changes, reported once ENABLENOTIFY(TRUE) is called. Wehikuł Czasu's minigames (PIESZO,
+    // SAMOCHODZIK, NUREK, …) stop their world while the window is in the background and start it again after.
+    private notifyFocus = false
+    private focusQueue: FocusEvent[] = []
+    private readonly onFocus = () => this.focusQueue.push('ONWINDOWFOCUSON')
+    private readonly onBlur = () => this.focusQueue.push('ONWINDOWFOCUSOFF')
+
+    async ready() {
+        window.addEventListener('focus', this.onFocus)
+        window.addEventListener('blur', this.onBlur)
+    }
+
+    destroy() {
+        window.removeEventListener('focus', this.onFocus)
+        window.removeEventListener('blur', this.onBlur)
+    }
+
+    async tick() {
+        const events = this.focusQueue
+        this.focusQueue = []
+        for (const event of events) {
+            if (this.notifyFocus) {
+                await this.callbacks.run(event)
+            }
+        }
+    }
+
     @method()
     async SETBACKGROUND(filename: string) {
         const relativePath = await this.engine.currentScene?.getRelativePath(filename)
@@ -55,9 +84,10 @@ export class CanvasObserver extends Type<CanvasObserverDefinition> {
         this.engine.rendering.pasteOnBackground(sprite, x + offset.x, y + offset.y)
     }
 
-    // Enables ONWINDOWFOCUSON/OFF notifications in the original; window focus isn't tracked
     @method()
-    ENABLENOTIFY(enabled: boolean) {}
+    ENABLENOTIFY(enabled: boolean) {
+        this.notifyFocus = enabled
+    }
 
     // The canvas is redrawn every frame, so redrawing immediately is the same as REFRESH
     @method()

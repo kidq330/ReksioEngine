@@ -368,6 +368,7 @@ Semantics [engine/types/sequence.ts] **[G]** throughout:
 -   At the end the SEQUENCE object fires `ONFINISHED^<name passed to PLAY>`.
 -   **Every finished element also fires `ONFINISHED^<element name>`**, when the object has a handler with that parameter. Wehikuł Czasu drives its cutscenes this way: `CS_INTRO1` plays `PIRACI` from `INTROMAIN1.SEQ`, and handlers such as `MAINSEQCS:ONFINISHED^ASEQ1={PROJEKTOR^SETFRAME("PLAY",1);}` react to its child elements while `ONFINISHED^PIRACI` starts the next part. **[G]**
 -   `PLAY(name)` accepts the name of any element, not only a SEQEVENT of the root. Wehikuł Czasu plays nested SEQUENCE and SPEAKING elements directly. **[G]**
+-   `PAUSE` pauses the element being played, and `PLAY` starts its element running, so `PLAY` after `PAUSE` plays. Wehikuł Czasu's `CS_INTRO2` does `SEQCS^PAUSE();VAR_UJECIE^SET(7);SEQCS^PLAY("PLAY2");` when an element finishes. `CSequencedPlayable::pause` pauses the current child and sets a paused flag; `play` leaves the flag but starts a new child, and the flag only matters to `resume`. **[F]** (disassembly)
 -   `PAUSE` holds the sequence after the current element finishes; `RESUME` continues with the next one. SCENE^PAUSE/RESUME pause and resume the sequences and timers that were running. **[G]**
 
 ---
@@ -1053,12 +1054,15 @@ An implementation that only runs one title can therefore leave whole areas untes
     The Czarodzieje, Wehikuł Czasu and Kapitan Nemo passes implemented everything in this list. Kapitan Nemo also needed `ARRAY^COPYTO` (appends: `CMC_Array_Runner::copyTo` calls the target's `add` for each element and clears nothing **[F]**)/`GETSUMVALUE`, `DOUBLE^SQRT`, `IMAGE^GETWIDTH`/`GETHEIGHT`, `GROUP^ADDCLONES`/`GETSIZE`/`SETMARKERPOS`, `MOUSE^ISLBUTTONDOWN`, `TEXT^SHOW`/`HIDE`/`SETJUSTIFY` and `BUTTON^SETRECT(x1,y1,x2,y2)`.
 
 -   **Events and properties** the TS schema does not know:
+
     -   `ONSIGNAL^<param>` on ANIMO: 506 handlers in Wehikuł Czasu, with numeric parameters and `ATGOAL`/`NOPATH` (§8.2);
     -   `ONCHAR^<key>` on KEYBOARD;
     -   `ONWINDOWFOCUSON`/`ONWINDOWFOCUSOFF` on CANVAS_OBSERVER;
     -   `ONFOCUSON`/`ONFOCUSOFF` on IMAGE;
     -   `HYPERTEXT` on TEXT (`HJUSTIFY` is now read, and `VJUSTIFY` is `TOP` in Kapitan Nemo but `TRUE` in older games);
     -   `RAW` on MOUSE.
+
+    `ONWINDOWFOCUSON`/`ONWINDOWFOCUSOFF` now run, after `CANVAS_OBSERVER^ENABLENOTIFY(TRUE)`, when the browser window gains or loses focus; Wehikuł Czasu's minigames stop their world meanwhile. `HYPERTEXT` and `RAW` are accepted and ignored: every game leaves them empty or 0.
 
 **Piklib and BlooMoo agree where checked.** Running Kapitan Nemo first suggested two differences, and the TS engine briefly switched on `APPLICATION:BLOOMOO_VERSION` for them. Reading `PIKLIB8.dll` and Kapitan Nemo's `bloomoodll.dll` (`yarn disasm`, `scripts/README.md`) showed the same behaviour in both, and that the TS engine's earlier rules were the wrong ones. **[F]** (disassembly)
 
@@ -1073,6 +1077,7 @@ An implementation that only runs one title can therefore leave whole areas untes
 -   **Class methods return values**, `@RETURN` inside `@IF` branches returns from the enclosing behaviour, STRUCT fields can be call targets, and constructors get the instance name as `$1` (§4.4, §4.8, §3.4). The save class (`clssave.class`, `GSAVE^GET`/`SET`) needs all four.
 -   **ANIMOs without a file.** The walker class declares `ANNCREATURE`, `ANNFRIEND` and `ANNMASK` with an empty FILENAME, then positions them, sets their priority and plays events before it LOADs an animation. The position and priority apply on LOAD, and PLAY does nothing until then.
 -   **`ANIMO^SETFRAME(event, frame)` with an unknown event name uses the first event.** Read from the binaries: `CMC_Animo_Runner::setFrame` (PIKLIB8 and Kapitan Nemo's BlooMoo alike) takes an INTEGER as the event's index (−1 = the current event) and looks a name up with `CAnimo::getFrameNo`, whose result starts at 0 and only changes on a case-insensitive match. `CAnimo::SetEventFrame(int, int)` then treats frame −1 as 0 and ignores frames past the event's end. LOTBALONEM's fuel counter depends on the fallback: it calls `ANCNT^SETFRAME("LICZBY",AMF)` on `LICZBY.ANN`, whose only event is `licz`. `PLAY` differs: `CAnimo::Play(name)` resolves names with `resolveEventName`, which returns −1, and then plays nothing. **[F]** (disassembly)
+-   **`ANIMO^PLAY(event, x)` ignores its second argument.** Czarodzieje and Kapitan Nemo pass one in five places (`ANSLONHEAD^PLAY("RUN",0)`, `*SNAZWA^PLAY(["SYLABA"+_I_],0)`, …). `CMC_Animo_Runner::play` in Kapitan Nemo's BlooMoo reads only the first and calls the animation's play with fixed values. **[F]** (disassembly)
 -   **0-byte WAV files** (`_PUSTY_SFX0.WAV`, `_NULL_AMBIENT_SND.WAV`) are placeholders for sounds LOADed later. They load as silence.
 -   **Save slots.** A new game copies `$COMMON\SAVE\SLOT_DEF.DTA` to `SLOT<n>.DTA`, and `GSAVE^DBLOAD()` reads it after `SGSLOTNAME^SET(n)`. Scenes read their state from it, e.g. `GSAVE^GET("ARCADE_SCENE_NAME")` picks ARCADE's location. Running a scene without a loaded slot gives `ERROR` or `NULL` paths.
 

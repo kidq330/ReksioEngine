@@ -167,8 +167,16 @@ const ButtonDefinitionStructure = {
     ONINIT: optional(callback),
 }
 
-export type CanvasObserverDefinition = TypeDefinition & NonNullable<unknown>
-const CanvasObserverStructure = {}
+export type CanvasObserverDefinition = TypeDefinition & {
+    ONINIT?: callback
+    ONWINDOWFOCUSON?: callback
+    ONWINDOWFOCUSOFF?: callback
+}
+const CanvasObserverStructure = {
+    ONINIT: optional(callback),
+    ONWINDOWFOCUSON: optional(callback),
+    ONWINDOWFOCUSOFF: optional(callback),
+}
 
 export type ClassDefinition = TypeDefinition & {
     DEF: string
