@@ -19,7 +19,7 @@
             "scene": "ARCADE",
             "code": "G_SARCADEOBJECTS^SET(\"%LOC%\");",
             "dir": "dane/game/przygoda/arcade",
-            "exclude": ["ARCADE", "START", "TEST*", "C_*"]
+            "exclude": ["ARCADE", "START", "TEST*", "C_*", "KRIS", "LABIRYNT"]
         }
     },
     "riwc": {
