@@ -57,32 +57,15 @@ export class Database extends Type<DatabaseDefinition> {
         this.updateCursorValue()
     }
 
+    // CMC_Database::find (PIKLIB8 and BlooMoo alike) checks the rows from the offset on, selects the first match
+    // and returns its index, or -1. Kapitan Nemo plays a dialogue's lines with
+    // I1^SET(DBDIALOGI^FIND("ID",SDIALOGNAME,IDIALOGINDEKS)) until it gets -1.
     @method()
-    async FIND(column: string, value: string | double | boolean, offset: int): Promise<int> {
-        // BlooMoo searches from the offset: Kapitan Nemo plays a dialogue's lines with
-        // I1^SET(DBDIALOGI^FIND("ID",SDIALOGNAME,IDIALOGINDEKS)) until it gets -1
-        if (this.engine.scopeManager.isBlooMoo) {
-            return await this.findEntryWithValue(column, value, offset)
-        }
-
-        const index = await this.findEntryWithValue(column, value)
-        if (index === -1) {
-            return -1
-        }
-
-        // Simulating stupid behavior
-        if (index < offset) {
-            return this.content.length + index
-        }
-
-        return index
-    }
-
-    private async findEntryWithValue(column: string, value: any, start: number = 0) {
-        for (let i = Math.max(0, start); i < this.content.length; i++) {
-            const entry = this.content[i]
-            const entryValue = await entry.getField(column)?.getValue()
+    async FIND(column: string, value: string | double | boolean, offset: int = 0): Promise<int> {
+        for (let i = Math.max(0, offset); i < this.content.length; i++) {
+            const entryValue = await this.content[i].getField(column)?.getValue()
             if (entryValue === value || equalIgnoringCase(entryValue, value)) {
+                this.SELECT(i)
                 return i
             }
         }
