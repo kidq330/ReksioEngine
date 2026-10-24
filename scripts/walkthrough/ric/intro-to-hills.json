@@ -1,0 +1,17 @@
+{
+    "game": "ric",
+    "title": "Czarodzieje: the intro plays through to the first location",
+    "start": "START",
+    "seed": 1,
+    "steps": [
+        { "waitFor": { "scene": "INTRO_1" }, "timeout": 5000 },
+        { "wait": 15000 },
+        { "screenshot": "1-intro" },
+        { "waitFor": { "scene": "INTRO_4" }, "timeout": 240000 },
+        { "wait": 10000 },
+        { "screenshot": "2-intro4" },
+        { "waitFor": { "scene": "HILLS" }, "timeout": 120000 },
+        { "wait": 5000 },
+        { "screenshot": "3-hills" }
+    ]
+}

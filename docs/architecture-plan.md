@@ -206,6 +206,8 @@ _Done when:_ `interpreter.test.ts` and `common/types.test.ts` run under vitest o
 
 _Done when:_ a Node CLI `reksio run <game.zip> --scene S44_511_PODKOP --steps 600 --input script.json --seed 1` runs the real engine and prints the log, with no browser and no jsdom.
 
+_Progress._ The clock and RNG parts of steps 1–2 are done, still in the browser. With `manualClock`, time moves only through `Engine.step(ms)`: it waits for the game to start and for scene loads (as the stopped ticker does), runs one tick, and finishes any file loads the tick started. Sounds are silent and end on a virtual audio clock. Random numbers come from a seeded generator. Two runs with the same seed give the same frames, whatever the loading speed. `yarn walkthrough` uses this to play scripted runs: Ufo's intro to the yard, Czarodzieje's intro to HILLS, Kapitan Nemo's new game through its intro to Paris (see [`scripts/README.md`](../scripts/README.md)). Still to do: the ports, the logic/view split and running without a browser.
+
 ### Phase 4: Test tiers (overlapping with Phase 3)
 
 | Tier                | What                                                                                                                             | Where it runs                                | Ground truth                                         |

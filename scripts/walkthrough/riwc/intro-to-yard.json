@@ -1,0 +1,20 @@
+{
+    "game": "riwc",
+    "title": "Wehikuł Czasu: the intro cutscenes play through to the yard",
+    "start": "CS_INTRO0",
+    "seed": 1,
+    "steps": [
+        { "wait": 10000 },
+        { "screenshot": "1-intro0" },
+        { "waitFor": { "scene": "CS_INTRO1" }, "timeout": 60000 },
+        { "wait": 30000 },
+        { "screenshot": "2-intro1" },
+        { "waitFor": { "scene": "CS_INTRO2" }, "timeout": 300000 },
+        { "wait": 30000 },
+        { "screenshot": "3-intro2" },
+        { "waitFor": { "scene": "ARCADE" }, "timeout": 300000 },
+        { "expect": { "vars": { "G_SARCADESCENE": "PODWORKO", "S_BFIRSTINTRO": false } } },
+        { "wait": 10000 },
+        { "screenshot": "4-yard" }
+    ]
+}

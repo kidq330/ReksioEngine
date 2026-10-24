@@ -1,0 +1,20 @@
+{
+    "game": "rikn",
+    "title": "Kapitan Nemo: a new game in slot 1 plays the intro and reaches Paris",
+    "start": "START",
+    "seed": 1,
+    "steps": [
+        { "waitFor": { "scene": "MENUSLOTY" }, "timeout": 120000 },
+        { "wait": 15000 },
+        { "screenshot": "1-slots" },
+        { "clickObject": "BTNSZUFLADA0" },
+        { "waitFor": { "scene": "CUTSCENKI" }, "timeout": 30000 },
+        { "wait": 20000 },
+        { "screenshot": "2-intro" },
+        { "waitFor": { "scene": "ARCADE" }, "timeout": 600000 },
+        { "run": "S1^SET(GSAVE^GET(\"ARCADE_SCENE_NAME\"));" },
+        { "expect": { "vars": { "S1": "PARYZ" } } },
+        { "wait": 10000 },
+        { "screenshot": "3-paris" }
+    ]
+}

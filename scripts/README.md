@@ -44,8 +44,11 @@ yarn sweep rikn --baseline sweep-results/rikn-base/summary.json
 Plays a game from a JSON script on a manual clock with a fixed random seed, so every run is the same, and fails when an expectation doesn't hold or the game logs an error. The engine runs with `manualClock=true&seed=N`: time advances only through `engine.step(ms)` (1/60 s per frame), and sounds are silent and end when the clock passes their length.
 
 ```sh
-yarn walkthrough scripts/walkthrough/rikn/new-game-to-paris.json [--scenes]   # --scenes lists the scenes passed
+yarn walkthrough scripts/walkthrough/*/*.json
+yarn walkthrough scripts/walkthrough/rikn/new-game-to-paris.json --scenes   # also list the scenes passed, with game times
 ```
+
+The walkthroughs in [`walkthrough/`](walkthrough) play each game's opening: Ufo's intro to the yard, Czarodzieje's intro to HILLS, Wehikuł Czasu's intro cutscenes to the yard and Kapitan Nemo's new game through the intro to Paris. They take 1–4 minutes each.
 
 A walkthrough names the `game` (a key of `sweep/games.json`), a `start` scene, a `seed`, optional `allowedErrors` (substrings of errors to accept) and `steps`:
 
@@ -56,7 +59,7 @@ A walkthrough names the `game` (a key of `sweep/games.json`), a `start` scene, a
 | `{ "click": [400, 300] }`, `{ "clickObject": "BTNSZUFLADA0" }`             | clicks a point, or the centre of a button's rectangle or an object's graphic           |
 | `{ "key": "Escape" }`                                                      | presses a key ([Playwright key names](https://playwright.dev/docs/api/class-keyboard)) |
 | `{ "run": "A^SET(1);" }`                                                   | runs script code                                                                       |
-| `{ "expect": { "scene": "MENUSLOTY", "vars": { "S1": "PARYZ" } } }`        | fails unless the condition holds                                                       |
+| `{ "expect": { "scene": "MENUSLOTY", "vars": { "S1": "PARYZ" } } }`        | fails unless the condition holds (values compare as text; a BOOL is `true` or `false`) |
 | `{ "screenshot": "name" }`                                                 | saves `name.png`                                                                       |
 
 Results go to `sweep-results/walkthroughs/<name>/`: the screenshots, `end.png`, `log.txt` and `scenes.txt`.

@@ -111,26 +111,36 @@ export const runWalkthrough = async (walkthrough: Walkthrough, root: string, app
         const canvas = (await page.locator('#game canvas').first().boundingBox())!
 
         let lastScene: string | null = null
-        const noteScene = async (index: number) => {
+        let stepNumber = 0
+        let gameTime = 0
+        const noteScene = async () => {
             const scene = await page.evaluate(() => (globalThis as any).engine.currentScene?.name ?? null)
             if (scene !== lastScene) {
-                scenes.push(`after step ${index}: ${scene}`)
+                scenes.push(`step ${stepNumber}, ${(gameTime / 1000).toFixed(1)} s: ${scene}`)
                 lastScene = scene
             }
         }
-        await noteScene(0)
+        // Advances in chunks, noting the scenes the game goes through
+        const run = async (ms: number) => {
+            for (let left = ms; left > 0; left -= 250) {
+                await advance(page, Math.min(left, 250))
+                gameTime += Math.min(left, 250)
+                await noteScene()
+            }
+        }
+        await noteScene()
 
         for (const [index, step] of walkthrough.steps.entries()) {
-            await noteScene(index)
+            stepNumber = index + 1
             const label = `step ${index + 1} ${describe(step)}`
             if ('wait' in step) {
-                await advance(page, step.wait)
+                await run(step.wait)
             } else if ('waitFor' in step) {
                 const timeout = step.timeout ?? 30000
                 let waited = 0
                 let problem = await checkCondition(page, step.waitFor)
                 while (problem !== null && waited < timeout) {
-                    await advance(page, 250)
+                    await run(250)
                     waited += 250
                     problem = await checkCondition(page, step.waitFor)
                 }
@@ -145,16 +155,16 @@ export const runWalkthrough = async (walkthrough: Walkthrough, root: string, app
                     break
                 }
                 await page.mouse.move(canvas.x + point[0], canvas.y + point[1])
-                await advance(page, FRAME_MS)
+                await run(FRAME_MS)
                 await page.mouse.down()
-                await advance(page, 100)
+                await run(100)
                 await page.mouse.up()
-                await advance(page, FRAME_MS)
+                await run(FRAME_MS)
             } else if ('key' in step) {
                 await page.keyboard.down(step.key)
-                await advance(page, 100)
+                await run(100)
                 await page.keyboard.up(step.key)
-                await advance(page, FRAME_MS)
+                await run(FRAME_MS)
             } else if ('run' in step) {
                 await page.evaluate(async (code) => {
                     const engine = (globalThis as any).engine
