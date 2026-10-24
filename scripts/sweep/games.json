@@ -34,7 +34,28 @@
             "scene": "ARCADE",
             "code": "G_SARCADESCENE^SET(\"%LOC%\");",
             "dir": "dane/game/przygoda/arcade",
-            "exclude": ["ARCADE", "CLEAN", "C_*", "___*"]
+            "exclude": [
+                "ARCADE",
+                "CLEAN",
+                "C_*",
+                "___*",
+                "CIEMNAJASKINIA1",
+                "KOPIEC",
+                "KROL",
+                "LEJ",
+                "LEJ2",
+                "PANORAMA",
+                "PODROZA",
+                "RATUSZ",
+                "ROZA",
+                "RYNEK3",
+                "SRELEJ",
+                "ZAMEK",
+                "ZAMEK0",
+                "ZAMEK1",
+                "ZAMEK2",
+                "ZAMEK4"
+            ]
         }
     },
     "rikn": {
