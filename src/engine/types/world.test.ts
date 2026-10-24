@@ -48,6 +48,35 @@ describe('WORLD', () => {
         expect(world.GETPOSITIONX(1)).toBe(400)
     })
 
+    test('a joint with an empty angle range keeps the child at its offset from the parent', async () => {
+        // Wehikuł Czasu's car and one of its wheels
+        await engine.run(
+            'W^SETPOSITION(501,100,100,6);W^SETPOSITION(502,112,115,6);W^JOIN(502,501,112,110,0,0,0,0,0,0,0);' +
+                'W^SETVELOCITY(501,100,0,0);W^START();'
+        )
+        await step(0.1)
+
+        expect(world.GETPOSITIONX(501)).toBeCloseTo(110)
+        expect(world.GETPOSITIONX(502)).toBeCloseTo(122)
+        expect(world.GETPOSITIONY(502)).toBeCloseTo(115)
+    })
+
+    test('a free hinge keeps the distance between the bodies, the lighter one moving further', async () => {
+        // Czarodzieje's MIOTLY chain: bodies 20 apart joined at the child's position
+        await engine.run(
+            'W^ADDBODY(1,1);W^ADDBODY(2,3);W^SETPOSITION(1,400,300,0);W^SETPOSITION(2,420,300,0);' +
+                'W^JOIN(1,2,400,300,0,0,-180,180);W^SETVELOCITY(1,-400,0,0);W^START();'
+        )
+        await step(0.1)
+
+        const dx = world.GETPOSITIONX(2) - world.GETPOSITIONX(1)
+        const dy = world.GETPOSITIONY(2) - world.GETPOSITIONY(1)
+        expect(Math.hypot(dx, dy)).toBeCloseTo(20)
+        // Body 1 was pulled back by 3/4 of the stretch, body 2 forward by 1/4
+        expect(world.GETPOSITIONX(1)).toBeCloseTo(390)
+        expect(world.GETPOSITIONX(2)).toBeCloseTo(410)
+    })
+
     test('nothing moves until START', async () => {
         await engine.run('W^SETPOSITION(1,400,300,0);W^SETVELOCITY(1,100,0,0);')
         await step(0.1)

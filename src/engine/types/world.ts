@@ -42,6 +42,19 @@ type Body = {
     attractors: number[]
 }
 
+// A joint keeps a body (the child) next to another (the parent). Bodies here don't rotate, so a joint either keeps
+// the child's offset from the parent (rigid) or only its distance (a free hinge)
+type Joint = {
+    child: number
+    parent: number
+    rigid: boolean
+    offset: Vec3
+    length: number
+}
+
+// Passes over the joints per step, so that chains of joints settle
+const JOINT_ITERATIONS = 4
+
 type Graph = {
     nodes: Vec3[]
     neighbours: number[][]
@@ -62,6 +75,7 @@ const distance = (a: Vec3, b: Vec3) => Math.hypot(a.x - b.x, a.y - b.y, a.z - b.
 
 export class World extends Type<WorldDefinition> {
     private bodies = new Map<number, Body>()
+    private joints: Joint[] = []
     private graphs = new Map<number, Graph>()
     private gravity: Vec3 = { x: 0, y: 0, z: 0 }
     private running = false
@@ -126,6 +140,7 @@ export class World extends Type<WorldDefinition> {
     @method()
     REMOVEOBJECT(id: int) {
         this.bodies.delete(id)
+        this.joints = this.joints.filter((joint) => joint.child !== id && joint.parent !== id)
     }
 
     @method()
@@ -138,9 +153,28 @@ export class World extends Type<WorldDefinition> {
         this.getBody(id).linked = animo
     }
 
-    // Joints between bodies (MIOTLY's chain) aren't simulated
+    // JOIN(child, parent, anchorX, anchorY, ?, ?, minAngle, maxAngle, …) pins the child to the parent at the anchor
+    // (in SETPOSITION's coordinates). Wehikuł Czasu's car holds its wheels with an empty angle range, so they keep
+    // their offsets from it; Czarodzieje's MIOTLY chains bodies with free hinges (-180 to 180), which keep their
+    // distance. The anchor itself isn't used, as bodies don't rotate around it.
     @method()
-    JOIN(first: int, second: int, ...args: double[]) {}
+    JOIN(child: int, parent: int, anchorX: double, anchorY: double, ...args: double[]) {
+        const [, , minAngle = 0, maxAngle = 0] = args
+        const childBody = this.getBody(child)
+        const parentBody = this.getBody(parent)
+        const offset = {
+            x: childBody.position.x - parentBody.position.x,
+            y: childBody.position.y - parentBody.position.y,
+            z: childBody.position.z - parentBody.position.z,
+        }
+        this.joints.push({
+            child,
+            parent,
+            rigid: minAngle === maxAngle,
+            offset,
+            length: distance(childBody.position, parentBody.position),
+        })
+    }
 
     @method()
     UNLINK(id: int) {
@@ -313,8 +347,9 @@ export class World extends Type<WorldDefinition> {
         this.pendingMS = 0
 
         const arrived: Body[] = []
+        const positionsBefore = new Map<Body, Vec3>()
         for (const body of this.bodies.values()) {
-            const before = { ...body.position }
+            positionsBefore.set(body, { ...body.position })
             if (this.running && body.active) {
                 if (body.path.length > 0) {
                     if (this.walk(body, body.followSpeed * seconds)) {
@@ -324,7 +359,12 @@ export class World extends Type<WorldDefinition> {
                     this.integrate(body, seconds)
                 }
             }
+        }
+        if (this.running) {
+            this.applyJoints()
+        }
 
+        for (const [body, before] of positionsBefore) {
             body.lastMoveDistance = distance(before, body.position)
             if (body.lastMoveDistance > 0) {
                 const angle = (Math.atan2(body.position.y - before.y, body.position.x - before.x) * 180) / Math.PI
@@ -432,6 +472,42 @@ export class World extends Type<WorldDefinition> {
                 if (p[axis] < body.limits.min[axis] || p[axis] > body.limits.max[axis]) {
                     p[axis] = Math.min(Math.max(p[axis], body.limits.min[axis]), body.limits.max[axis])
                     v[axis] = 0
+                }
+            }
+        }
+    }
+
+    private applyJoints() {
+        for (let iteration = 0; iteration < JOINT_ITERATIONS; iteration++) {
+            for (const joint of this.joints) {
+                const child = this.bodies.get(joint.child)
+                const parent = this.bodies.get(joint.parent)
+                if (child === undefined || parent === undefined) {
+                    continue
+                }
+
+                if (joint.rigid) {
+                    child.position = {
+                        x: parent.position.x + joint.offset.x,
+                        y: parent.position.y + joint.offset.y,
+                        z: parent.position.z + joint.offset.z,
+                    }
+                    child.velocity = { ...parent.velocity }
+                    continue
+                }
+
+                // Both ends move back to the joint's length, the lighter one further; inactive bodies stay
+                const length = distance(child.position, parent.position)
+                const childShare = child.active ? 1 / child.mass : 0
+                const parentShare = parent.active ? 1 / parent.mass : 0
+                if (length === 0 || childShare + parentShare === 0) {
+                    continue
+                }
+                const correction = (length - joint.length) / length / (childShare + parentShare)
+                for (const axis of ['x', 'y', 'z'] as const) {
+                    const delta = (child.position[axis] - parent.position[axis]) * correction
+                    child.position[axis] -= delta * childShare
+                    parent.position[axis] += delta * parentShare
                 }
             }
         }
