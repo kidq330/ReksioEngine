@@ -2,6 +2,10 @@ import { structureDefinitions } from './types'
 import { FieldProcessorRecoverableError, FieldTypeEntry } from '../common'
 import { logger } from '../logger'
 
+// Notes of the game's editor that any object may carry (Skarb Piratów's scenes have AUTHOR, its INTEGERs
+// DESCRIPTION); they are kept but mean nothing to the engine
+const METADATA_FIELDS = ['AUTHOR', 'DESCRIPTION']
+
 export interface CNVObject {
     TYPE: string
     [key: string]: any
@@ -146,7 +150,7 @@ export const processTokens = (tokens: string[], objects: CNV) => {
                         }
                     )
                 }
-            } else if (variableName !== 'TYPE') {
+            } else if (!['TYPE', ...METADATA_FIELDS].includes(variableName)) {
                 logger.warn(`Unsupported field ${variableName} in type ${object.TYPE}`, {
                     object,
                 })

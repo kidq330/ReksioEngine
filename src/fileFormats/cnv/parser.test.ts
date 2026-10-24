@@ -1,4 +1,5 @@
 import { getLines, parseCNV } from './parser'
+import { logger, setFormatsLogger } from '../logger'
 
 describe('cnv lines parsing', () => {
     test('continuation lines', () => {
@@ -10,6 +11,25 @@ TEST:CODE={ /
 }
 `)
         expect(lines).toStrictEqual(['OBJECT=TEST', 'TEST:CODE={ OTHER^CALL(); ANOTHER^CALL(); }'])
+    })
+
+    test('the editor notes AUTHOR and DESCRIPTION are kept without a warning', () => {
+        const previousLogger = logger
+        const warn = jest.fn()
+        setFormatsLogger({ warn, error: jest.fn() })
+        try {
+            const cnv = parseCNV(`
+OBJECT=COUNTER
+COUNTER:TYPE=INTEGER
+COUNTER:DESCRIPTION=Number of parrots
+COUNTER:AUTHOR=Someone
+COUNTER:COLOUR=RED
+`)
+            expect(cnv.COUNTER.DESCRIPTION).toBe('Number of parrots')
+            expect(warn.mock.calls.map(([message]) => message)).toEqual(['Unsupported field COLOUR in type INTEGER'])
+        } finally {
+            setFormatsLogger(previousLogger)
+        }
     })
 
     test('normal OBJECT lines parsing', () => {
