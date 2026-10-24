@@ -26,6 +26,25 @@ describe('ANIMO', () => {
         expect(allLogs.map((log) => log.text)).not.toContain('More arguments given than method accepts')
     })
 
+    test('ISAT checks the frame rectangle, and with TRUE its pixel', () => {
+        const engine = new TestEngine()
+        const animo = new Animo(engine.asEngine(), null, { TYPE: 'ANIMO', NAME: 'ANMAP' } as any)
+        // A 3x2 frame at (10, 20) whose left column is transparent
+        ;(animo as any).sprite = {
+            x: 10,
+            y: 20,
+            anchor: { x: 0, y: 0 },
+            texture: { orig: { width: 3, height: 2 } },
+            hitmap: new Uint8Array([0, 255, 255, 0, 255, 255]),
+        }
+
+        expect(animo.ISAT(10, 20, false)).toBe(true)
+        expect(animo.ISAT(10, 20, true)).toBe(false)
+        expect(animo.ISAT(12, 21, true)).toBe(true)
+        expect(animo.ISAT(13, 21, false)).toBe(false)
+        expect(animo.ISAT(9, 20, false)).toBe(false)
+    })
+
     test('GETPOSITIONX with any argument is the position set with SETPOSITION', async () => {
         const engine = new TestEngine()
         const animo = new Animo(engine.asEngine(), null, { TYPE: 'ANIMO', NAME: 'ANLOCO' } as any)

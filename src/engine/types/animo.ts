@@ -881,6 +881,26 @@ export class Animo extends DisplayType<AnimoDefinition> {
     }
 
     // TODO: alternative 5 arg version
+    // Whether the point lies on the current frame: within its rectangle and, with checkAlpha, on a pixel that
+    // isn't transparent (CAnimo6::isAt in PIKLIB8 asks the frame's image). Czarodzieje's LABIRYNT steers its
+    // enemies with *VARPATHNAME^ISAT(x,y,TRUE) on an invisible map, so the sprite's own position is used rather
+    // than its world transform, which PIXI only updates for visible objects.
+    @method()
+    ISAT(x: int, y: int, checkAlpha: boolean = false): boolean {
+        const sprite = this.sprite
+        if (sprite === null) {
+            return false
+        }
+        const width = sprite.texture.orig.width
+        const height = sprite.texture.orig.height
+        const localX = Math.trunc(x - sprite.x + width * sprite.anchor.x)
+        const localY = Math.trunc(y - sprite.y + height * sprite.anchor.y)
+        if (localX < 0 || localY < 0 || localX >= width || localY >= height) {
+            return false
+        }
+        return !checkAlpha || (sprite.hitmap?.[localY * width + localX] ?? 0) > 0
+    }
+
     @method()
     ISNEAR(objectName: string, percentage: int): boolean {
         const otherObject = this.getObject(objectName)
