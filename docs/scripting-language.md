@@ -1039,7 +1039,7 @@ An implementation that only runs one title can therefore leave whole areas untes
 
 -   **Globals.** `@INT`, `@STRING`, `@BOOL`, `@DOUBLE` and `@MSGBOX` are used. The TS engine now implements them (§4.8).
 -   **Types.**
-    -   WORLD needs most of `World.dll`'s methods, including `FINDPATH` (125 calls in Wehikuł Czasu), `SETACTIVE`, `ADDFORCE`, `GETPOSITIONX/Y/Z`, `JOIN`, `REMOVEOBJECT` and `SETGRAVITYCENTER`. The TS engine now has the subset Czarodzieje's ARCADE needs (§8.2), but no collisions or joints.
+    -   WORLD needs most of `World.dll`'s methods, including `FINDPATH` (125 calls in Wehikuł Czasu), `SETACTIVE`, `ADDFORCE`, `GETPOSITIONX/Y/Z`, `JOIN`, `REMOVEOBJECT` and `SETGRAVITYCENTER`. The TS engine now has the subset the scripts call (§8.2), with joints approximated and no collisions between bodies.
     -   PATTERN (Czarodzieje: `ADD`, `MOVE`, `GETGRAPHICSAT`, and the properties `LAYERS`, `GRIDX`, `GRIDY`, `WIDTH`, `HEIGHT`) is now implemented (§5).
 -   **Methods**, among others:
 
@@ -1101,12 +1101,12 @@ Not yet analysed: _Kretes w Akcji_ and the other BlooMoo titles, and the non-scr
 -   **`World.dll`** (Czarodzieje, Wehikuł Czasu; `DLLS=WORLD`) registers the WORLD type. It is a thin script binding over **`Sekai.dll`**, a physics and path-finding library with a C++ interface `ISekai` (`AddBody`, `AddForce`, `AddWayPoint`, `AddMeshWayPoint`, `FindPath`, `Follow`, `FollowPath`, `CollideMesh`, …). Its data files are the `.sek` meshes. WORLD's vocabulary:
 
     -   Properties and callbacks: `FILENAME`, `ONINIT`, `ONDONE`, `ONSIGNAL`.
-    -   Bodies and forces: `ADDBODY`, `ADDOBJECT`, `REMOVEOBJECT`, `ADDFORCE`, `ADDGRAVITYEX`, `SETGRAVITY`, `SETGRAVITYCENTER`, `SETFORCE`, `SETOBJECTFORCE`, `SETMASS`, `SETVELOCITY`, `SETSPEED`, `SETMAXSPEED`, `SETBODYDYNAMICS`, `SETBODYPROPERTIES`, `SETOBJECTPROPERTIES`, `SETCOLLISIONTYPE`, `SETDISPERSION`, `SETLIMIT`, `ZEROALL`.
-    -   Joints: `JOIN2`, `JOINTSPEED`, `JOINTSTEER`, `UNLINK`, `PAUSELINK`, `RESUMELINK`, `BREAK`.
+    -   Bodies and forces: `ADDBODY`, `SETG`, `ADDOBJECT`, `REMOVEOBJECT`, `ADDFORCE`, `ADDGRAVITYEX`, `SETGRAVITY`, `SETGRAVITYCENTER`, `SETFORCE`, `SETOBJECTFORCE`, `SETMASS`, `SETVELOCITY`, `SETSPEED`, `SETMAXSPEED`, `SETBODYDYNAMICS`, `SETBODYPROPERTIES`, `SETOBJECTPROPERTIES`, `SETCOLLISIONTYPE`, `SETDISPERSION`, `SETLIMIT`, `ZEROALL`.
+    -   Joints: `JOIN`, `JOIN2`, `JOINTSPEED`, `JOINTSTEER`, `UNLINK`, `PAUSELINK`, `RESUMELINK`, `BREAK`.
     -   Paths: `FINDPATH`, `FOLLOWPATH`, `FOLLOW`, `FOLLOWROUTE`, `GOTOPATH`, `MOVETOPATH`, `ADDTOPATH`, `ADDWAYPOINT`, `ADDMESHWAYPOINT`, `REMOVEWAYPOINT`, `REMOVEROUTE`, `ENABLEMESH`, `COLLIDEMESH`, `ISMESHENABLED`, `ISMESHCOLLIDING`.
     -   Queries and control: `GETPOSITIONX/Y/Z`, `GETROTATIONX/Y/Z`, `GETANGLE`, `GETSPEED`, `GETMOVEDISTANCE`, `GETCOLLISION`, `GETBKGPOSX/Y`, `SETBKGSIZE`, `SETREFOBJECT`, `SETMOVEFLAGS`, `SETACTIVE`, `SETALWAYSACTIVE`, `SETPOSITION`, `SETPOSITIONCOORD`, `SETANGLE`, `ROTATE`, `MOVETO`, `MOVEOBJECTS`, `USEFF`, `START`.
 
-    Scripts call `JOIN` and `SETG`, which are not in this list. They may be prefix-matched abbreviations of `JOIN2` and `SETGRAVITY…`, or calls the original silently ignores. **[?]**
+    `JOIN` and `SETG` are in the DLL's name table next to `BREAK` and `SETGRAVITYCENTER` (an earlier reading of the strings missed them). **[F]** (strings) The TS engine keeps joined bodies together: `JOIN(child, parent, anchorX, anchorY, ?, ?, minAngle, maxAngle, …)` with an empty angle range keeps the child's offset from the parent (Wehikuł Czasu's car and its wheels), and a free hinge keeps their distance (Czarodzieje's MIOTLY chain). Its bodies don't rotate, so this approximates Sekai. **[G]**
 
 -   **`ONSIGNAL` is how WORLD reports back. [G]** `ONSIGNAL` is in the vocabulary of every engine build from Piklib 7.1 on, and of `Matrix.dll` and `World.dll`. It is therefore a generic event that ordinary objects can receive, and plugins can raise it. In the WORLD scenes, the scripts attach `ONSIGNAL^<param>` handlers to the ANIMO objects that the WORLD moves. The parameters are `ATGOAL` and `NOPATH` for path following, and numbers for the rest (506 handlers in Wehikuł Czasu), apparently body or contact identifiers. The TS engine accepts these handlers on ANIMO and raises `ATGOAL`/`NOPATH`.
 -   **WORLD conventions, as Czarodzieje's scripts use them [G]:**
