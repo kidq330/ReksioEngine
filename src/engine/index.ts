@@ -62,6 +62,8 @@ export class Engine {
 
             if (this.clock.isManual) {
                 globalAudio.useVirtualClock()
+                // Frames are drawn by step() only, not by the ticker on every animation frame
+                this.app.ticker.remove(this.app.render, this.app)
             } else if (!BUILD_VARS.manualTick) {
                 this.app.ticker.add(() => this.tick(this.app.ticker.elapsedMS))
             }
@@ -116,12 +118,15 @@ export class Engine {
         globalAudio.stopAll()
     }
 
-    // Advances a manual clock by `ms` and runs one tick of the game, then draws the frame
-    async step(ms: number) {
+    // Advances a manual clock by `ms` and runs one tick of the game, then draws the frame unless told not to
+    // (drawing is the slow part of a headless run, and the game's logic doesn't depend on it)
+    async step(ms: number, draw: boolean = true) {
         this.clock.advance(ms)
         globalAudio.advance(ms / 1000)
         await this.tick(ms)
-        this.app.render()
+        if (draw) {
+            this.app.render()
+        }
     }
 
     // Scripts run to completion like in the original engine. A tick still waiting for something (e.g. a file

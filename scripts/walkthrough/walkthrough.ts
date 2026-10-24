@@ -40,7 +40,8 @@ const advance = async (page: Page, ms: number) => {
         async ([frames, frameMs]) => {
             const engine = (globalThis as any).engine
             for (let i = 0; i < frames; i++) {
-                await engine.step(frameMs)
+                // Only the last frame is drawn
+                await engine.step(frameMs, i === frames - 1)
             }
         },
         [frames, FRAME_MS]
