@@ -19,6 +19,15 @@ describe('SCENE', () => {
         expect(engine.getObject('A_3')).toBeNull()
     })
 
+    test('STOPMUSIC stops the scene music whatever the arguments', async () => {
+        const stop = jest.fn()
+        engine.music = { stop } as any
+        await engine.run('SCENE^STOPMUSIC("MUSIC.WAV");')
+        expect(stop).toHaveBeenCalled()
+        expect(engine.music).toBeNull()
+        expect(engine.errors).toEqual([])
+    })
+
     test('PAUSE stops running objects and RESUME continues only those', async () => {
         await engine.load(`
 OBJECT=RUNNING

@@ -65,6 +65,13 @@ export class Scene extends ParentType<SceneDefinition> {
         })
     }
 
+    // Arguments are ignored, as in the original: Wehikuł Czasu calls STOPMUSIC(G_SMUSIC)
+    @method()
+    STOPMUSIC(...ignored: any[]) {
+        this.engine.music?.stop()
+        this.engine.music = null
+    }
+
     @method()
     GETMAXHSPRIORITY(): int {
         return this.maxHSPriority
