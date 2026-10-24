@@ -11,6 +11,10 @@
     "ric": {
         "title": "Reksio i Czarodzieje",
         "prelude": "START",
+        "sceneSetup": {
+            "ARCADE": "G_SARCADEOBJECTS^SET(\"MIASTO\");",
+            "LIMBO": "G_SARCADEOBJECTS^SET(\"MIASTO\");"
+        },
         "locations": {
             "scene": "ARCADE",
             "code": "G_SARCADEOBJECTS^SET(\"%LOC%\");",
@@ -21,7 +25,7 @@
     "riwc": {
         "title": "Reksio i Wehikuł Czasu",
         "prelude": "CS_INTRO0",
-        "setup": "G_MENU^NEWGAMESTART();",
+        "setup": "G_MENU^NEWGAMESTART();G_SARCADESCENE^SET(\"PODWORKO\");",
         "sceneSetup": {
             "LAS": "G_SARCADESCENELAST^SET(\"151\");",
             "TURNIEJ": "G_SARCADESCENELAST^SET(\"151\");"
