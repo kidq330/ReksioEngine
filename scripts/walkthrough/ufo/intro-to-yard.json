@@ -1,0 +1,47 @@
+{
+    "game": "ufo",
+    "title": "Reksio i Ufo: the intros play, a click on the title starts chapter 1, and the kennel leads to the yard",
+    "seed": 1,
+    "steps": [
+        {
+            "waitFor": {
+                "scene": "S2_0_INTRO2"
+            },
+            "timeout": 180000
+        },
+        {
+            "wait": 3000
+        },
+        {
+            "screenshot": "1-title"
+        },
+        {
+            "click": [400, 300]
+        },
+        {
+            "waitFor": {
+                "scene": "S12_0_WBUDZIE"
+            },
+            "timeout": 10000
+        },
+        {
+            "expect": {
+                "vars": {
+                    "VARROZDZIAL1": 1
+                }
+            }
+        },
+        {
+            "waitFor": {
+                "scene": "S14_0_PRZEDKOGUTEM"
+            },
+            "timeout": 60000
+        },
+        {
+            "wait": 5000
+        },
+        {
+            "screenshot": "2-yard"
+        }
+    ]
+}
