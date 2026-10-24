@@ -192,6 +192,10 @@ export class Animo extends DisplayType<AnimoDefinition> {
         this.visibleWithoutSprite = null
         this.setPriority(this.priorityWithoutSprite ?? this.definition.PRIORITY ?? 0)
         this.priorityWithoutSprite = null
+        if (this.opacityWithoutSprite !== null) {
+            this.sprite.alpha = this.opacityWithoutSprite / 255
+            this.opacityWithoutSprite = null
+        }
 
         if (this.definition.TOCANVAS) {
             this.engine.rendering.addToStage(this.sprite, this)
@@ -943,9 +947,16 @@ export class Animo extends DisplayType<AnimoDefinition> {
 
     @method()
     SETOPACITY(opacity: int) {
-        assert(this.sprite !== null)
+        if (this.sprite === null) {
+            this.opacityWithoutSprite = opacity
+            return
+        }
         this.sprite.alpha = opacity / 255
     }
+
+    // SETOPACITY before the ANIMO has a sprite applies on LOAD, like SETPRIORITY: Czarodzieje's ARRAS sets the
+    // opacity of ANNMAGIA's clones before loading their animation
+    private opacityWithoutSprite: number | null = null
 
     @method()
     async LOAD(path: string) {

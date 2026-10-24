@@ -45,6 +45,14 @@ describe('ANIMO', () => {
         expect(animo.ISAT(9, 20, false)).toBe(false)
     })
 
+    test('SETOPACITY before the animation is loaded is kept for it', async () => {
+        const engine = new TestEngine()
+        engine.add(new Animo(engine.asEngine(), engine.currentScene, { TYPE: 'ANIMO', NAME: 'ANNMAGIA' } as any))
+        await engine.run('ANNMAGIA^SETOPACITY(200);')
+        expect(engine.errors).toEqual([])
+        expect((engine.getObject('ANNMAGIA') as any).opacityWithoutSprite).toBe(200)
+    })
+
     test('GETPOSITIONX with any argument is the position set with SETPOSITION', async () => {
         const engine = new TestEngine()
         const animo = new Animo(engine.asEngine(), null, { TYPE: 'ANIMO', NAME: 'ANLOCO' } as any)
