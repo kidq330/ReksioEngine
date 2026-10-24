@@ -13,6 +13,9 @@ import {
     openGame,
     runScript,
     waitForSceneChange,
+    wait,
+    Clock,
+    REAL_TIME,
 } from './browser'
 import { GameConfig, listLocations, loadConfig, resolveGameRoot } from './config'
 import { startServer } from './server'
@@ -29,13 +32,14 @@ const { values: options, positionals } = parseArgs({
         only: { type: 'string' },
         seconds: { type: 'string', default: '12' },
         interact: { type: 'boolean', default: false },
+        'real-clock': { type: 'boolean', default: false },
         out: { type: 'string' },
         baseline: { type: 'string' },
     },
 })
 
 const usage = `Usage: yarn sweep <game> [--root DIR] [--scenes A,B | --locations [--only A,B]] [--seconds N]
-                  [--interact] [--out DIR] [--baseline summary.json] [--config FILE] [--app DIR]`
+                  [--interact] [--real-clock] [--out DIR] [--baseline summary.json] [--config FILE] [--app DIR]`
 
 const main = async () => {
     const game = positionals[0]
@@ -62,6 +66,7 @@ const main = async () => {
     }
 
     const seconds = Number(options.seconds)
+    const clock: Clock = options['real-clock'] ? REAL_TIME : { manual: true, seed: 1 }
     const outDir = options.out ?? path.join('sweep-results', options.locations ? `${game}-locations` : game)
     fs.mkdirSync(outDir, { recursive: true })
 
@@ -89,9 +94,9 @@ const main = async () => {
             const logs = captureLogs(page)
             try {
                 if (prelude !== undefined) {
-                    await openGame(page, server.url, prelude)
-                    await waitForSceneChange(page, prelude)
-                    await page.waitForTimeout(5000)
+                    await openGame(page, server.url, prelude, clock)
+                    await waitForSceneChange(page, prelude, clock)
+                    await wait(page, 5000, clock)
                     logs.length = 0
                     if (config.setup) {
                         await runScript(page, config.setup)
@@ -106,11 +111,11 @@ const main = async () => {
                         await changeScene(page, target)
                     }
                 } else {
-                    await openGame(page, server.url, target)
+                    await openGame(page, server.url, target, clock)
                 }
-                await page.waitForTimeout(seconds * 1000)
+                await wait(page, seconds * 1000, clock)
                 if (options.interact) {
-                    await interact(page)
+                    await interact(page, 40, clock)
                 }
                 await page.screenshot({ path: path.join(outDir, `${target}.png`) })
             } catch (error) {

@@ -18,28 +18,65 @@ export const captureLogs = (page: Page): string[] => {
     return logs
 }
 
+// How the game's time passes: in real time, or on a manual clock that moves only when the tools step it, with
+// seeded random numbers. A manual clock makes runs repeatable and is faster, as only the last frame of a wait
+// is drawn.
+export type Clock = { manual: boolean; seed?: number }
+export const REAL_TIME: Clock = { manual: false }
+
 // Without a scene the game starts where its episode's STARTWITH says
-export const gameUrl = (serverUrl: string, scene?: string) =>
+export const gameUrl = (serverUrl: string, scene?: string, clock: Clock = REAL_TIME) =>
     `${serverUrl}/app/?loader=listingjson&source=${serverUrl}/game/listing.json&debug=false` +
+    (clock.manual ? `&manualClock=true&seed=${clock.seed ?? 1}` : '') +
     (scene ? `&scene=${scene}` : '')
 
 // Opens the game in a scene and waits until the engine has entered it
-export const openGame = async (page: Page, serverUrl: string, scene?: string) => {
-    await page.goto(gameUrl(serverUrl, scene))
+export const openGame = async (page: Page, serverUrl: string, scene?: string, clock: Clock = REAL_TIME) => {
+    await page.goto(gameUrl(serverUrl, scene, clock))
     await page.click('#game')
     await page.waitForFunction(() => (globalThis as any).engine?.currentScene, null, { timeout: 60000 })
 }
 
-// Waits until the game leaves the given scene by itself, e.g. an intro handing over to the menu
-export const waitForSceneChange = (page: Page, from: string) =>
-    page.waitForFunction(
-        (scene) => {
-            const current = (globalThis as any).engine?.currentScene
-            return current && current.name !== scene
+const FRAME_MS = 1000 / 60
+
+// Advances a game on a manual clock by whole frames, drawing only the last one
+export const advanceGame = async (page: Page, ms: number) => {
+    const frames = Math.max(1, Math.round(ms / FRAME_MS))
+    await page.evaluate(
+        async ([frames, frameMs]) => {
+            const engine = (globalThis as any).engine
+            for (let i = 0; i < frames; i++) {
+                await engine.step(frameMs, i === frames - 1)
+            }
         },
-        from,
-        { timeout: 60000 }
+        [frames, FRAME_MS]
     )
+}
+
+// Lets `ms` of game time pass
+export const wait = (page: Page, ms: number, clock: Clock = REAL_TIME) =>
+    clock.manual ? advanceGame(page, ms) : page.waitForTimeout(ms)
+
+// Waits until the game leaves the given scene by itself, e.g. an intro handing over to the menu
+export const waitForSceneChange = async (page: Page, from: string, clock: Clock = REAL_TIME) => {
+    if (!clock.manual) {
+        await page.waitForFunction(
+            (scene) => {
+                const current = (globalThis as any).engine?.currentScene
+                return current && current.name !== scene
+            },
+            from,
+            { timeout: 60000 }
+        )
+        return
+    }
+    for (let waited = 0; (await currentScene(page)) === from; waited += 250) {
+        if (waited >= 60000) {
+            throw new Error(`still in ${from} after 60 s of game time`)
+        }
+        await advanceGame(page, 250)
+    }
+}
 
 // Runs script code in the game as if from a callback, logging (not throwing) script failures
 export const runScript = (page: Page, code: string) =>
@@ -72,7 +109,7 @@ export const episodeScenes = (page: Page): Promise<string[]> =>
     page.evaluate(() => (globalThis as any).engine.scopeManager.findByType('EPISODE').definition.SCENES)
 
 // Deterministic pseudo-random clicks and key presses over the 800x600 canvas
-export const interact = async (page: Page, rounds = 40) => {
+export const interact = async (page: Page, rounds = 40, clock: Clock = REAL_TIME) => {
     const box = await page.locator('#game canvas').first().boundingBox()
     if (box === null) {
         return
@@ -84,15 +121,15 @@ export const interact = async (page: Page, rounds = 40) => {
         if (i % 3 === 0) {
             const key = keys[Math.floor(random() * keys.length)]
             await page.keyboard.down(key)
-            await page.waitForTimeout(300)
+            await wait(page, 300, clock)
             await page.keyboard.up(key)
         } else {
             await page.mouse.move(box.x + 20 + random() * 760, box.y + 20 + random() * 560)
-            await page.waitForTimeout(150)
+            await wait(page, 150, clock)
             await page.mouse.down()
-            await page.waitForTimeout(80)
+            await wait(page, 80, clock)
             await page.mouse.up()
         }
-        await page.waitForTimeout(400)
+        await wait(page, 400, clock)
     }
 }

@@ -14,7 +14,7 @@ The keys and per-game settings are in [`sweep/games.json`](sweep/games.json): `u
 
 ## Sweeping scenes: `yarn sweep`
 
-Runs each scene of a game in headless Chromium with the built app (`yarn build` first) and records script errors, warnings and a screenshot per scene.
+Runs each scene of a game in headless Chromium with the built app (`yarn build` first) and records script errors, warnings and a screenshot per scene. The game runs on a manual clock with a fixed random seed (see [walkthroughs](#walkthroughs-yarn-walkthrough)), so a sweep gives the same results every time and takes a few seconds per scene; `--real-clock` runs it in real time instead.
 
 ```sh
 yarn build
@@ -25,7 +25,7 @@ yarn sweep riwc --locations              # every ARCADE location instead of the 
 yarn sweep riwc --locations --only STAW,ZAMEK5
 ```
 
-Options: `--seconds N` (time in each scene, default 12), `--out <dir>` (default `sweep-results/<game>`), `--baseline <summary.json>`, `--config`, `--app` (default `dist/app`). Chromium comes from `playwright-core`; set `CHROMIUM_PATH` to use another binary (run `npx playwright-core install chromium` if none is installed).
+Options: `--seconds N` (game time in each scene, default 12), `--real-clock`, `--out <dir>` (default `sweep-results/<game>`), `--baseline <summary.json>`, `--config`, `--app` (default `dist/app`). Chromium comes from `playwright-core`; set `CHROMIUM_PATH` to use another binary (run `npx playwright-core install chromium` if none is installed).
 
 The output folder gets `<scene>.log`, `<scene>.png`, `summary.json` (errors, warnings and the scene the game ended in, per scene) and `errors.txt` (each distinct error with the scenes it happened in; script stack traces are reduced to the failing call).
 

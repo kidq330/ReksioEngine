@@ -4,7 +4,7 @@ import * as fs from 'fs'
 import * as path from 'path'
 import { parseArgs } from 'util'
 import { Page } from 'playwright-core'
-import { captureLogs, launchBrowser } from '../sweep/browser'
+import { advanceGame as advance, captureLogs, gameUrl, launchBrowser } from '../sweep/browser'
 import { resolveGameRoot } from '../sweep/config'
 import { startServer } from '../sweep/server'
 import { isError } from '../sweep/summary'
@@ -32,21 +32,6 @@ export type Walkthrough = {
 }
 
 const FRAME_MS = 1000 / 60
-
-// Advances the game by whole frames
-const advance = async (page: Page, ms: number) => {
-    const frames = Math.max(1, Math.round(ms / FRAME_MS))
-    await page.evaluate(
-        async ([frames, frameMs]) => {
-            const engine = (globalThis as any).engine
-            for (let i = 0; i < frames; i++) {
-                // Only the last frame is drawn
-                await engine.step(frameMs, i === frames - 1)
-            }
-        },
-        [frames, FRAME_MS]
-    )
-}
 
 // What failed in a condition, or null when it holds
 const checkCondition = (page: Page, condition: Condition): Promise<string | null> =>
@@ -101,11 +86,7 @@ export const runWalkthrough = async (walkthrough: Walkthrough, root: string, app
     const scenes: string[] = []
 
     try {
-        const scene = walkthrough.start ? `&scene=${walkthrough.start}` : ''
-        await page.goto(
-            `${server.url}/app/?loader=listingjson&source=${server.url}/game/listing.json&debug=false` +
-                `&manualClock=true&seed=${walkthrough.seed ?? 1}${scene}`
-        )
+        await page.goto(gameUrl(server.url, walkthrough.start, { manual: true, seed: walkthrough.seed ?? 1 }))
         await page.click('#game')
         await page.waitForFunction(() => (globalThis as any).engine?.currentScene, null, { timeout: 60000 })
         const canvas = (await page.locator('#game canvas').first().boundingBox())!
