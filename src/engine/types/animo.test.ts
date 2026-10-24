@@ -16,4 +16,13 @@ describe('ANIMO', () => {
         expect(find(-1)).toBe(events[1])
         expect(find(5)).toBeNull()
     })
+
+    test('GETPOSITIONX with any argument is the position set with SETPOSITION', async () => {
+        const engine = new TestEngine()
+        const animo = new Animo(engine.asEngine(), null, { TYPE: 'ANIMO', NAME: 'ANLOCO' } as any)
+        await animo.SETPOSITION(120, 45)
+        expect(animo.GETPOSITIONX(true)).toBe(120)
+        expect(animo.GETPOSITIONX(false)).toBe(120)
+        expect(animo.GETPOSITIONY(true)).toBe(45)
+    })
 })

@@ -749,36 +749,35 @@ export class Animo extends DisplayType<AnimoDefinition> {
         return Math.round(this.sprite.getGlobalPosition().y + this.sprite.height / 2)
     }
 
-    // Piklib returns where the current frame is drawn. BlooMoo (Kapitan Nemo) added a flag: TRUE gives the
-    // position set with SETPOSITION and FALSE the frame's, so GETPOSITIONX(FALSE)-GETPOSITIONX() is the frame
-    // offset there, and its default is TRUE: the cutscenes paste a frame at [0-GETPOSITIONX()] to keep its offset.
+    // CMC_Animo_Runner::getPositionX (PIKLIB8 and BlooMoo alike) returns where the current frame is drawn
+    // (CAnimo::GetPosition: position + image and event frame offsets) without arguments, and the position set
+    // with SETPOSITION (CAnimo::getPosition) with any argument; its value isn't read. Kapitan Nemo uses both:
+    // GETPOSITIONX(FALSE)-GETPOSITIONX() is a frame's offset, and ANLOCO_1^SETPOSITION(ANLOCO^GETPOSITIONX(TRUE),…)
+    // copies a position to a clone.
     @method()
     GETPOSITIONX(objectPosition?: boolean): int {
-        if (objectPosition ?? this.engine.scopeManager.isBlooMoo) {
-            return this.positionX
-        }
-        assert(this.sprite !== null)
-        return this.sprite.getGlobalPosition().x
+        return objectPosition !== undefined ? this.positionX : this.framePosition().x
     }
 
     @method()
     GETPOSITIONY(objectPosition?: boolean): int {
-        if (objectPosition ?? this.engine.scopeManager.isBlooMoo) {
-            return this.positionY
-        }
+        return objectPosition !== undefined ? this.positionY : this.framePosition().y
+    }
+
+    private framePosition() {
         assert(this.sprite !== null)
-        return this.sprite.getGlobalPosition().y
+        return this.sprite.getGlobalPosition()
     }
 
     // The right and bottom edges of the current frame, e.g. the feet of a walking character (Kapitan Nemo)
     @method()
     GETENDX(): int {
-        return this.GETPOSITIONX(false) + this.GETWIDTH()
+        return this.framePosition().x + this.GETWIDTH()
     }
 
     @method()
     GETENDY(): int {
-        return this.GETPOSITIONY(false) + this.GETHEIGHT()
+        return this.framePosition().y + this.GETHEIGHT()
     }
 
     @method()
